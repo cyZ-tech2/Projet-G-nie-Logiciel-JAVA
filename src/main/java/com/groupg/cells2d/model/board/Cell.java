@@ -1,4 +1,4 @@
-package com.groupg.cells2d.model.entity;
+package com.groupg.cells2d.model.board;
 
 public class Cell{
     
