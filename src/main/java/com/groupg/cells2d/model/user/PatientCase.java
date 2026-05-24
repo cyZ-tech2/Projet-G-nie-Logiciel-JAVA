@@ -1,4 +1,4 @@
-package com.groupg.cells2d.model;
+package com.groupg.cells2d.model.user;
 
 /**
  * rajouter un cas de patient

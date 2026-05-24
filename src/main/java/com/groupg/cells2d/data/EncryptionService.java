@@ -5,4 +5,9 @@ package com.groupg.cells2d.data;
  */
 
 public class EncryptionService {
+
+    public static String hashPassword(String password){
+        
+    }
+
 }
