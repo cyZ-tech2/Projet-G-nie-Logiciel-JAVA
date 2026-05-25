@@ -1,7 +1,11 @@
 package com.groupg.cells2d.model.board;
 import java.awt.Point;
 import com.groupg.cells2d.model.enums.CellState;
+import com.groupg.cells2d.model.enums.TimeStep;
 
+/**
+ * 
+ */
 public class Cell{
     private String cellId;
     private int population;
@@ -26,15 +30,44 @@ public class Cell{
     }
 
     public void evolve(TimeStep step) {
-
+        switch (state) {
+            case HEALTHY:
+                state = CellState.PARTIAL;
+                break;
+            case PARTIAL:
+                state = CellState.INFECTED;
+                break;
+            case INFECTED:
+                state = CellState.CRITICAL;
+                break;
+            case CRITICAL:
+                //Already critical, no changes for now 
+                state = CellState.CRITICAL;
+                break;
+        }
     }
 
-    public void addCase(PatientCase c) {
-
+    public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected 
+        this.state = CellState.INFECTED;
     }
-
+    /**
+     * Computes the infection rate of the cell
+     * according to its current health state.
+     *
+     * HEALTHY   -> 0.0
+     * PARTIAL   -> 0.3
+     * INFECTED  -> 0.7
+     * CRITICAL  -> 1.0
+     *
+     * @return infection rate between 0 and 1
+     */
     public double getInfectionRate() {
-
+        return switch (state) {
+            case HEALTHY -> 0.0;
+            case PARTIAL -> 0.3;
+            case INFECTED -> 0.7;
+            case CRITICAL -> 1.0;
+        };
     }
 
     /* Override */

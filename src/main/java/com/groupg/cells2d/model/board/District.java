@@ -1,5 +1,4 @@
 package com.groupg.cells2d.model.board;
-import java.util.ArrayList;
 import java.util.List;
 
 public class District {
