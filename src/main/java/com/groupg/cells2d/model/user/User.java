@@ -1,6 +1,7 @@
 package com.groupg.cells2d.model.user;
 
 import com.groupg.cells2d.data.EncryptionService;
+import com.groupg.cells2d.data.PasswordHash;
 
 import java.util.Objects;
 
@@ -12,12 +13,12 @@ abstract class User {
 
      private final double id;
      private final String username;
-     private final String passwordHash;
+     private final PasswordHash passwordHash;
 
-    public User(double id, String username, String password) {
+    public User(double id, String username, String password) throws Exception{
         this.id = id;
         this.username = username;
-        passwordHash = EncryptionService.hashPassword(password);
+        this.passwordHash = new PasswordHash(password);
     }
 
     public double getId() {
@@ -28,7 +29,7 @@ abstract class User {
         return this.username;
     }
 
-    public String getPasswordHash(){
+    public PasswordHash getPasswordHash(){
         return this.passwordHash;
     }
 
