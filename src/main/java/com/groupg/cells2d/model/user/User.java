@@ -4,7 +4,8 @@ import com.groupg.cells2d.data.EncryptionService;
 import com.groupg.cells2d.data.PasswordHash;
 
 import java.util.Objects;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 /**
  * classe abstraite de nos utilisateurs médecin et/ou chercheur
  */
@@ -50,6 +51,5 @@ abstract class User {
 //
 //    }
     //faudrait tirer les les logs de la base de donnée
-
 
 }
