@@ -45,7 +45,7 @@ public class SEIRData {
     }
 
 
-    //exemple de simulation ---> A remplacer 
+    //exemple de simulation ---> A remplacer avec les parametres de SimulationParam 
     public void computeNextStep() {
 
         double newExposed = susceptible * 0.05;
