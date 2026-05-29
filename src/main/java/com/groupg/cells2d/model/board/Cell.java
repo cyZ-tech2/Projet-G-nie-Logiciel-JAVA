@@ -2,6 +2,7 @@ package com.groupg.cells2d.model.board;
 import java.awt.Point;
 import com.groupg.cells2d.model.enums.CellState;
 import com.groupg.cells2d.model.enums.TimeStep;
+import com.groupg.cells2d.model.user.PatientCase;
 
 /**
  * 
@@ -47,7 +48,7 @@ public class Cell{
         }
     }
 
-    public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected 
+    public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected
         this.state = CellState.INFECTED;
     }
     /**

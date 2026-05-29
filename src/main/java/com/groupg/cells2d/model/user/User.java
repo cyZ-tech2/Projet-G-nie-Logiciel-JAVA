@@ -10,15 +10,17 @@ import com.google.gson.GsonBuilder;
  * classe abstraite de nos utilisateurs médecin et/ou chercheur
  */
 
-abstract class User {
+public abstract class User {
 
      private final double id;
      private final String username;
      private final PasswordHash passwordHash;
 
+
     public User(double id, String username, String password) throws Exception{
         this.id = id;
         this.username = username;
+        //verify if not a duplicate
         this.passwordHash = new PasswordHash(password);
     }
 
@@ -34,7 +36,9 @@ abstract class User {
         return this.passwordHash;
     }
 
-
+    public String toString(){
+        return this.username +" "+this.id;
+    }
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof User user)) return false;
