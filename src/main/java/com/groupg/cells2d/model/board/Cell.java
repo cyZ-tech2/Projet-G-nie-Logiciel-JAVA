@@ -11,12 +11,14 @@ public class Cell{
     private int population;
     private CellState state;
     private SEIRData seirData;
-    private Point coordinates;
+    private int row;
+    private int col;
 
     public Cell(String cellId, int population, Point coordinates) {
         this.cellId = cellId;
         this.population = population;
-        this.coordinates = coordinates;
+        this.row = row;
+        this.col = col;
         this.state = CellState.HEALTHY;
         this.seirData = new SEIRData();
     }
@@ -26,7 +28,8 @@ public class Cell{
         this.population = population;
         this.state = state;
         this.seirData = seirData;
-        this.coordinates = coordinates;
+        this.row = row;
+        this.col = col;
     }
 
     public void evolve(TimeStep step) {
@@ -74,7 +77,7 @@ public class Cell{
 
     @Override
     public String toString() {
-        return "Cell{" + "cellId='" + cellId + '\'' + ", population=" + population + ", state=" + state + ", coordinates=" + coordinates + '}';
+        return "Cell{" + "cellId='" + cellId + '\'' + ", population=" + population + ", state=" + state + ", row=" + row + ", col="+col+"}";
     }
 
     /* Getters and setters */
@@ -111,13 +114,18 @@ public class Cell{
         this.seirData = seirData;
     }
 
-    public Point getCoordinates() {
-        return coordinates;
-    }
 
-    public void setCoordinates(Point coordinates) {
-        this.coordinates = coordinates;
-    }
+    /**
+     * returns the row of our cell
+     * @return
+     */
+    public int getRow(){return row;}
+
+    /**
+     * returns the col of our cell
+     * @return
+     */
+    public int getCol(){return col;}
 
 
 

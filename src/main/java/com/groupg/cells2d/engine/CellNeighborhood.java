@@ -1,6 +1,6 @@
 package com.groupg.cells2d.engine;
 
-import com.groupg.cells2d.model.Cell;
+import com.groupg.cells2d.model.board.Cell;
 
 import java.util.ArrayList;
 import java.util.List;
