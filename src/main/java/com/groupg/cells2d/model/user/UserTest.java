@@ -1,20 +1,25 @@
 package com.groupg.cells2d.model.user;
 
+import com.groupg.cells2d.data.AppConfig;
+import com.groupg.cells2d.data.JsonRepository;
 import com.groupg.cells2d.data.SaveJson;
 
+import javax.imageio.IIOException;
 import javax.print.Doc;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Scanner;
 
 public class UserTest {
 
 
-    public static void main(String[] args) throws Exception {
-         HashSet<User> userSet = new HashSet<User>();
-
-         userSet =(HashSet<User>) SaveJson.loadUsers("data/users.json");
-        System.out.println(userSet.toString());
-
-
+    public static void main(String[] args) throws Exception, IOException {
+       JsonRepository<User>    userRepo    = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class,    "users.json");
+//        userRepo.add(new Doctor(1,  "Jean", "bruh123", "paris","generaliste"));
+//        userRepo.save();
+        userRepo.load();
+        for(User u : userRepo.getAll()){
+            System.out.println(u.toString());
+        }
     }
 }

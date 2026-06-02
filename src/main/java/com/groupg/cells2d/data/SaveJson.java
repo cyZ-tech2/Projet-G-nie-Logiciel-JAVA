@@ -1,49 +1,35 @@
 package com.groupg.cells2d.data;
-import java.io.*;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.groupg.cells2d.model.user.Doctor;
-import com.groupg.cells2d.model.user.User;
-
 import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Scanner;
-
+import java.util.*;
 
 public class SaveJson {
-    public static void save(Object obj,String path) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Path filePath = Paths.get(path);
-    try{
-        if(filePath.getParent()!=null) {
-            Files.createDirectories(filePath.getParent());
-        }
-        try (Writer writer = new FileWriter(path)) {
-            gson.toJson(obj, writer);
-
-        }
-        System.out.println("Data successfully saved");
-    }
-        catch(IOException e){ //pretty sure there are some unhandled exceptions here
-            System.err.println("File writing error:"+" "+e.getMessage());
-        }
+    private final GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
+    private Gson gson;
+    public <T> SaveJson registerHierarchy(Class<T> baseClass, Map<String, Class<? extends T>> subtypes) {
+        RuntimeTypeAdapterFactory<T> factory = RuntimeTypeAdapterFactory.of(baseClass, "type");
+        subtypes.forEach((label, type) -> factory.registerSubtype(type, label));
+        builder.registerTypeAdapterFactory(factory);
+        gson = null; // invalide le cache
+        return this;
     }
 
-    public static HashSet<User> loadUsers(String path) throws IOException {
-        Gson gson = new Gson();
-        Type type = new TypeToken<HashSet<User>>() {}.getType();
-
-        try (Reader reader = Files.newBufferedReader(Paths.get(path))) {
-            return gson.fromJson(reader, type);
-        }
+    public Gson get() {
+        if (gson == null) gson = builder.create();
+        return gson;
+    }
+    // Serializes a Set to Json
+    public <T> String setToJson(Set<T> set, Class<T> baseClass) {
+        Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType();
+        return get().toJson(set, type);
     }
 
-        
+    // Deserializes a json to a Hashsetx
+    public <T> Set<T> jsonToSet(String json, Class<T> baseClass) {
+        Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType();
+        return get().fromJson(json, type);
     }
 
+}
