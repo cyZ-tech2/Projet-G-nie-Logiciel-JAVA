@@ -28,7 +28,7 @@ public class Grid {
      * @param cell our target cell
      * @return list of the target cell neighbors
      */
-    public List<Cell> getNeighbors(Cell cell){
+    public List<Cell> getNeighbours(Cell cell){
         List<Cell> neighbors=new ArrayList<>();
         int[][] directions={
                 {-1,0},{1,0},{0,-1},{0,1},

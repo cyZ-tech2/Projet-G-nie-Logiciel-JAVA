@@ -1,11 +1,15 @@
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/Launcher.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/controller/Controller.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/board/Cell.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/board/District.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/board/Grid.java
-/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/board/Position.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/board/MainTestBoard.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/board/PatientCase.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/board/SEIRData.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/entity/Entity.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/enums/CellState.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/enums/Enums.java
-/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/simulation/Simulation.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/enums/TimeStep.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/simulation/rules/Exception.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/view/Login.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/module-info.java
