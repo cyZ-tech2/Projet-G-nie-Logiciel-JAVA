@@ -34,17 +34,14 @@ public class Grid {
                 {-1,0},{1,0},{0,-1},{0,1},
                 {-1,-1},{1,1},{-1,1},{1,-1}
         };
-        // Get the current position of target cell
-        int currentI = cell.getRow();
-        int currentJ = cell.getCol();
 
         //Iterate through all 8 relative directions
         for(int d=0;d<directions.length;d++) {
             int neighbori = cell.getRow() + directions[d][0];
             int neighborj = cell.getCol() + directions[d][1];
             //Boundary check 
-            if (neighbori >= 0 && neighbori < cells.length && neighborj >= 0 && neighborj < cells[0].length) {
-                neighbors.add(cells[neighbori][neighborj]);
+            if (neighbori >= 0 && neighbori < map.length && neighborj >= 0 && neighborj < map[0].length) {
+                neighbors.add(map[neighbori][neighborj]);
             }
         }
         return neighbors;

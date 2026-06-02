@@ -1,7 +1,5 @@
 package com.groupg.cells2d.model.board;
-import java.awt.Point;
 import com.groupg.cells2d.model.enums.CellState;
-import com.groupg.cells2d.model.enums.TimeStep;
 
 /**
  * Represents a simulation cell inside the epidemic grid.
@@ -21,31 +19,36 @@ public class Cell{
     private int population;
     private CellState state; //A revoir car peut etre incoherent avec seirDATA
     private SEIRData seirData;
-    private Point coordinates;
+    private int row;
+    private int col; 
 
-    public Cell(String cellId, int population, Point coordinates) {
+    public Cell(String cellId, int population, int row, int col) {
         this.cellId = cellId;
         this.population = population;
-        this.coordinates = coordinates;
+        this.row = row ;
+        this.col = col;
         this.state = CellState.HEALTHY;
-        this.seirData = new SEIRData();
+        this.seirData = new SEIRData(population);
     }
 
-    public Cell(String cellId, int population, CellState state, SEIRData seirData, Point coordinates) {
+    public Cell(String cellId, int population, CellState state, SEIRData seirData, int row , int col) {
         this.cellId = cellId;
         this.population = population;
         this.state = state;
         this.seirData = seirData;
-        this.coordinates = coordinates;
+        this.col = col;
+        this.row = row;
     }
-    /**
-     * Evolves the cell epidemic state
-     * using simulation parameters.
-     *
-     * @param params simulation parameters
+        /**
+     * Evolves the internal epidemic state of the cell
+     * without considering neighboring cells.
+     * @param beta transmission rate
+     * @param sigma incubation rate
+     * @param gamma recovery rate
+     * @param mortalityRate mortality rate
      */
-    public void evolve(SimulationParams params) { // A revoir puisque propagation.apply fait deja l'evolution 
-        seirData.computeNextStep(params);
+    public void evolve(double beta, double sigma, double gamma, double mortalityRate) {
+        seirData.computeNextStep(beta, sigma, gamma, mortalityRate, population);
     }
 
     public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected 
@@ -80,10 +83,26 @@ public class Cell{
 
     @Override
     public String toString() {
-        return "Cell{" + "cellId='" + cellId + '\'' + ", population=" + population + ", state=" + state + ", coordinates=" + coordinates + '}';
+        return "Cell{" + "cellId='" + cellId + '\'' + ", population=" + population + ", state=" + state + ", coordinates=" + "(" +col + "," + row + ")" + '}';
     }
 
     /* Getters and setters */
+
+    public int getRow() {
+        return row;
+    }
+    
+    public void setRow (int row) {
+        this.row = row;
+    }
+
+     public int getCol() {
+        return col;
+    }
+    
+    public void setCol(int row) {
+        this.row = col;
+    }
 
     public String getCellId() {
         return cellId;
@@ -116,16 +135,6 @@ public class Cell{
     public void setSeirData(SEIRData seirData) {
         this.seirData = seirData;
     }
-
-    public Point getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Point coordinates) {
-        this.coordinates = coordinates;
-    }
-
-
 
 }
 

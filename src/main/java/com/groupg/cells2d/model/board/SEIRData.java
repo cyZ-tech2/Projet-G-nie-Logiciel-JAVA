@@ -50,19 +50,45 @@ public class SEIRData {
     } 
 
 
-    //exemple de simulation ---> A remplacer avec les parametres de SimulationParam  --> y a seircalculator 
-    /*public void computeNextStep() {
+        /**
+     * Computes the next SEIR step without spatial propagation.
+     *
+     * @param beta transmission rate
+     * @param sigma incubation rate
+     * @param gamma recovery rate
+     * @param mortalityRate mortality rate
+     * @param population total population of the cell
+     */
+    public void computeNextStep(double beta,double sigma,double gamma,double mortalityRate,int population) {
+                                                            
+        if (population == 0) {
+            return;
+        }
 
-        double newExposed = susceptible * 0.05;
-        double newInfected = exposed * 0.10;
-        double newRecovered = infected * 0.10;
+        double newExposed = (beta * susceptible * infected) / population;
+        double newInfected = sigma * exposed;
+        double recoveredPeople = (1 - mortalityRate) * gamma * infected;
+        double deadPeople = mortalityRate * gamma * infected;
 
         susceptible -= newExposed;
         exposed += newExposed - newInfected;
-        infected += newInfected - newRecovered;
-        recovered += newRecovered;
+        infected += newInfected - recoveredPeople - deadPeople;
+        recovered += recoveredPeople;
+        dead += deadPeople;
+        validate();
 
-    }*/
+    }
+
+    /**
+    * Prevents negative values in SEIR compartments.
+     */
+    private void validate() {
+        susceptible = Math.max(0, susceptible);
+        exposed = Math.max(0, exposed);
+        infected = Math.max(0, infected);
+        recovered = Math.max(0, recovered);
+        dead = Math.max(0, dead);
+    }
 
     public double getSusceptible() {
         return susceptible;

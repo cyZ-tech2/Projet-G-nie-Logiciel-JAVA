@@ -14,9 +14,9 @@ public class District extends Grid {
 
     private String id;
     private String name;
-    private RiskLevel riskLevel;
     private boolean quarantine;
 
+    
     /**
      * Creates a new district.
      *
@@ -32,7 +32,6 @@ public class District extends Grid {
         this.id = id;
         this.name = name;
         this.quarantine = false;
-        this.riskLevel = RiskLevel.LOW;
     }
 
     /**
@@ -59,30 +58,6 @@ public class District extends Grid {
     }
 
     /**
-     * Evaluates the epidemic risk level.
-     *
-     * @return district risk level
-     */
-    /**public RiskLevel evaluateRisk() {
-
-        double rate = getTotalInfected() / getTotalPopulation();
-
-        if (rate == 0)
-            riskLevel = RiskLevel.LOW;
-
-        else if (rate < 0.25)
-            riskLevel = RiskLevel.MEDIUM;
-
-        else if (rate < 0.60)
-            riskLevel = RiskLevel.HIGH;
-
-        else
-            riskLevel = RiskLevel.CRITICAL;
-
-        return riskLevel;
-    }*/
-
-    /**
      * Activates district lockdown.
      */
     public void lockDown() {
@@ -95,4 +70,31 @@ public class District extends Grid {
     public void liftLockDown() {
         quarantine = false;
     }
+
+    /**
+     * Getters and setters
+     */
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public boolean isQuarantine() {
+        return quarantine;
+    }
+
+    public void setQuarantine(boolean quarantine) {
+        this.quarantine = quarantine;
+    }
+
+
 }
