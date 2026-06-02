@@ -1,6 +1,7 @@
 module com.groupg.cells2d {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
 
     opens com.groupg.cells2d to javafx.fxml;
