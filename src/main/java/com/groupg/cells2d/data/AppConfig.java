@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class AppConfig {
 
-    public static final SaveJson GSON_MANAGER = new SaveJson()
+    public static final GsonManager GSON_MANAGER = new GsonManager()
 
             // Hiérarchie User
             .registerHierarchy(User.class, Map.of(

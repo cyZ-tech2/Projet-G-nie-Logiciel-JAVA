@@ -2,13 +2,8 @@ package com.groupg.cells2d.model.user;
 
 import com.groupg.cells2d.data.AppConfig;
 import com.groupg.cells2d.data.JsonRepository;
-import com.groupg.cells2d.data.SaveJson;
 
-import javax.imageio.IIOException;
-import javax.print.Doc;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Scanner;
 
 public class UserTest {
 

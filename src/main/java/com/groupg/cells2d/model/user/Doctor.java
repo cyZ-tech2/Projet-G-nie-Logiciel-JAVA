@@ -1,9 +1,5 @@
 package com.groupg.cells2d.model.user;
 
-import com.groupg.cells2d.data.SaveJson;
-
-import static com.groupg.cells2d.model.user.UserRole.DOCTOR;
-
 /**
  * classe décrivant un médecin
  */

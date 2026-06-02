@@ -6,13 +6,13 @@ import java.util.*;
 
 public class JsonRepository<T> {
 
-    private final SaveJson saveJson;
+    private final GsonManager gsonManager;
     private final Class<T> baseClass;
     private final Path filePath;
     private final Set<T> data = new HashSet<>();
 
-    public JsonRepository(SaveJson saveJson, Class<T> baseClass, String filePath) {
-        this.saveJson= saveJson;
+    public JsonRepository(GsonManager gsonManager, Class<T> baseClass, String filePath) {
+        this.gsonManager = gsonManager;
         this.baseClass   = baseClass;
         this.filePath    = Path.of(filePath);
     }
@@ -22,7 +22,7 @@ public class JsonRepository<T> {
     public Set<T> getAll()     { return Collections.unmodifiableSet(data); }
 
     public void save() throws IOException {
-        String json = saveJson.setToJson(data, baseClass);
+        String json = gsonManager.setToJson(data, baseClass);
         Files.writeString(filePath, json);
     }
 
@@ -30,6 +30,6 @@ public class JsonRepository<T> {
         if (!Files.exists(filePath)) return;
         String json = Files.readString(filePath);
         data.clear();
-        data.addAll(saveJson.jsonToSet(json, baseClass));
+        data.addAll(gsonManager.jsonToSet(json, baseClass));
     }
 }
