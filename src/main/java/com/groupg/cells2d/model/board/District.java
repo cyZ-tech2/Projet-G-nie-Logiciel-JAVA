@@ -1,65 +1,98 @@
 package com.groupg.cells2d.model.board;
-import java.util.List;
 
-public class District {
 
+/**
+ * Represents a regional district inside the global grid.
+ *
+ * <p>
+ * A district is a specialized grid containing epidemic cells
+ * and additional regional management features such as
+ * risk evaluation and quarantine handling.
+ * </p>
+ */
+public class District extends Grid {
+
+    private String id;
     private String name;
-    private Grid grid;
+    private RiskLevel riskLevel;
+    private boolean quarantine;
 
-    public District(String name, int rows, int cols) {
+    /**
+     * Creates a new district.
+     *
+     * @param id district identifier
+     * @param name district name
+     * @param rows number of rows
+     * @param cols number of columns
+     */
+    public District(String id, String name, int rows, int cols) {
+
+        super(rows, cols);
+
+        this.id = id;
         this.name = name;
-        this.grid = new Grid(rows, cols);
+        this.quarantine = false;
+        this.riskLevel = RiskLevel.LOW;
     }
 
-    public District(String name, Grid grid) {
-        this.name = name;
-        this.grid = grid;
+    /**
+     * Computes the total infected population
+     * inside the district.
+     *
+     * @return infected population
+     */
+    public double getTotalInfected() {
+
+        double infected = 0;
+
+        for (Cell[] row : getMap()) {
+
+            for (Cell cell : row) {
+
+                if (cell != null) {
+                    infected += cell.getSeirData().getInfected();
+                }
+            }
+        }
+
+        return infected;
     }
 
-    public List<Cell> getNeighbours(int row, int col) {
-        return grid.getNeighbours(row, col);
+    /**
+     * Evaluates the epidemic risk level.
+     *
+     * @return district risk level
+     */
+    /**public RiskLevel evaluateRisk() {
+
+        double rate = getTotalInfected() / getTotalPopulation();
+
+        if (rate == 0)
+            riskLevel = RiskLevel.LOW;
+
+        else if (rate < 0.25)
+            riskLevel = RiskLevel.MEDIUM;
+
+        else if (rate < 0.60)
+            riskLevel = RiskLevel.HIGH;
+
+        else
+            riskLevel = RiskLevel.CRITICAL;
+
+        return riskLevel;
+    }*/
+
+    /**
+     * Activates district lockdown.
+     */
+    public void lockDown() {
+        quarantine = true;
     }
 
-    public Grid clone() {
-        return grid.clone();
+    /**
+     * Removes district lockdown.
+     */
+    public void liftLockDown() {
+        quarantine = false;
     }
-
-    public Cell getCell(int row, int col){
-        return grid.getCell(row, col);
-    }
-    public void setCell(int row, int col, Cell c){
-        grid.setCell(row, col, c);
-    }
-
-    /* Override */
-
-    @Override
-    public String toString() {
-        return "District : name : " + name + ", rows : " + grid.getRows() + ", cols : " + grid.getCols() + "";
-    }
-
-    /* Getters and setters*/
-
-    public String getName(){
-        return name;
-    }
-
-    public void   setName(String name){
-        this.name = name;
-    }
-
-    public Grid getGrid(){
-        return grid;
-    }
-
-    public int getRows(){
-        return grid.getRows();
-    }
-
-    public int getCols(){
-        return grid.getCols();
-    }
-
 }
-
-

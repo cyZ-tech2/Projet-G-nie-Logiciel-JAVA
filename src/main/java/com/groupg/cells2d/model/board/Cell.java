@@ -4,12 +4,22 @@ import com.groupg.cells2d.model.enums.CellState;
 import com.groupg.cells2d.model.enums.TimeStep;
 
 /**
- * 
+ * Represents a simulation cell inside the epidemic grid.
+ *
+ * <p>
+ * A cell models a local geographical area containing
+ * a population and epidemic SEIR data.
+ * </p>
+ *
+ * <p>
+ * Cells evolve over time according to epidemic
+ * parameters and may interact with neighboring cells.
+ * </p>
  */
 public class Cell{
     private String cellId;
     private int population;
-    private CellState state;
+    private CellState state; //A revoir car peut etre incoherent avec seirDATA
     private SEIRData seirData;
     private Point coordinates;
 
@@ -28,46 +38,42 @@ public class Cell{
         this.seirData = seirData;
         this.coordinates = coordinates;
     }
-
-    public void evolve(TimeStep step) {
-        switch (state) {
-            case HEALTHY:
-                state = CellState.PARTIAL;
-                break;
-            case PARTIAL:
-                state = CellState.INFECTED;
-                break;
-            case INFECTED:
-                state = CellState.CRITICAL;
-                break;
-            case CRITICAL:
-                //Already critical, no changes for now 
-                state = CellState.CRITICAL;
-                break;
-        }
+    /**
+     * Evolves the cell epidemic state
+     * using simulation parameters.
+     *
+     * @param params simulation parameters
+     */
+    public void evolve(SimulationParams params) { // A revoir puisque propagation.apply fait deja l'evolution 
+        seirData.computeNextStep(params);
     }
 
     public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected 
         this.state = CellState.INFECTED;
     }
     /**
-     * Computes the infection rate of the cell
-     * according to its current health state.
-     *
-     * HEALTHY   -> 0.0
-     * PARTIAL   -> 0.3
-     * INFECTED  -> 0.7
-     * CRITICAL  -> 1.0
+     * Computes the local infection rate.
      *
      * @return infection rate between 0 and 1
      */
     public double getInfectionRate() {
-        return switch (state) {
-            case HEALTHY -> 0.0;
-            case PARTIAL -> 0.3;
-            case INFECTED -> 0.7;
-            case CRITICAL -> 1.0;
-        };
+
+        if (population == 0)
+            return 0;
+
+        return seirData.getInfected() / population;
+    }
+    /**
+     * Computes the mortality rate.
+     *
+     * @return mortality rate
+     */
+    public double getMortalityRate() {
+
+        if (population == 0)
+            return 0;
+
+        return seirData.getDead() / population;
     }
 
     /* Override */

@@ -8,7 +8,7 @@ import java.util.List;
  * It manages the spatial structure and relations between cells.
  */
 public class Grid {
-    private Cell[][] map;
+    private Cell[][] map; //Map <coordi, Cell>
     private int rows;
     private int cols;
 
@@ -20,7 +20,7 @@ public class Grid {
     public Grid(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
-        this.map = new Cell[rows][cols];
+        this.map = new Cell[rows][cols]; 
     }
 
     /**

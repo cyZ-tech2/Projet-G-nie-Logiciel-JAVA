@@ -39,14 +39,19 @@ public class SEIRData {
         this.dead        = dead;
     }
 
-    /* I create this one so the Cell file works but it's temporary */
-    public SEIRData(){
-        this(0);
-    }
+    /**
+     * Computes the total population represented by
+     * this SEIR state (excluding deceased individuals).
+     *
+     * @return total living population
+     */
+    public double getTotalPopulation() {
+        return susceptible + exposed + infected + recovered;
+    } 
 
 
-    //exemple de simulation ---> A remplacer avec les parametres de SimulationParam 
-    public void computeNextStep() {
+    //exemple de simulation ---> A remplacer avec les parametres de SimulationParam  --> y a seircalculator 
+    /*public void computeNextStep() {
 
         double newExposed = susceptible * 0.05;
         double newInfected = exposed * 0.10;
@@ -57,7 +62,7 @@ public class SEIRData {
         infected += newInfected - newRecovered;
         recovered += newRecovered;
 
-    }
+    }*/
 
     public double getSusceptible() {
         return susceptible;
@@ -97,5 +102,16 @@ public class SEIRData {
 
     public void setDead(double dead) {
         this.dead = dead;
+    }
+
+    @Override
+    public String toString() {
+        return "SEIRData{" +
+                "S=" + susceptible +
+                ", E=" + exposed +
+                ", I=" + infected +
+                ", R=" + recovered +
+                ", D=" + dead +
+                '}';
     }
 }
