@@ -2,22 +2,54 @@ package com.groupg.cells2d.model.board;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Represents the simulation grid composed of a 2D array of cells.
+ * It manages the spatial structure and relations between cells.
+ */
 public class Grid {
     private Cell[][] map;
     private int rows;
     private int cols;
 
-
+    /**
+     * Constructs a new Grid with the specified dimensions.
+     * * @param rows the number of rows in the grid
+     * @param cols the number of columns in the grid
+     */
     public Grid(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         this.map = new Cell[rows][cols];
     }
 
-    public List<Cell> getNeighbours(int row, int col) {
-        List<Cell> neighbours = new ArrayList<>();
-        return neighbours;
+    /**
+     * Function returning the List of neighbors of our target cell, all around it (up, down, right, left, and diogonals)
+     * @param cell our target cell
+     * @return list of the target cell neighbors
+     */
+    public List<Cell> getNeighbors(Cell cell){
+        List<Cell> neighbors=new ArrayList<>();
+        int[][] directions={
+                {-1,0},{1,0},{0,-1},{0,1},
+                {-1,-1},{1,1},{-1,1},{1,-1}
+        };
+        // Get the current position of target cell
+        int currentI = cell.getRow();
+        int currentJ = cell.getCol();
+
+        //Iterate through all 8 relative directions
+        for(int d=0;d<directions.length;d++) {
+            int neighbori = cell.getRow() + directions[d][0];
+            int neighborj = cell.getCol() + directions[d][1];
+            //Boundary check 
+            if (neighbori >= 0 && neighbori < cells.length && neighborj >= 0 && neighborj < cells[0].length) {
+                neighbors.add(cells[neighbori][neighborj]);
+            }
+        }
+        return neighbors;
     }
+    
 
     /* Functions */
 
