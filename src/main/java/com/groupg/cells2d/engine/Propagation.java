@@ -1,108 +1,40 @@
 package com.groupg.cells2d.engine;
 
-import com.groupg.cells2d.model.board.Cell;    //j'ai mis celui de board car je pense que les doublons
+import com.groupg.cells2d.model.SimulationParams;
+import com.groupg.cells2d.model.board.Cell;
 import com.groupg.cells2d.model.board.SEIRData;
-// vont être supprimés dans model
+
 import java.util.List;
 
-
 /**
- * paramètres du la fonction de l'évolution de propagation à voir pour que ce ne soit pas la même
- * chose que simulationparams et/ou seircalculator
+ * takes the parameters of SEIR simulation from SimulationParams from model and applies the propagation on a cell
  */
 
-public class Propagation {
-    private double beta;
-    private double sigma;
-    private double gamma;
-    private double propagationRate;
-    private double mortalityRate;
+public class Propagation{
+    private SimulationParams params;
 
     /**
-     * constructor for standard propagation
+     * constructor for Propagation for standard propagation
      */
-    public Propagation(){
-        this.beta=0.3;
-        this.sigma=0.2;
-        this.gamma=0.1;
-        this.propagationRate=0.05;
-        this.mortalityRate=0.02;
-    }
+    public Propagation(){this.params = new SimulationParams();} // standard
 
     /**
-     * constructer for custom propagation
-     * @param beta transmission rate
-     * @param sigma incubation rate
-     * @param gamma recovery rate
-     * @param propagationRate mobility rate between cells
+     * constructor for Propagation for customised propagation
+     * @param params the values we want to give to variables of SEIRcalculator
      */
-    public Propagation(double beta, double sigma, double gamma, double propagationRate, double mortalityRate){
-        this.beta=beta;
-        this.sigma=sigma;
-        this.gamma=gamma;
-        this.propagationRate=propagationRate;
-        this.mortalityRate=mortalityRate;
-    }
+    public Propagation(SimulationParams params){this.params = params;} // custom
 
     /**
-     * getter to enable access to the transmission rate
-     * @return beta our transmission rate
+     * getter for params
+     * @return the params we need beta,sigma,gamma etc
      */
-    public double getBeta(){return beta;}
+    public SimulationParams getParams(){return params;}
 
     /**
-     * setter enables the changement of the transmission rate
-     * @param beta takes the current transmission rate and changes it to what we want
+     * setter for params if we want to change them manually
+     * @param params our simulation parameters
      */
-    public void setBeta(double beta){this.beta=beta;}
-
-    /**
-     * getter to enable access to the incubation rate
-     * @return sigma our incubation rate
-     */
-    public double getSigma(){return sigma;}
-
-    /**
-     * setter enables the changement of the incubation rate
-     * @param sigma takes the current incubation rate and changes it to what we want
-     */
-    public void setSigma(double sigma){this.sigma=sigma;}
-
-    /**
-     * getter to enable access to the recovery rate
-     * @return gamma our recovery rate
-     */
-    public double getGamma(){return gamma;}
-
-    /**
-     * setter enables the changement of the recovery rate
-     * @param gamma takes the current recovery rate and changes it to what we want
-     */
-    public void setGamma(double gamma){this.gamma=gamma;}
-
-    /**
-     * getter to enable access to the propagation rate
-     * @return propagationRate our recovery rate
-     */
-    public double getPropagationRate(){return propagationRate;}
-
-    /**
-     * setter enables the changement of the propagation rate
-     * @param propagationRate takes the current propagation rate and changes it to what we want
-     */
-    public void setPropagationRate(double propagationRate){this.propagationRate=propagationRate;}
-
-    /**
-     * setter enables the changement of the mortality rate
-     * @param mortalityRate takes the current mortality rate and changes it to what we want
-     */
-    public void setMortalityRate(double mortalityRate){this.mortalityRate=mortalityRate;}
-
-    /**
-     * getter to enable access to the mortality rate
-     * @return mortalityRate our recovery rate
-     */
-    public double getMortalityRate(){return mortalityRate;}
+    public void setParams(SimulationParams params){this.params = params;}
 
     /**
      * Applies SEIR propagation to a cell based on its neighbors
@@ -110,21 +42,27 @@ public class Propagation {
      * @param neighbors the list of neighboring cells
      */
     public void apply(Cell cell, List<Cell> neighbors){
-        if(cell.getPopulation()==0) return; //nothing to compute, there's nobody
+        if(cell.getPopulation()==0) return; //nothing to compute, there's nobody so we do nothing if no population
 
         SEIRData data=cell.getSeirData();
 
-        double avgNeighborInfected=0;
+        double avgNeighborInfected=0;   //average infected population from the neighbors
         for(Cell neighbor:neighbors){
             avgNeighborInfected+=neighbor.getSeirData().getInfected();
         }
-        avgNeighborInfected=neighbors.isEmpty()?0:avgNeighborInfected/neighbors.size();
 
-        SEIRData newData= SEIRcalculator.compute(data, beta, sigma, gamma, mortalityRate, propagationRate, avgNeighborInfected, cell.getPopulation());
+        if (neighbors.isEmpty()){       //verification to not divide by zero if no neighbors
+            avgNeighborInfected = 0;}
+        else{
+            avgNeighborInfected = avgNeighborInfected / neighbors.size();}
+
+
+        SEIRData newData= SEIRcalculator.compute(data, params.getBeta(), params.getSigma(), params.getGamma(), params.getMortalityRate(), params.getPropagationRate(), avgNeighborInfected, cell.getPopulation());
 
         cell.setSeirData(newData);
 
-        //lier avec cellstate
+        double infectionRate = newData.getInfected() / cell.getPopulation();
+        cell.updateState(infectionRate);
     }
 
 }

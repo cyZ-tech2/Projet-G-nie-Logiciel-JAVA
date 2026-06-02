@@ -1,5 +1,5 @@
 package com.groupg.cells2d.model.board;
-import java.awt.Point;
+
 import com.groupg.cells2d.model.enums.CellState;
 import com.groupg.cells2d.model.enums.TimeStep;
 
@@ -14,7 +14,7 @@ public class Cell{
     private int row;
     private int col;
 
-    public Cell(String cellId, int population, Point coordinates) {
+    public Cell(String cellId, int population, int row, int col) {
         this.cellId = cellId;
         this.population = population;
         this.row = row;
@@ -23,7 +23,7 @@ public class Cell{
         this.seirData = new SEIRData();
     }
 
-    public Cell(String cellId, int population, CellState state, SEIRData seirData, Point coordinates) {
+    public Cell(String cellId, int population, CellState state, SEIRData seirData, int row, int col) {
         this.cellId = cellId;
         this.population = population;
         this.state = state;
@@ -32,6 +32,8 @@ public class Cell{
         this.col = col;
     }
 
+
+    //à voir on laisse celle-ci pour les tests pas à pas ou on le supprime car on a updateState
     public void evolve(TimeStep step) {
         switch (state) {
             case HEALTHY:
@@ -127,7 +129,21 @@ public class Cell{
      */
     public int getCol(){return col;}
 
-
+    /**
+     * Updates the cell state based on the infection rate.
+     * @param infectionRate ratio of infected over total population
+     */
+    public void updateState(double infectionRate){
+        if(infectionRate < 0.10){
+            setState(CellState.HEALTHY);
+        } else if(infectionRate < 0.30){
+            setState(CellState.PARTIAL);
+        } else if(infectionRate < 0.60){
+            setState(CellState.INFECTED);
+        } else {
+            setState(CellState.CRITICAL);
+        }
+    }
 
 }
 

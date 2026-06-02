@@ -14,16 +14,15 @@ public class Grid {
         this.map = new Cell[rows][cols];
     }
 
-    public List<Cell> getNeighbours(int row, int col) {
-        List<Cell> neighbours = new ArrayList<>();
-        return neighbours;
-    }
-
     /* Functions */
 
     public Grid clone(){
         Grid newOne = new Grid(this.rows, this.cols);
-
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                newOne.setCell(i,j,map[i][j]);
+            }
+        }
         return newOne;
     }
 
