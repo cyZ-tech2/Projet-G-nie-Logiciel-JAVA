@@ -32,13 +32,26 @@ public class SEIRcalculator{
 
         if(population==0){return seirData;}     //if no population nothing to do, also to not divide by 0
 
+        //local infections, in the cell itself
+        double localTransmission=(beta*s*i)/population;
+
+        //neighbors infected (spacial propagation), infected people from neighboring cells expose our cell population
+        double spatialTransmission=propagationRate*avgNeighborInfected*(s/population);
+
         //formules of SEIRD propagation model
-        double dS=((-beta*s*i)/population)-(propagationRate*s)+(propagationRate*avgNeighborInfected);
-        double dE=(beta*s*i)/population-sigma*e+(propagationRate*avgNeighborInfected*beta);
-        double dI=sigma*e-gamma*i;
+        double dS=-localTransmission-spatialTransmission;
+        double dE=localTransmission+spatialTransmission-(sigma*e);
+        double dI=(sigma*e)-(gamma*i);
         double dR=(1-mortalityRate)*gamma*i;
         double dD=mortalityRate*gamma*i;
 
-        return new SEIRData(s+dS, e+dE, i+dI, r+dR,d+dD);
+        //verify that values don't become negative
+        double newS = Math.max(0, s + dS);
+        double newE = Math.max(0, e + dE);
+        double newI = Math.max(0, i + dI);
+        double newR = Math.max(0, r + dR);
+        double newD = Math.max(0, d + dD);
+
+        return new SEIRData(newS, newE, newI, newR, newD);
     }
 }

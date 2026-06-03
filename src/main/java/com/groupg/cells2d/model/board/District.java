@@ -16,10 +16,6 @@ public class District {
         this.grid = grid;
     }
 
-    public List<Cell> getNeighbours(int row, int col) {
-        return grid.getNeighbours(row, col);
-    }
-
     public Grid clone() {
         return grid.clone();
     }

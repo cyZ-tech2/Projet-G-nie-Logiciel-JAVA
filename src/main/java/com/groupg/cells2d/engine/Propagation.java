@@ -40,29 +40,27 @@ public class Propagation{
      * Applies SEIR propagation to a cell based on its neighbors
      * @param cell the target cell to update
      * @param neighbors the list of neighboring cells
+     * @return
      */
-    public void apply(Cell cell, List<Cell> neighbors){
-        if(cell.getPopulation()==0) return; //nothing to compute, there's nobody so we do nothing if no population
+    public SEIRData apply(Cell cell, List<Cell> neighbors){
+        if(cell.getPopulation()==0){return cell.getSeirData();}
 
-        SEIRData data=cell.getSeirData();
-
-        double avgNeighborInfected=0;   //average infected population from the neighbors
-        for(Cell neighbor:neighbors){
-            avgNeighborInfected+=neighbor.getSeirData().getInfected();
+        double avgNeighborInfected=0; //average infected population from the neighbors
+        for(Cell neighbor : neighbors){
+            avgNeighborInfected += neighbor.getSeirData().getInfected();
         }
 
-        if (neighbors.isEmpty()){       //verification to not divide by zero if no neighbors
-            avgNeighborInfected = 0;}
-        else{
-            avgNeighborInfected = avgNeighborInfected / neighbors.size();}
+        if(neighbors.isEmpty()){  //verification to not divide by zero if no neighbors
+            avgNeighborInfected = 0;
+        } else {
+            avgNeighborInfected = avgNeighborInfected / neighbors.size();
+        }
 
-
-        SEIRData newData= SEIRcalculator.compute(data, params.getBeta(), params.getSigma(), params.getGamma(), params.getMortalityRate(), params.getPropagationRate(), avgNeighborInfected, cell.getPopulation());
-
-        cell.setSeirData(newData);
-
-        double infectionRate = newData.getInfected() / cell.getPopulation();
-        cell.updateState(infectionRate);
+        return SEIRcalculator.compute(
+                cell.getSeirData(),
+                params.getBeta(), params.getSigma(), params.getGamma(),
+                params.getMortalityRate(), params.getPropagationRate(),
+                avgNeighborInfected, cell.getPopulation()
+        );
     }
-
 }

@@ -2,6 +2,7 @@ package com.groupg.cells2d.engine;
 
 import com.groupg.cells2d.model.board.Cell;
 import com.groupg.cells2d.model.board.Grid;
+import com.groupg.cells2d.model.board.SEIRData;
 import com.groupg.cells2d.model.enums.SimStatus;
 
 import java.util.List;
@@ -55,12 +56,29 @@ public class SimulationEngine{
      * based on their neighbors and the propagation rules
      */
     public void step(){
-        for(int i=0;i<grid.getRows();i++){
-            for(int j=0;j<grid.getCols();j++){
+        int rows=grid.getRows();
+        int cols= grid.getCols();
+
+        //place to keep new states
+        SEIRData[][] newDataBuffer=new SEIRData[rows][cols];
+
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
                 Cell cell=grid.getMap()[i][j];
                 if(cell==null) continue;
                 List<Cell> neighbors=neighborhood.getNeighbors(cell);
-                propagation.apply(cell,neighbors);
+                newDataBuffer[i][j] = propagation.apply(cell, neighbors);
+            }
+        }
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                Cell cell = grid.getMap()[i][j];
+                if(cell != null && newDataBuffer[i][j] != null){
+                    cell.setSeirData(newDataBuffer[i][j]);
+                    double infectionRate = cell.getPopulation() > 0 ?
+                            newDataBuffer[i][j].getInfected() / cell.getPopulation() : 0;
+                    cell.updateState(infectionRate);
+                }
             }
         }
         stepCount++;
