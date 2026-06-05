@@ -33,13 +33,26 @@ public class GsonManager {
         if (gson == null) gson = builder.create();
         return gson;
     }
-    // Serializes a Set to Json
+
+    /**
+     * Serializes a Set to Json
+     * @param set
+     * @param baseClass
+     * @return
+     * @param <T>
+     */
     public <T> String setToJson(Set<T> set, Class<T> baseClass) {
         Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType(); //Saves the type of the set
         return get().toJson(set, type);
     }
 
-    // Deserializes a json to a Hashsetx
+    /**
+     * Deserializes a json to a Hashsetx
+     * @param json
+     * @param baseClass
+     * @return
+     * @param <T>
+     */
     public <T> Set<T> jsonToSet(String json, Class<T> baseClass) {
         Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType();
         return get().fromJson(json, type);
