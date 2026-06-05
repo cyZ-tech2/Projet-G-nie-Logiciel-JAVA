@@ -1,6 +1,8 @@
 package com.groupg.cells2d.model.user;
 
+import com.groupg.cells2d.data.AppConfig;
 import com.groupg.cells2d.data.EncryptionService;
+import com.groupg.cells2d.data.JsonRepository;
 import com.groupg.cells2d.data.PasswordHash;
 
 import java.util.Objects;
@@ -42,18 +44,31 @@ public abstract class User {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof User user)) return false;
-        return Double.compare(id, user.id) == 0 && Objects.equals(username, user.username) && Objects.equals(passwordHash, user.passwordHash);
+        return Double.compare(id, user.id) == 0 && Objects.equals(username, user.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, passwordHash);
+        return Objects.hash(username);
     }
 
-//    public boolean login(String username, String password){
-//        return this.username.equals(username) && this.passwordHash.equals(EncryptionService.hashPassword(password));
-//
-//    }
-    //faudrait tirer les les logs de la base de donnée
+    /**
+     * returns true if username exists and password matches
+     * @param username
+     * @param password
+     * @return
+     * @throws Exception
+     */
+    public static boolean login(String username, String password) throws Exception {
+        JsonRepository<User> userRepo = new JsonRepository<User>(AppConfig.GSON_MANAGER,User.class,"data/users.json");
+        userRepo.load();
+        for(User user : userRepo.getAll()){
+            if(user.getUsername().equals(username)){
+                return user.getPasswordHash().verifyPassword(password);
+            }
+        }
+        return false;
+    }
+
 
 }

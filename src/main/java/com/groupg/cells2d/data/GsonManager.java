@@ -35,7 +35,7 @@ public class GsonManager {
     }
     // Serializes a Set to Json
     public <T> String setToJson(Set<T> set, Class<T> baseClass) {
-        Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType();
+        Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType(); //Saves the type of the set
         return get().toJson(set, type);
     }
 

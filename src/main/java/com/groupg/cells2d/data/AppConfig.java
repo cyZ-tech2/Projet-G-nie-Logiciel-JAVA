@@ -7,16 +7,19 @@ import com.groupg.cells2d.model.user.User;
 import java.util.Map;
 
 public class AppConfig {
-
+    /**
+     * Saves the hierarchy of each classes  their types can be indicated when
+     * converted to Json
+     */
     public static final GsonManager GSON_MANAGER = new GsonManager()
 
-            // Hiérarchie User
+            // User hierarchy
             .registerHierarchy(User.class, Map.of(
                     "docteur",   Doctor.class,
                     "chercheur", Researcher.class
             ));
 
-            // Hiérarchie Patient
+            // Patient hierarchy
 //            .registerHierarchy(Patient.class, Map.of(
 //                    "adulte",   PatientAdulte.class,
 //                    "pediatrique", PatientPediatrique.class

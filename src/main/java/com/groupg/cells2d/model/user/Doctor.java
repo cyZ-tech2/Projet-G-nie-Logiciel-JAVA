@@ -8,7 +8,6 @@ public class Doctor extends User {
 
     private String location;
     private String speciality;
-    private final UserRole role = UserRole.DOCTOR;
 
     public Doctor(double id, String username, String password,String location, String speciality) throws Exception {
         super(id, username, password);

@@ -9,12 +9,12 @@ public class UserTest {
 
 
     public static void main(String[] args) throws Exception, IOException {
-       JsonRepository<User>    userRepo    = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class,    "users.json");
-//        userRepo.add(new Doctor(1,  "Jean", "bruh123", "paris","generaliste"));
+//        JsonRepository<User> userRepo = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class, "data/users.json");
+//        userRepo.add(new Doctor(1, "Jean", "bruh123", "paris", "generaliste"));
 //        userRepo.save();
-        userRepo.load();
-        for(User u : userRepo.getAll()){
-            System.out.println(u.toString());
-        }
+        System.out.println(User.login("jean","bruh123"));
+
+
+
     }
 }

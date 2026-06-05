@@ -3,6 +3,7 @@ package com.groupg.cells2d.data;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 public class PasswordHash {
     private final byte[] hash;
@@ -39,4 +40,8 @@ public class PasswordHash {
         return salt;
     }
 
+    public boolean verifyPassword(String candidatePassword) throws Exception {
+        byte[] canditateHash = hashPassword(candidatePassword,this.salt,this.iterations,keyLength);
+        return Arrays.equals(this.hash,canditateHash);
+    }
 }
