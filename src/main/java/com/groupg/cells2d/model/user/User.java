@@ -60,7 +60,7 @@ public abstract class User {
      * @throws Exception
      */
     public static boolean login(String username, String password) throws Exception {
-        JsonRepository<User> userRepo = new JsonRepository<User>(AppConfig.GSON_MANAGER,User.class,"data/users.json");
+        JsonRepository<User> userRepo = new JsonRepository<User>(AppConfig.GSON_MANAGER,User.class,"src/main/java/com/groupg/cells2d/model/user/data/users.json");
         userRepo.load();
         for(User user : userRepo.getAll()){
             if(user.getUsername().equals(username)){
@@ -68,6 +68,18 @@ public abstract class User {
             }
         }
         return false;
+    }
+
+    public static User get(String username) throws Exception {
+        JsonRepository<User> userRepo = new JsonRepository<User>(AppConfig.GSON_MANAGER,User.class,"src/main/java/com/groupg/cells2d/model/user/data/users.json");
+        userRepo.load();
+        for (User user : userRepo.getAll()){
+            if(user.getUsername().equals(username)){
+                return user;
+            }
+
+        }
+        return null;
     }
 
 
