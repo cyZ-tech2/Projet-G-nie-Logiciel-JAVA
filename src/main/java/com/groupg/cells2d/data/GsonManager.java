@@ -29,6 +29,19 @@ public class GsonManager {
         return this;
     }
 
+//    /**
+//     * Registers a class without subtypes hierarchy
+//     * @param baseClass the class to register
+//     * @return
+//     * @param <T>
+//     */
+//    public <T> GsonManager registerHierarchy(Class<T> baseClass) {
+//        RuntimeTypeAdapterFactory<T> factory = RuntimeTypeAdapterFactory.of(baseClass, "type");
+//        builder.registerTypeAdapterFactory(factory);
+//        this.gson = null;
+//        return this;
+//    }
+
     public Gson get() {
         if (gson == null) gson = builder.create();
         return gson;

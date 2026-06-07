@@ -15,11 +15,22 @@ public class JsonRepository<T> {
     private final Path filePath;
     private final Set<T> data = new HashSet<>();
 
+    public Path getFilePath(){
+        return this.filePath;
+    }
+
     public JsonRepository(GsonManager gsonManager, Class<T> baseClass, String filePath) {
         this.gsonManager = gsonManager;
         this.baseClass   = baseClass;
         this.filePath    = Path.of(filePath);
     }
+//    public JsonRepository(GsonManager gsonManager, Class<T> baseClass) {
+//        this.gsonManager = gsonManager;
+//        this.baseClass   = baseClass;
+//        this.filePath    = null;
+//    }
+
+
 
     public void add(T item)    { this.data.add(item); }
     public void remove(T item) { this.data.remove(item); }
@@ -35,12 +46,26 @@ public class JsonRepository<T> {
     }
 
     /**
+     * returns the json string
+     * @return
+     * @throws IOException
+     */
+    public String getJson() throws IOException {
+        return this.gsonManager.setToJson(data,baseClass);
+
+    }
+
+    /**
      * Loads Set from a Json file
      * @throws IOException
      */
     public void load() throws IOException {
         if (!Files.exists(this.filePath)) return;
         String json = Files.readString(this.filePath);
+        this.data.clear();
+        this.data.addAll(this.gsonManager.jsonToSet(json, this.baseClass));
+    }
+    public void load(String json) throws IOException {
         this.data.clear();
         this.data.addAll(this.gsonManager.jsonToSet(json, this.baseClass));
     }
