@@ -34,7 +34,7 @@ public class PatientCase {
     }
 
     /**
-     * Serialize file into json, encrypts and saves it into a file
+     * Deserializes database, adds the case and Serializes file into json, encrypts and saves it into a file
      * @param patientCaseRepo
      * @throws IOException
      * @throws NoSuchPaddingException
@@ -51,7 +51,7 @@ public class PatientCase {
 
     public  static void loadAndDecrypt(JsonRepository<PatientCase> patientCaseRepo) throws IOException,NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException{
         if(!Files.exists(patientCaseRepo.getFilePath())) return;
-        patientCaseRepo.load(Files.readString(patientCaseRepo.getFilePath()));
+        patientCaseRepo.load(EncryptionService.decrypt(Files.readString(patientCaseRepo.getFilePath())));
 
     }
 
