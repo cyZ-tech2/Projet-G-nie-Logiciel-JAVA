@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * AES chiffrement des informations sur le patiens, nécessaire pour le respect du RGPD
@@ -32,7 +33,8 @@ private static final SecretKey MASTER_KEY;
     if(encodedKey == null){
         throw new IllegalAccessException("ENCRYPTION_KEY environement variable not set");
     }
-    return new SecretKeySpec(encodedKey.getBytes(StandardCharsets.UTF_8),0,encodedKey.length(),"AES");
+        byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
+        return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
 }
 
     /**
@@ -50,7 +52,7 @@ private static final SecretKey MASTER_KEY;
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE,key);
         byte[] encrypted = cipher.doFinal(string.getBytes());
-        return Arrays.toString(encrypted);
+        return Base64.getEncoder().encodeToString(encrypted);
     }
 
     /**
@@ -68,7 +70,9 @@ private static final SecretKey MASTER_KEY;
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE,key);
 
-        return new String(cipher.doFinal(encryptedString.getBytes()));
+        byte[] decodedBytes = Base64.getDecoder().decode(encryptedString);
+        byte[] decrypted = cipher.doFinal(decodedBytes);
+        return new String(decrypted);
     }
 
     /**
