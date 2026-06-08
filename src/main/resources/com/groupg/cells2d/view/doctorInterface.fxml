@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.groupg.cells2d.controller.DoctorInterfaceController">
    <right>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
          <children>
@@ -87,7 +98,53 @@
                   </VBox>
               </items>
             </ToolBar>
-            <Slider />
+            <Separator prefWidth="175.0">
+               <VBox.margin>
+                  <Insets bottom="20.0" top="20.0" />
+               </VBox.margin>
+            </Separator>
+            <Label style="-fx-font-weight: bold; -fx-font-size: 12;" text="Ajouter un nouveau cas">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="8.0" />
+               </VBox.margin>
+            </Label>
+            <VBox prefHeight="250.0" prefWidth="278.0" spacing="8.0">
+               <children>
+                  <TextField fx:id="caseIdField" promptText="ID du cas">
+                     <VBox.margin>
+                        <Insets left="8.0" right="8.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <ComboBox fx:id="ageGroupCombo" promptText="Groupe d'âge">
+                     <VBox.margin>
+                        <Insets left="8.0" right="8.0" />
+                     </VBox.margin>
+                  </ComboBox>
+                  <TextField fx:id="symptomsField" promptText="Symptômes (séparés par virgule)">
+                     <VBox.margin>
+                        <Insets left="8.0" right="8.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField fx:id="diseaseField" promptText="Maladie suspectée">
+                     <VBox.margin>
+                        <Insets left="8.0" right="8.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField fx:id="cellIdField" promptText="ID de la cellule">
+                     <VBox.margin>
+                        <Insets left="8.0" right="8.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Button fx:id="addCaseButton" mnemonicParsing="false" text="Ajouter le cas">
+                     <VBox.margin>
+                        <Insets left="8.0" right="8.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets left="0.0" right="0.0" />
+               </VBox.margin>
+            </VBox>
          </children>
       </VBox>
    </left>
