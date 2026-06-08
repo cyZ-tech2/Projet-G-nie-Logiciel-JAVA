@@ -1,14 +1,10 @@
 com/groupg/cells2d/model/entity/Entity.class
 com/groupg/cells2d/view/Login.class
-com/groupg/cells2d/model/board/MainTestBoard.class
-com/groupg/cells2d/model/board/SEIRData.class
 com/groupg/cells2d/model/board/PatientCase.class
 com/groupg/cells2d/controller/Controller.class
 com/groupg/cells2d/model/enums/CellState.class
 com/groupg/cells2d/model/board/Cell.class
 module-info.class
-com/groupg/cells2d/model/board/Grid.class
 com/groupg/cells2d/model/enums/TimeStep.class
 com/groupg/cells2d/model/simulation/rules/Exception.class
 com/groupg/cells2d/Launcher.class
-com/groupg/cells2d/model/board/District.class

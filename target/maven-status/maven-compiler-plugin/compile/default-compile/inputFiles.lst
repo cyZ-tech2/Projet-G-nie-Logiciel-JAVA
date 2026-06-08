@@ -10,6 +10,9 @@
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/enums/CellState.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/enums/Enums.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/enums/TimeStep.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/exceptions/InvalidGridCoordinatesException.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/exceptions/InvalidPopulationException.java
+/home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/exceptions/InvalidSEIRStateException.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/model/simulation/rules/Exception.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/com/groupg/cells2d/view/Login.java
 /home/bouchichenetiziri/LogicielProjet/Projet-G-nie-Logiciel-JAVA/src/main/java/module-info.java

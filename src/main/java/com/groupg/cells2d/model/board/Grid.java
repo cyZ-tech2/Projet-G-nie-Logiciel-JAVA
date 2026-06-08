@@ -1,7 +1,7 @@
 package com.groupg.cells2d.model.board;
 import java.util.ArrayList;
 import java.util.List;
-
+import com.groupg.cells2d.model.exceptions.InvalidGridCoordinatesException;
 
 /**
  * Represents the simulation grid composed of a 2D array of cells.
@@ -77,10 +77,11 @@ public class Grid {
     }
 
     public Cell getCell(int row, int col) {
-        if (isInBounds(row, col)) {
-            return map[row][col];
+        if (!isInBounds(row, col)) {
+        throw new InvalidGridCoordinatesException(row, col);
         }
-        return null;
+
+        return map[row][col];
     }
 
     public void setCell(int row, int col, Cell cell) {

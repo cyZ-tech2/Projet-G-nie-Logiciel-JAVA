@@ -1,5 +1,7 @@
 package com.groupg.cells2d.model.board;
 
+import com.groupg.cells2d.model.exceptions.InvalidPopulationException;
+import com.groupg.cells2d.model.exceptions.InvalidSEIRStateException;
 
 /**
  * Represents epidemiological SEIR data for a cell.
@@ -24,6 +26,9 @@ public class SEIRData {
 
     /* Initialize the seed */
     public SEIRData(double totalPopulation) {
+        if (totalPopulation < 0) {
+            throw new InvalidPopulationException((int)totalPopulation);
+        }
         this.susceptible = totalPopulation;
         this.exposed     = 0;
         this.infected    = 0;
@@ -32,6 +37,9 @@ public class SEIRData {
     }
 
     public SEIRData(double susceptible, double exposed, double infected, double recovered, double dead) {
+        if (susceptible < 0 || exposed < 0 || infected < 0 || recovered < 0 || dead < 0) {
+            throw new InvalidSEIRStateException();
+        }
         this.susceptible = susceptible;
         this.exposed     = exposed;
         this.infected    = infected;
@@ -59,7 +67,10 @@ public class SEIRData {
      * @param mortalityRate mortality rate
      * @param population total population of the cell
      */
-    public void computeNextStep(double beta,double sigma,double gamma,double mortalityRate,int population) {
+    public void computeNextStep() {
+    // delegated to SEIRCalculator
+    }
+    /**public void computeNextStep(double beta,double sigma,double gamma,double mortalityRate,int population) {
                                                             
         if (population == 0) {
             return;
@@ -77,18 +88,18 @@ public class SEIRData {
         dead += deadPeople;
         validate();
 
-    }
+    }*/
 
     /**
     * Prevents negative values in SEIR compartments.
      */
-    private void validate() {
+    /**private void validate() {
         susceptible = Math.max(0, susceptible);
         exposed = Math.max(0, exposed);
         infected = Math.max(0, infected);
         recovered = Math.max(0, recovered);
         dead = Math.max(0, dead);
-    }
+    }*/
 
     public double getSusceptible() {
         return susceptible;

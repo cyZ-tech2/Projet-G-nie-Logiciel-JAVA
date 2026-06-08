@@ -1,6 +1,6 @@
 package com.groupg.cells2d.model.board;
 import com.groupg.cells2d.model.enums.CellState;
-
+import com.groupg.cells2d.model.exceptions.InvalidPopulationException;
 /**
  * Represents a simulation cell inside the epidemic grid.
  *
@@ -23,6 +23,9 @@ public class Cell{
     private int col; 
 
     public Cell(String cellId, int population, int row, int col) {
+        if(population < 0) {
+            throw new InvalidPopulationException(population);
+        }
         this.cellId = cellId;
         this.population = population;
         this.row = row ;
@@ -32,6 +35,9 @@ public class Cell{
     }
 
     public Cell(String cellId, int population, CellState state, SEIRData seirData, int row , int col) {
+        if(population < 0) {
+            throw new InvalidPopulationException(population);
+        }
         this.cellId = cellId;
         this.population = population;
         this.state = state;
@@ -47,10 +53,10 @@ public class Cell{
      * @param gamma recovery rate
      * @param mortalityRate mortality rate
      */
-    public void evolve(double beta, double sigma, double gamma, double mortalityRate) {
-        seirData.computeNextStep(beta, sigma, gamma, mortalityRate, population);
+    /**public void evolve(TimeStep step){
+        seirData.computeNextStep();
     }
-
+    */
     public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected 
         this.state = CellState.INFECTED;
     }
@@ -68,7 +74,7 @@ public class Cell{
     }
     /**
      * Computes the mortality rate.
-     *
+     *s
      * @return mortality rate
      */
     public double getMortalityRate() {
@@ -100,8 +106,8 @@ public class Cell{
         return col;
     }
     
-    public void setCol(int row) {
-        this.row = col;
+    public void setCol(int col) {
+        this.col = col;
     }
 
     public String getCellId() {

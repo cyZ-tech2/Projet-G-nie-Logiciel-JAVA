@@ -9,14 +9,13 @@ public class MainTestBoard {
         SEIRData seir1 = new SEIRData(900, 50, 40, 10, 0);
         SEIRData seir2 = new SEIRData(800, 100, 80, 20, 0);
 
-        Cell cell1 = new Cell("C1", 1000, CellState.CRITICAL, seir1, 0, 0);
+        Cell cell1 = new Cell("C1",  1000, CellState.CRITICAL, seir1, 0, 0);
         Cell cell2 = new Cell("C2", 1000, CellState.INFECTED, seir2, 0, 1);
 
         System.out.println("=== CELL TEST ===");
         System.out.println("Cell 1 id: " + cell1.getCellId());
         System.out.println("Cell 1 infection rate: " + cell1.getInfectionRate());
 
-        cell1.evolve(0.3, 0.2, 0.1, 0.02);
 
         System.out.println("After evolve:");
         System.out.println("Susceptible: " + cell1.getSeirData().getSusceptible());
