@@ -22,10 +22,10 @@ public class PatientCase {
     private AgeGroup ageGroup;
     private List<String> symptoms;
     private String suspectedDisease;
-    private double cellid;
+    private String cellid;
 
 
-    public PatientCase(double caseid, AgeGroup ageGroup, List<String> symptoms, String suspectedDisease, double cellid) {
+    public PatientCase(double caseid, AgeGroup ageGroup, List<String> symptoms, String suspectedDisease, String cellid) {
         this.caseid = caseid;
         this.ageGroup = ageGroup;
         this.symptoms = symptoms;
