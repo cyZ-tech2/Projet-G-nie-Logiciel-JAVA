@@ -1,5 +1,6 @@
 package com.groupg.cells2d.controller;
 
+import com.groupg.cells2d.model.board.Grid;
 import com.groupg.cells2d.model.enums.AgeGroup;
 import com.groupg.cells2d.model.user.PatientCase;
 import com.groupg.cells2d.model.user.PatientCaseRepo;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -21,6 +23,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class DoctorInterfaceController implements Initializable {
+
+    /// ////////////////////////////////////Menu part//////////////////////////////////////////////////////////////::::::::::
+
     @FXML
     private ComboBox<AgeGroup> ageGroupCombo;
     @FXML
@@ -49,4 +54,17 @@ public class DoctorInterfaceController implements Initializable {
         PatientCaseRepo.addCase(new PatientCase(caseid,ageGroup,symptoms,suspectedDisease,cellid));
 
     }
+
+    /// /////////////////////////////////////Grid part//////////////////////////////////////////////::
+    private GridPane gridPane;
+    private final int maxRow = gridPane.getRowCount()-1;
+    private final int maxCol = gridPane.getColumnCount()-1;
+    private int row;
+    private int col;
+    private Grid grid = new Grid(maxRow,maxCol);
+
+    public void initialize(){
+
+    }
+
 }
