@@ -20,10 +20,7 @@ public class Cell{
     private CellState state; //A revoir car peut etre incoherent avec seirDATA
     private SEIRData seirData;
     private int row;
-    private int col; 
-    private boolean insideParis;
-     private String districtId;
-    private String districtName;
+    private int col;
 
     public Cell(String cellId, int population, int row, int col) {
         if(population < 0) {
@@ -48,7 +45,7 @@ public class Cell{
         this.col = col;
         this.row = row;
     }
-        /**
+    /**
      * Evolves the internal epidemic state of the cell
      * without considering neighboring cells.
      * @param beta transmission rate
@@ -57,10 +54,10 @@ public class Cell{
      * @param mortalityRate mortality rate
      */
     /**public void evolve(TimeStep step){
-        seirData.computeNextStep();
-    }
-    */
-    public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected 
+     seirData.computeNextStep();
+     }
+     */
+    public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected
         this.state = CellState.INFECTED;
     }
     /**
@@ -100,15 +97,15 @@ public class Cell{
     public int getRow() {
         return row;
     }
-    
+
     public void setRow (int row) {
         this.row = row;
     }
 
-     public int getCol() {
+    public int getCol() {
         return col;
     }
-    
+
     public void setCol(int col) {
         this.col = col;
     }
@@ -145,28 +142,20 @@ public class Cell{
         this.seirData = seirData;
     }
 
-    public boolean isInsideParis() {
-        return insideParis;
-    }
-
-    public void setInsideParis( boolean insideParis){
-        this.insideParis = insideParis;
-    }
-     public String getDistrictId() {
-        return districtId;
-    }
-
-    public void setDistrictId(String districtId) {
-        this.districtId = districtId;
-    }
-
-    public String getDistrictName() {
-        return districtName;
-    }
-
-    public void setDistrictName(String districtName) {
-        this.districtName = districtName;
+    /**
+     * Updates the cell state based on the infection rate.
+     * @param infectionRate ratio of infected over total population
+     */
+    public void updateState(double infectionRate){
+        if(infectionRate < 0.10){
+            setState(CellState.HEALTHY);
+        } else if(infectionRate < 0.30){
+            setState(CellState.PARTIAL);
+        } else if(infectionRate < 0.60){
+            setState(CellState.INFECTED);
+        } else {
+            setState(CellState.CRITICAL);
+        }
     }
 
 }
-
