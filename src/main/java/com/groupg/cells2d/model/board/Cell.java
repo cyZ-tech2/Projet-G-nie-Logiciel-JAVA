@@ -21,6 +21,9 @@ public class Cell{
     private SEIRData seirData;
     private int row;
     private int col; 
+    private boolean insideParis;
+     private String districtId;
+    private String districtName;
 
     public Cell(String cellId, int population, int row, int col) {
         if(population < 0) {
@@ -140,6 +143,29 @@ public class Cell{
 
     public void setSeirData(SEIRData seirData) {
         this.seirData = seirData;
+    }
+
+    public boolean isInsideParis() {
+        return insideParis;
+    }
+
+    public void setInsideParis( boolean insideParis){
+        this.insideParis = insideParis;
+    }
+     public String getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(String districtId) {
+        this.districtId = districtId;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
     }
 
 }

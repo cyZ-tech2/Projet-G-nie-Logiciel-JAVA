@@ -69,7 +69,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.groupg.cells2d/com.groupg.cells2d.view.HelloApplication</mainClass>
+                            <mainClass>com.groupg.cells2d/com.groupg.cells2d.Launcher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
