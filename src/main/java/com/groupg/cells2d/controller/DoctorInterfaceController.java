@@ -39,9 +39,21 @@ public class DoctorInterfaceController implements Initializable {
 
     private AgeGroup[] ageGroup = {AgeGroup.ADULT,AgeGroup.CHILD,AgeGroup.ELDERY};
 
+    /// /////////////////////////////////////Grid part//////////////////////////////////////////////::
+    @FXML
+    private GridPane gridPane;
+    private int maxRow;
+    private int maxCol;
+    private int row;
+    private int col;
+    private Grid grid;
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1){
         ageGroupCombo.getItems().addAll(ageGroup);
+        maxRow = gridPane.getRowCount() - 1;
+        maxCol = gridPane.getColumnCount() - 1;
+        grid = new Grid(maxRow, maxCol);
     }
 
     public void submitCase (ActionEvent event) throws Exception,NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
@@ -52,19 +64,6 @@ public class DoctorInterfaceController implements Initializable {
         double caseid = Double.parseDouble(caseIdField.getText());
         String suspectedDisease = diseaseField.getText();
         PatientCaseRepo.addCase(new PatientCase(caseid,ageGroup,symptoms,suspectedDisease,cellid));
-
-    }
-
-    /// /////////////////////////////////////Grid part//////////////////////////////////////////////::
-    private GridPane gridPane;
-    private final int maxRow = gridPane.getRowCount()-1;
-    private final int maxCol = gridPane.getColumnCount()-1;
-    private int row;
-    private int col;
-    private Grid grid = new Grid(maxRow,maxCol);
-
-    public void initialize(){
-
     }
 
 }
