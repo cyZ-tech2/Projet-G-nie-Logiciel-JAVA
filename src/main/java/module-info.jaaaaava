@@ -1,9 +1,8 @@
 module com.groupg.cells2d {
     requires javafx.controls;
     requires javafx.fxml;
-    requires com.google.gson;
+    requires javafx.graphics;
     requires java.desktop;
-    requires com.google.errorprone.annotations;
 
 
     opens com.groupg.cells2d to javafx.fxml;
@@ -12,5 +11,4 @@ module com.groupg.cells2d {
     opens com.groupg.cells2d.view to javafx.fxml;
     exports com.groupg.cells2d.controller;
     opens com.groupg.cells2d.controller to javafx.fxml;
-
 }

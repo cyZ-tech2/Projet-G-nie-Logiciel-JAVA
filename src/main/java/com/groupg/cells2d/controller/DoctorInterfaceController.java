@@ -56,15 +56,15 @@ public class DoctorInterfaceController implements Initializable {
     }
 
     /// /////////////////////////////////////Grid part//////////////////////////////////////////////::
-    private GridPane gridPane;
-    private final int maxRow = gridPane.getRowCount()-1;
-    private final int maxCol = gridPane.getColumnCount()-1;
-    private int row;
-    private int col;
-    private Grid grid = new Grid(maxRow,maxCol);
-
-    public void initialize(){
-
-    }
+//    private GridPane gridPane;
+//    private final int maxRow = gridPane.getRowCount()-1;
+//    private final int maxCol = gridPane.getColumnCount()-1;
+//    private int row;
+//    private int col;
+//    private Grid grid = new Grid(maxRow,maxCol);
+//
+//    public void initialize(){
+//
+//    }
 
 }
