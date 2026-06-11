@@ -113,21 +113,45 @@
                   </TitledPane>
               </panes>
             </Accordion>
-            <HBox alignment="CENTER_LEFT" spacing="6">
-               <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(89,180,90,0.6);" />
-               <Label text="Sain (HEALTHY)" />
+            <Separator prefWidth="200.0" />
+            <Label layoutX="20.0" layoutY="731.0" style="-fx-font-weight: bold;" text="Légende" />
+            <HBox prefHeight="18.0" prefWidth="457.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="6">
+                     <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(89,180,90,0.6);" />
+                     <Label text="Sain (HEALTHY)">
+                        <HBox.margin>
+                           <Insets right="5.0" />
+                        </HBox.margin>
+                     </Label>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="6">
+                     <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(255,193,7,0.8);" />
+                     <Label text="Partiel (PARTIAL)" />
+                  </HBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="0.0" prefWidth="290.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="6">
+                     <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(220,53,69,0.9);" />
+                     <Label text="Infecté (INFECTED)">
+                        <HBox.margin>
+                           <Insets right="5.0" />
+                        </HBox.margin>
+                     </Label>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="6">
+                     <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(0, 0, 0, 0.6);" />
+                     <Label text="Critique (CRITICAL)" />
+                  </HBox>
+               </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="6">
-               <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(255,193,7,0.8);" />
-               <Label text="Partiel (PARTIAL)" />
-            </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="6">
-               <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(220,53,69,0.9);" />
-               <Label text="Infecté (INFECTED)" />
-            </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="6">
-               <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(0, 0, 0, 0.6);" />
-               <Label text="Critique (CRITICAL)" />
+               <children>
+                  <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: WHITE; -fx-border-color: RED; -fx-border-width: 3;" />
+                  <Label text="Cellule morte (&lt;100 habitants)" />
+               </children>
             </HBox>
 
             <Separator prefWidth="280.0" />
