@@ -39,7 +39,10 @@ public class ResearcherController {
     @FXML private Slider gammaSlider;
     @FXML private Label betaLabel;
     @FXML private Label gammaLabel;
-
+    @FXML private Slider sigmaSlider;
+    @FXML private Label sigmaLabel;
+    @FXML private Slider xiSlider;
+    @FXML private Label xiLabel;
     private Grid parisGrid;
     private SimulationEngine engine;
     private Propagation propagation;
@@ -75,6 +78,20 @@ public class ResearcherController {
                 if (gammaLabel != null) gammaLabel.setText(String.format("γ: %.2f", n.doubleValue()));
             });
             if (gammaLabel != null) gammaLabel.setText(String.format("γ: %.2f", propagation.getParams().getGamma()));
+        }
+        if (sigmaSlider != null) {
+            sigmaSlider.setValue(propagation.getParams().getSigma());
+            sigmaSlider.valueProperty().addListener((obs,o,n)-> {
+                propagation.getParams().setSigma(n.doubleValue());
+                if (sigmaLabel !=null) sigmaLabel.setText(String.format("σ (incubation period/rate): %.2f",propagation.getParams().getSigma()));
+            });
+        }
+        if(xiSlider != null) {
+            xiSlider.setValue(propagation.getParams().getPropagationRate());
+            xiSlider.valueProperty().addListener((obs,o,n)-> {
+                propagation.getParams().setPropagationRate(n.doubleValue());
+                if (xiLabel !=null) xiLabel.setText(String.format("Xi (Waning imunity, SEIRS): %.2f",propagation.getParams().getPropagationRate()));
+            });
         }
 
         updateStatusUI();
