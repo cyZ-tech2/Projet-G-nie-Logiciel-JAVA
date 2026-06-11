@@ -23,7 +23,7 @@ public class SEIRcalculator{
      * @param population people
      * @return new values for seirData
      */
-    public static SEIRData compute(SEIRData seirData, double beta, double sigma, double gamma, double mortalityRate, double propagationRate, double avgNeighborInfected, int population){
+    public static SEIRData compute(SEIRData seirData, double beta, double sigma, double gamma, double mortalityRate, double propagationRate, double avgNeighborInfected, int population,double xi){
         double s=seirData.getSusceptible();
         double e=seirData.getExposed();
         double i=seirData.getInfected();
@@ -39,10 +39,13 @@ public class SEIRcalculator{
         double spatialTransmission=propagationRate*avgNeighborInfected*(s/population);
 
         //formules of SEIRD propagation model
-        double dS=-localTransmission-spatialTransmission;
+
+        double waningImmunity = xi * r;
+
+        double dS=-localTransmission-spatialTransmission + waningImmunity;
         double dE=localTransmission+spatialTransmission-(sigma*e);
         double dI=(sigma*e)-(gamma*i);
-        double dR=(1-mortalityRate)*gamma*i;
+        double dR=(1-mortalityRate)*gamma*i - waningImmunity;
         double dD=mortalityRate*gamma*i;
 
         //verify that values don't become negative

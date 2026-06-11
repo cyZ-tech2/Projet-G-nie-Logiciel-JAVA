@@ -40,27 +40,28 @@ public class Propagation{
      * Applies SEIR propagation to a cell based on its neighbors
      * @param cell the target cell to update
      * @param neighbors the list of neighboring cells
-     * @return
+     * @returnAp
      */
     public SEIRData apply(Cell cell, List<Cell> neighbors){
         if(cell.getPopulation()==0){return cell.getSeirData();}
 
-        double avgNeighborInfected=0; //average infected population from the neighbors
+        double totalNeighborInfected=0; //average infected population from the neighbors
         for(Cell neighbor : neighbors){
-            avgNeighborInfected += neighbor.getSeirData().getInfected();
+            totalNeighborInfected += neighbor.getSeirData().getInfected();
         }
 
-        if(neighbors.isEmpty()){  //verification to not divide by zero if no neighbors
-            avgNeighborInfected = 0;
-        } else {
-            avgNeighborInfected = avgNeighborInfected / neighbors.size();
-        }
+//        if(neighbors.isEmpty()){  //verification to not divide by zero if no neighbors
+//            avgNeighborInfected = 0;
+//        } else {
+//            avgNeighborInfected = avgNeighborInfected / neighbors.size();
+//        }
 
         return SEIRcalculator.compute(
                 cell.getSeirData(),
                 params.getBeta(), params.getSigma(), params.getGamma(),
                 params.getMortalityRate(), params.getPropagationRate(),
-                avgNeighborInfected, cell.getPopulation()
+                totalNeighborInfected, cell.getPopulation(),
+                params.getXi()
         );
     }
 }

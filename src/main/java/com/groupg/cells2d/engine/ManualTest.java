@@ -47,7 +47,7 @@ public class ManualTest {
                 " R=" + data.getRecovered() +
                 " D=" + data.getDead());
 
-        SEIRData newData = SEIRcalculator.compute(data, 0.3, 0.2, 0.1, 0.02, 0.05, 2, 100);
+        SEIRData newData = SEIRcalculator.compute(data, 0.3, 0.2, 0.1, 0.02, 0.05, 2, 100,0.02);
         System.out.println("Après calcul: S=" + String.format("%.2f", newData.getSusceptible()) +
                 " E=" + String.format("%.2f", newData.getExposed()) +
                 " I=" + String.format("%.2f", newData.getInfected()) +
@@ -55,7 +55,7 @@ public class ManualTest {
                 " D=" + String.format("%.2f", newData.getDead()));
 
         SEIRData emptyData = new SEIRData(0, 0, 0, 0, 0);
-        SEIRData resultEmpty = SEIRcalculator.compute(emptyData, 0.3, 0.2, 0.1, 0.02, 0.05, 0, 0);
+        SEIRData resultEmpty = SEIRcalculator.compute(emptyData, 0.3, 0.2, 0.1, 0.02, 0.05, 0, 0,0.02);
         System.out.println("Test population 0: " +
                 (resultEmpty.getSusceptible() == 0 ? "OK ✓" : "ERREUR ✗"));
 
