@@ -83,20 +83,27 @@
             </HBox>
 
             <!-- Status info -->
-            <Label fx:id="stepLabel" style="-fx-font-size: 12;" text="Étape: 0" />
-            <Label fx:id="statusLabel" style="-fx-font-size: 12;" text="Statut: IDLE" />
+            <Label fx:id="stepLabel"   text="Étape: 0"       style="-fx-font-size: 12;"/>
+            <Label fx:id="statusLabel" text="Statut: IDLE"   style="-fx-font-size: 12;"/>
 
+            <!--Statistics-->
+            <Label text="Statistiques"
+            style="-fx-font-weight: bold; -fx-font-size: 13;" />
+
+            <Label fx:id="statsLabel" wrapText="true" prefWidth="280.0"/>
             <Separator prefWidth="280.0" />
-            <Accordion>
+             <Button text="📊 Graphiques" onAction="#onShowStatisticsCharts" prefWidth="280.0"/>
+
+             <Accordion>
               <panes>
                 <TitledPane animated="false" text="Paramètres SEIR">
                      <content>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
-                  
+
                                                 <Label fx:id="betaLabel" text="β (transmission): 0.30" />
                               <Slider fx:id="betaSlider" max="1.0" min="0.0" prefWidth="280.0" showTickLabels="true" showTickMarks="true" value="0.3" />
-                  
+
                               <Label fx:id="gammaLabel" text="γ (guérison): 0.10" />
                               <Slider fx:id="gammaSlider" max="0.5" min="0.0" prefWidth="280.0" showTickLabels="true" showTickMarks="true" value="0.1" />
                               <Label fx:id="sigmaLabel" text="σ (incubation period/rate):" />

@@ -1,5 +1,8 @@
 package com.groupg.cells2d.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.groupg.cells2d.engine.Propagation;
 import com.groupg.cells2d.engine.SimulationEngine;
 import com.groupg.cells2d.model.board.Cell;
@@ -9,9 +12,19 @@ import com.groupg.cells2d.model.board.SimulationParams;
 import com.groupg.cells2d.model.board.ParisGridFactory;
 import com.groupg.cells2d.model.enums.CellState;
 import com.groupg.cells2d.model.enums.SimStatus;
+import com.groupg.cells2d.stats.Snapshot;
+import com.groupg.cells2d.stats.Statistics;
+import com.groupg.cells2d.model.board.ParisGridFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -20,6 +33,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.scene.control.CheckBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class ResearcherController {
 
@@ -58,6 +75,7 @@ public class ResearcherController {
     @FXML private Label gammaLabel;
     @FXML private Label sigmaLabel;
     @FXML private Label xiLabel;
+    @FXML private Label statsLabel;
 
     // --- State ---
     private Grid parisGrid;
@@ -65,6 +83,7 @@ public class ResearcherController {
     private Propagation propagation;
     private double canvasWidth;
     private double canvasHeight;
+    private final List<Snapshot> statisticHistory = new ArrayList<>();
 
 
     @FXML
@@ -167,18 +186,39 @@ public class ResearcherController {
     @FXML public void onStep() {
         if (engine.getStatus() != SimStatus.RUNNING) {
             engine.step();
+            Snapshot stats =
+                Statistics.compute(parisGrid, engine.getStepCount());
+
+            statisticHistory.add(stats);
+            updateStatisticsUI(stats);
             updateStatusUI();
             drawGrid();
         }
     }
 
+
     private void startUIRefreshLoop() {
         Thread t = new Thread(() -> {
             while (engine.getStatus() == SimStatus.RUNNING) {
                 Platform.runLater(() -> { drawGrid(); updateStatusUI(); });
+                Platform.runLater(() -> {
+                    Snapshot stats = Statistics.compute(parisGrid, engine.getStepCount());
+
+                    statisticHistory.add(stats);
+                    updateStatisticsUI(stats);
+
+                    drawGrid();
+                    updateStatusUI();
+                });
                 try { Thread.sleep(520); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
             }
             Platform.runLater(() -> { drawGrid(); updateStatusUI(); });
+            // Final refresh after stop/pause
+            Platform.runLater(() -> {
+                Snapshot stats = Statistics.compute(parisGrid, engine.getStepCount());
+                statisticHistory.add(stats);
+                updateStatisticsUI(stats);
+                drawGrid(); updateStatusUI(); });
         });
         t.setDaemon(true);
         t.start();
@@ -373,4 +413,96 @@ public class ResearcherController {
             default:       return Color.rgb(180, 180, 180, 0.30);
         }
     }
+
+    private void updateStatisticsUI(Snapshot stats) {
+        statsLabel.setText(
+                "Healthy : " + stats.getHealthyCells()
+                + "\nPartial : " + stats.getPartialCells()
+                + "\nInfected : " + stats.getInfectedCells()
+                + "\nCritical : " + stats.getCriticalCells()
+                + "\nTotal : " + stats.getTotalCells()
+        );
+    }
+
+    @FXML
+public void onShowStatisticsCharts() {
+    Stage stage = new Stage();
+        stage.setTitle("Graphiques statistiques");
+
+        NumberAxis xAxis = new NumberAxis();
+        xAxis.setLabel("Step");
+
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Nombre de cellules");
+
+        LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
+        chart.setTitle("Évolution des cellules");
+
+        CheckBox healthyCheck = new CheckBox("Healthy");
+        CheckBox partialCheck = new CheckBox("Partial");
+        CheckBox infectedCheck = new CheckBox("Infected");
+        CheckBox criticalCheck = new CheckBox("Critical");
+
+        healthyCheck.setSelected(true);
+        partialCheck.setSelected(true);
+        infectedCheck.setSelected(true);
+        criticalCheck.setSelected(true);
+
+        Button updateButton = new Button("Update chart");
+
+        updateButton.setOnAction(event -> {
+            chart.getData().clear();
+
+            if (healthyCheck.isSelected()) {
+                chart.getData().add(createSeries("Healthy", "healthy"));
+            }
+            if (partialCheck.isSelected()) {
+                chart.getData().add(createSeries("Partial", "partial"));
+            }
+            if (infectedCheck.isSelected()) {
+                chart.getData().add(createSeries("Infected", "infected"));
+            }
+            if (criticalCheck.isSelected()) {
+                chart.getData().add(createSeries("Critical", "critical"));
+            }
+        });
+
+        updateButton.fire();
+
+        HBox checkBoxBox = new HBox(10, healthyCheck, partialCheck, infectedCheck, criticalCheck, updateButton);
+        VBox root = new VBox(10, checkBoxBox, chart);
+
+        Scene scene = new Scene(root, 900, 600);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private XYChart.Series<Number, Number> createSeries(String name, String type) {
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName(name);
+
+        for (Snapshot snapshot : statisticHistory) {
+            int value = 0;
+
+            switch (type) {
+                case "healthy":
+                    value = snapshot.getHealthyCells();
+                    break;
+                case "partial":
+                    value = snapshot.getPartialCells();
+                    break;
+                case "infected":
+                    value = snapshot.getInfectedCells();
+                    break;
+                case "critical":
+                    value = snapshot.getCriticalCells();
+                    break;
+            }
+
+            series.getData().add(new XYChart.Data<>(snapshot.getStep(), value));
+        }
+
+        return series;
+    }
+
 }
