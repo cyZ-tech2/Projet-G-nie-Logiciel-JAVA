@@ -47,7 +47,10 @@ public class CellNeighborhood{
             int neighborj = cell.getCol() + colMove;
 
             if (neighbori >= 0 && neighbori < cells.length && neighborj >= 0 && neighborj < cells[0].length){
-                neighbors.add(cells[neighbori][neighborj]);
+                Cell neighbor = cells[neighbori][neighborj];
+                if (neighbor !=null && neighbor.isInsideParis()) {
+                    neighbors.add(neighbor);
+                }
             }
         }
         return neighbors;

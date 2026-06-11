@@ -8,8 +8,10 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -30,9 +32,9 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Simulation">
             <items>
-              <MenuItem mnemonicParsing="false" text="Start" />
-              <MenuItem mnemonicParsing="false" text="Pause" />
-              <MenuItem mnemonicParsing="false" text="Reset" />
+              <MenuItem mnemonicParsing="false" text="Start" onAction="#onPlay"/>
+              <MenuItem mnemonicParsing="false" text="Pause" onAction="#onPause"/>
+              <MenuItem mnemonicParsing="false" text="Reset" onAction="#onStop"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -45,37 +47,74 @@
    </top>
 
    <left>
-      <VBox spacing="12.0" prefWidth="310.0" BorderPane.alignment="CENTER">
+      <VBox spacing="10.0" prefWidth="310.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
          </padding>
          <children>
-            <Button mnemonicParsing="false" text="Open/Close" />
-            <ToolBar prefWidth="290.0">
-              <items>
-                  <VBox spacing="10.0" prefWidth="270.0">
-                     <children>
-                        <Button mnemonicParsing="false" text="Brush" />
-                        <Button mnemonicParsing="false" text="Eraser" />
-                        <Button mnemonicParsing="false" text="Bucket" />
-                        <ComboBox prefWidth="180.0" />
-                        <Separator prefWidth="250.0" />
-                        <Label text="Cellule sélectionnée" />
-                        <Label fx:id="selectedCellLabel" wrapText="true" text="Clique sur une cellule dans Paris." />
-                     </children>
-                  </VBox>
-              </items>
-            </ToolBar>
+            <!-- Simulation controls -->
+            <Label text="Contrôles" style="-fx-font-weight: bold; -fx-font-size: 13;" />
+            <HBox spacing="6.0">
+               <children>
+                  <Button fx:id="btnPlay"  text="▶ Play"  onAction="#onPlay"  prefWidth="70"/>
+                  <Button fx:id="btnPause" text="⏸ Pause" onAction="#onPause" prefWidth="70"/>
+                  <Button fx:id="btnStop"  text="⏹ Stop"  onAction="#onStop"  prefWidth="70"/>
+                  <Button fx:id="btnStep"  text="→ Step"  onAction="#onStep"  prefWidth="70"/>
+               </children>
+            </HBox>
+
+            <!-- Status info -->
+            <Label fx:id="stepLabel"   text="Étape: 0"       style="-fx-font-size: 12;"/>
+            <Label fx:id="statusLabel" text="Statut: IDLE"   style="-fx-font-size: 12;"/>
+
+            <Separator prefWidth="280.0" />
+
+            <!-- SEIR params -->
+            <Label text="Paramètres SEIR" style="-fx-font-weight: bold; -fx-font-size: 13;" />
+
+            <Label fx:id="betaLabel" text="β (transmission): 0.30" />
+            <Slider fx:id="betaSlider" min="0.0" max="1.0" value="0.3" showTickLabels="true" showTickMarks="true" prefWidth="280.0"/>
+
+            <Label fx:id="gammaLabel" text="γ (guérison): 0.10" />
+            <Slider fx:id="gammaSlider" min="0.0" max="0.5" value="0.1" showTickLabels="true" showTickMarks="true" prefWidth="280.0"/>
+
+            <Separator prefWidth="280.0" />
+
+            <!-- Légende -->
+            <Label text="Légende" style="-fx-font-weight: bold; -fx-font-size: 13;" />
+            <HBox spacing="6" alignment="CENTER_LEFT">
+               <Pane prefWidth="16" prefHeight="16" style="-fx-background-color: rgba(89,180,90,0.6);"/>
+               <Label text="Sain (HEALTHY)"/>
+            </HBox>
+            <HBox spacing="6" alignment="CENTER_LEFT">
+               <Pane prefWidth="16" prefHeight="16" style="-fx-background-color: rgba(255,193,7,0.8);"/>
+               <Label text="Partiel (PARTIAL)"/>
+            </HBox>
+            <HBox spacing="6" alignment="CENTER_LEFT">
+               <Pane prefWidth="16" prefHeight="16" style="-fx-background-color: rgba(220,53,69,0.9);"/>
+               <Label text="Infecté (INFECTED)"/>
+            </HBox>
+            <HBox spacing="6" alignment="CENTER_LEFT">
+               <Pane prefWidth="16" prefHeight="16" style="-fx-background-color: rgba(33,150,243,0.8);"/>
+               <Label text="Critique (CRITICAL)"/>
+            </HBox>
+
+            <Separator prefWidth="280.0" />
+
+            <!-- Cell info -->
+            <Label text="Cellule sélectionnée" style="-fx-font-weight: bold;"/>
+            <Label fx:id="selectedCellLabel" wrapText="true" text="Clique sur une cellule dans Paris." prefWidth="280.0"/>
          </children>
       </VBox>
    </left>
 
    <center>
-      <StackPane fx:id="mapPane" prefHeight="800.0" prefWidth="1000.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+      <StackPane fx:id="mapPane" prefHeight="800.0" prefWidth="1000.0"
+                 style="-fx-background-color: white;" BorderPane.alignment="CENTER">
          <children>
             <ImageView fx:id="mapImageView" preserveRatio="true" smooth="true" />
             <Pane fx:id="districtLayer" prefWidth="1000.0" prefHeight="800.0" pickOnBounds="false" />
-            <Pane fx:id="gridLayer" prefWidth="1000.0" prefHeight="800.0" pickOnBounds="false" />
+            <Pane fx:id="gridLayer"     prefWidth="1000.0" prefHeight="800.0" pickOnBounds="false" />
          </children>
       </StackPane>
    </center>

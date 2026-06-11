@@ -10,6 +10,7 @@ public class SimulationParams{
     private double gamma;   //recovery
     private double propagationRate;     //propagation
     private double mortalityRate;   //mortality
+    private double xi; //waning imunity(seirs)
 
     /**
      * constructor for standard propagation
@@ -17,9 +18,10 @@ public class SimulationParams{
     public SimulationParams(){
         this.beta=0.3;
         this.sigma=0.2;
-        this.gamma=0.1;
-        this.propagationRate=0.05;
+        this.gamma=0.3;
+        this.propagationRate=0.10;
         this.mortalityRate=0.02;
+        this.xi = 0.03;
     }
 
     /**
@@ -97,4 +99,11 @@ public class SimulationParams{
      */
     public double getMortalityRate(){return mortalityRate;}
 
+    public double getXi() {
+        return xi;
+    }
+
+    public void setXi(double xi) {
+        this.xi = xi;
+    }
 }
