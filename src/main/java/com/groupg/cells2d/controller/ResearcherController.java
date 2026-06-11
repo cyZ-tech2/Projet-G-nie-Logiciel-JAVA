@@ -1,13 +1,17 @@
 package com.groupg.cells2d.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.groupg.cells2d.engine.Propagation;
 import com.groupg.cells2d.engine.SimulationEngine;
 import com.groupg.cells2d.model.board.Cell;
 import com.groupg.cells2d.model.board.Grid;
 import com.groupg.cells2d.model.board.SEIRData;
 import com.groupg.cells2d.model.board.SimulationParams;
-import com.groupg.cells2d.model.enums.CellState;
 import com.groupg.cells2d.model.enums.SimStatus;
+import com.groupg.cells2d.stats.Snapshot;
+import com.groupg.cells2d.stats.Statistics;
 import com.groupg.cells2d.model.board.ParisGridFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -39,12 +43,14 @@ public class ResearcherController {
     @FXML private Slider gammaSlider;
     @FXML private Label betaLabel;
     @FXML private Label gammaLabel;
+    @FXML private Label statsLabel;
 
     private Grid parisGrid;
     private SimulationEngine engine;
     private Propagation propagation;
     private double canvasWidth;
     private double canvasHeight;
+    private final List<Snapshot> statisticHistory = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -136,11 +142,17 @@ public class ResearcherController {
     public void onStep() {
         if (engine.getStatus() != SimStatus.RUNNING) {
             engine.step();
+            Snapshot stats =
+                Statistics.compute(parisGrid, engine.getStepCount());
+
+            statisticHistory.add(stats);
+            updateStatisticsUI(stats);
             updateStatusUI();
             drawGrid();
         }
     }
 
+    
     private void startUIRefreshLoop() {
         Thread refreshThread = new Thread(() -> {
             while (engine.getStatus() == SimStatus.RUNNING) {
@@ -261,4 +273,14 @@ public class ResearcherController {
             default:       return Color.rgb(180, 180, 180, 0.30);
         }
     }
+
+    private void updateStatisticsUI(Snapshot stats) {
+    statsLabel.setText(
+            "Healthy : " + stats.getHealthyCells()
+            + "\nPartial : " + stats.getPartialCells()
+            + "\nInfected : " + stats.getInfectedCells()
+            + "\nCritical : " + stats.getCriticalCells()
+            + "\nTotal : " + stats.getTotalCells()
+    );
+}
 }

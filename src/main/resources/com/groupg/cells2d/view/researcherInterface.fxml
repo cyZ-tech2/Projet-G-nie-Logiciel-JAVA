@@ -66,7 +66,12 @@
             <!-- Status info -->
             <Label fx:id="stepLabel"   text="Étape: 0"       style="-fx-font-size: 12;"/>
             <Label fx:id="statusLabel" text="Statut: IDLE"   style="-fx-font-size: 12;"/>
+            
+            <!--Statistics-->
+            <Label text="Statistiques"
+            style="-fx-font-weight: bold; -fx-font-size: 13;" />
 
+            <Label fx:id="statsLabel" wrapText="true" prefWidth="280.0"/>
             <Separator prefWidth="280.0" />
 
             <!-- SEIR params -->
