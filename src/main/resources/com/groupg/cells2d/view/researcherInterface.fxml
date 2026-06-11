@@ -74,6 +74,8 @@
             <Label fx:id="statsLabel" wrapText="true" prefWidth="280.0"/>
             <Separator prefWidth="280.0" />
 
+            <Button text="📊 Graphiques" onAction="#onShowStatisticsCharts" prefWidth="280.0"/>
+
             <!-- SEIR params -->
             <Label text="Paramètres SEIR" style="-fx-font-weight: bold; -fx-font-size: 13;" />
 
