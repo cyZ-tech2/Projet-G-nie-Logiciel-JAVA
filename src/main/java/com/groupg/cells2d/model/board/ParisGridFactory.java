@@ -50,13 +50,6 @@ public final class ParisGridFactory {
                     cell.setDistrictId(district.id);
                     cell.setDistrictName("Arrondissement " + district.id);
                 }
-                //juste pour mettre un cellule inféctée et une critique 
-                if (insideParis && row == rows / 2 && col == cols / 2) {
-                    cell.setState(CellState.INFECTED);
-                } else if (insideParis && row == rows / 2 && col == cols / 2 + 1) {
-                    cell.setState(CellState.PARTIAL);
-                }
-
                 grid.setCell(row, col, cell);
             }
         }

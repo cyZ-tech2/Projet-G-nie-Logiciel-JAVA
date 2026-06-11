@@ -6,16 +6,15 @@ import com.groupg.cells2d.model.board.Cell;
 import com.groupg.cells2d.model.board.Grid;
 import com.groupg.cells2d.model.board.SEIRData;
 import com.groupg.cells2d.model.board.SimulationParams;
+import com.groupg.cells2d.model.board.ParisGridFactory;
 import com.groupg.cells2d.model.enums.CellState;
 import com.groupg.cells2d.model.enums.SimStatus;
-import com.groupg.cells2d.model.board.ParisGridFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -24,30 +23,49 @@ import javafx.scene.shape.Rectangle;
 
 public class ResearcherController {
 
+    // --- Map ---
     @FXML private StackPane mapPane;
     @FXML private ImageView mapImageView;
     @FXML private Pane districtLayer;
     @FXML private Pane gridLayer;
-    @FXML private Label selectedCellLabel;
-    @FXML private Label stepLabel;
-    @FXML private Label statusLabel;
+
+    // --- Modes ---
+    @FXML private RadioButton cursorRadio;
+    @FXML private RadioButton brushRadio;
+    @FXML private RadioButton bucketRadio;
+
+    // --- Controls ---
     @FXML private Button btnPlay;
     @FXML private Button btnPause;
     @FXML private Button btnStop;
     @FXML private Button btnStep;
+
+    // --- Status ---
+    @FXML private Label stepLabel;
+    @FXML private Label statusLabel;
+    @FXML private Label selectedCellLabel;
+
+    // --- Sliders ---
     @FXML private Slider betaSlider;
     @FXML private Slider gammaSlider;
+    @FXML private Slider sigmaSlider;
+    @FXML private Slider xiSlider;
+    @FXML private Slider mortalitySlider;
+    @FXML private Slider propagationSlider;
+    @FXML private Label mortalityLabel;
+    @FXML private Label propagationLabel;
     @FXML private Label betaLabel;
     @FXML private Label gammaLabel;
-    @FXML private Slider sigmaSlider;
     @FXML private Label sigmaLabel;
-    @FXML private Slider xiSlider;
     @FXML private Label xiLabel;
+
+    // --- State ---
     private Grid parisGrid;
     private SimulationEngine engine;
     private Propagation propagation;
     private double canvasWidth;
     private double canvasHeight;
+
 
     @FXML
     public void initialize() {
@@ -57,84 +75,82 @@ public class ResearcherController {
 
         mapImageView.setImage(new Image(getClass().getResourceAsStream(ParisGridFactory.MAP_RESOURCE)));
 
-        // Seed: infect a cell in the center of Paris (arrondissement 1)
-        seedInitialInfection();
+        bindSliders();
 
         mapPane.widthProperty().addListener((obs, o, n) -> drawMap());
         mapPane.heightProperty().addListener((obs, o, n) -> drawMap());
 
-        if (betaSlider != null) {
-            betaSlider.setValue(propagation.getParams().getBeta());
-            betaSlider.valueProperty().addListener((obs, o, n) -> {
-                propagation.getParams().setBeta(n.doubleValue());
-                if (betaLabel != null) betaLabel.setText(String.format("β: %.2f", n.doubleValue()));
-            });
-            if (betaLabel != null) betaLabel.setText(String.format("β: %.2f", propagation.getParams().getBeta()));
-        }
-        if (gammaSlider != null) {
-            gammaSlider.setValue(propagation.getParams().getGamma());
-            gammaSlider.valueProperty().addListener((obs, o, n) -> {
-                propagation.getParams().setGamma(n.doubleValue());
-                if (gammaLabel != null) gammaLabel.setText(String.format("γ: %.2f", n.doubleValue()));
-            });
-            if (gammaLabel != null) gammaLabel.setText(String.format("γ: %.2f", propagation.getParams().getGamma()));
-        }
-        if (sigmaSlider != null) {
-            sigmaSlider.setValue(propagation.getParams().getSigma());
-            sigmaSlider.valueProperty().addListener((obs,o,n)-> {
-                propagation.getParams().setSigma(n.doubleValue());
-                if (sigmaLabel !=null) sigmaLabel.setText(String.format("σ (incubation period/rate): %.2f",propagation.getParams().getSigma()));
-            });
-        }
-        if(xiSlider != null) {
-            xiSlider.setValue(propagation.getParams().getPropagationRate());
-            xiSlider.valueProperty().addListener((obs,o,n)-> {
-                propagation.getParams().setPropagationRate(n.doubleValue());
-                if (xiLabel !=null) xiLabel.setText(String.format("Xi (Waning imunity, SEIRS): %.2f",propagation.getParams().getPropagationRate()));
-            });
-        }
-
-        updateStatusUI();
         drawMap();
+        updateStatusUI();
     }
 
-    private void seedInitialInfection() {
-        // Find a cell inside Paris and infect it to start the simulation
-        for (int row = 0; row < parisGrid.getRows(); row++) {
-            for (int col = 0; col < parisGrid.getCols(); col++) {
-                Cell cell = parisGrid.getCell(row, col);
-                if (cell != null && cell.isInsideParis() && cell.getPopulation() > 0) {
-                    int pop = cell.getPopulation();
-                    // Start with ~5% infected
-                    int infected = Math.max(1, (int)(pop * 1));
-                    cell.setSeirData(new SEIRData(pop - infected, 0, infected, 0, 0));
-                    cell.updateState(cell.getInfectionRate());
-                    return; // seed only one cell
-                }
-            }
-        }
+    // -------------------------------------------------------------------------
+    // Sliders
+    // -------------------------------------------------------------------------
+
+    private void bindSliders() {
+        betaSlider.setValue(propagation.getParams().getBeta());
+        betaSlider.valueProperty().addListener((obs, o, n) -> {
+            propagation.getParams().setBeta(n.doubleValue());
+            betaLabel.setText(String.format("β (transmission): %.2f", n.doubleValue()));
+        });
+        betaLabel.setText(String.format("β (transmission): %.2f", propagation.getParams().getBeta()));
+
+        gammaSlider.setValue(propagation.getParams().getGamma());
+        gammaSlider.valueProperty().addListener((obs, o, n) -> {
+            propagation.getParams().setGamma(n.doubleValue());
+            gammaLabel.setText(String.format("γ (guérison): %.2f", n.doubleValue()));
+        });
+        gammaLabel.setText(String.format("γ (guérison): %.2f", propagation.getParams().getGamma()));
+
+        sigmaSlider.setValue(propagation.getParams().getSigma());
+        sigmaSlider.valueProperty().addListener((obs, o, n) -> {
+            propagation.getParams().setSigma(n.doubleValue());
+            sigmaLabel.setText(String.format("σ (incubation): %.2f", n.doubleValue()));
+        });
+        sigmaLabel.setText(String.format("σ (incubation): %.2f", propagation.getParams().getSigma()));
+
+        xiSlider.setValue(propagation.getParams().getXi());
+        xiSlider.valueProperty().addListener((obs, o, n) -> {
+            propagation.getParams().setXi(n.doubleValue());
+            xiLabel.setText(String.format("ξ (déclin d'immunité, SEIRS): %.2f", n.doubleValue()));
+        });
+        xiLabel.setText(String.format("ξ (déclin d'immunité, SEIRS): %.2f", propagation.getParams().getXi()));
+
+        mortalitySlider.setValue(propagation.getParams().getMortalityRate());
+        mortalitySlider.valueProperty().addListener((obs,o,n)->{
+            propagation.getParams().setMortalityRate(n.doubleValue());
+            mortalityLabel.setText(String.format("Taux de mortalité: %.2f", n.doubleValue()));
+        });
+        mortalityLabel.setText(String.format("Taux de mortalité: %.2f",propagation.getParams().getMortalityRate()));
+
+        propagationSlider.setValue(propagation.getParams().getPropagationRate());
+        propagationSlider.valueProperty().addListener((obs,o,n)->{
+            propagation.getParams().setPropagationRate(n.doubleValue());
+            propagationLabel.setText(String.format("Taux de propagation: %.2f", n.doubleValue()));
+        });
+        propagationLabel.setText(String.format("Taux de propagation: %.2f",propagation.getParams().getPropagationRate()));
     }
 
-    @FXML
-    public void onPlay() {
+    // -------------------------------------------------------------------------
+    // Simulation controls
+    // -------------------------------------------------------------------------
+
+    @FXML public void onPlay() {
         if (engine.getStatus() != SimStatus.RUNNING) {
-            // Start engine loop in background, refresh UI via Platform.runLater
             engine.play();
             startUIRefreshLoop();
         }
         updateStatusUI();
     }
 
-    @FXML
-    public void onPause() {
+    @FXML public void onPause() {
         engine.pause();
         updateStatusUI();
     }
 
-    @FXML
-    public void onStop() {
+    @FXML public void onStop() {
         engine.stop();
-        // Reset grid
         parisGrid = ParisGridFactory.createDefaultParisGrid();
         propagation = new Propagation(new SimulationParams(
             propagation.getParams().getBeta(),
@@ -144,13 +160,11 @@ public class ResearcherController {
             propagation.getParams().getMortalityRate()
         ));
         engine = new SimulationEngine(parisGrid, propagation);
-        seedInitialInfection();
         updateStatusUI();
         drawMap();
     }
 
-    @FXML
-    public void onStep() {
+    @FXML public void onStep() {
         if (engine.getStatus() != SimStatus.RUNNING) {
             engine.step();
             updateStatusUI();
@@ -159,30 +173,28 @@ public class ResearcherController {
     }
 
     private void startUIRefreshLoop() {
-        Thread refreshThread = new Thread(() -> {
+        Thread t = new Thread(() -> {
             while (engine.getStatus() == SimStatus.RUNNING) {
-                Platform.runLater(() -> {
-                    drawGrid();
-                    updateStatusUI();
-                });
+                Platform.runLater(() -> { drawGrid(); updateStatusUI(); });
                 try { Thread.sleep(520); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
             }
-            // Final refresh after stop/pause
             Platform.runLater(() -> { drawGrid(); updateStatusUI(); });
         });
-        refreshThread.setDaemon(true);
-        refreshThread.start();
+        t.setDaemon(true);
+        t.start();
     }
 
     private void updateStatusUI() {
-        if (stepLabel != null) stepLabel.setText("Étape: " + engine.getStepCount());
-        if (statusLabel != null) statusLabel.setText("Statut: " + engine.getStatus());
+        stepLabel.setText("Étape: " + engine.getStepCount());
+        statusLabel.setText("Statut: " + engine.getStatus());
     }
 
+    // -------------------------------------------------------------------------
+    // Drawing
+    // -------------------------------------------------------------------------
+
     private void drawMap() {
-        if (mapPane == null || mapImageView == null || districtLayer == null
-                || gridLayer == null || parisGrid == null) return;
-        if (mapPane.getWidth() <= 0 || mapPane.getHeight() <= 0) return;
+        if (mapPane == null || mapPane.getWidth() <= 0 || mapPane.getHeight() <= 0) return;
 
         double ratio = ParisGridFactory.MAP_WIDTH / ParisGridFactory.MAP_HEIGHT;
         canvasWidth = mapPane.getWidth();
@@ -207,7 +219,7 @@ public class ResearcherController {
     private void drawGrid() {
         gridLayer.getChildren().clear();
 
-        double cellWidth = canvasWidth / parisGrid.getCols();
+        double cellWidth  = canvasWidth  / parisGrid.getCols();
         double cellHeight = canvasHeight / parisGrid.getRows();
 
         for (int row = 0; row < parisGrid.getRows(); row++) {
@@ -219,7 +231,33 @@ public class ResearcherController {
                 rect.setStroke(Color.rgb(20, 20, 20, 0.22));
                 rect.setStrokeWidth(0.35);
                 rect.setFill(getColorFor(cell));
-                rect.setOnMouseClicked(event -> selectCell(cell, rect));
+                if(!cell.isAlive()){
+                    rect.setStrokeWidth(3);
+                    rect.setStroke(Color.rgb(255, 0, 0, 0.85));
+                }
+
+                // --- Cursor : clic simple pour sélectionner et afficher les infos ---
+                rect.setOnMouseClicked(event -> {
+                    if (cursorRadio.isSelected()) {
+                        selectCell(cell, rect);
+                    }
+                });
+
+                // --- Brush : peint la cellule au clic ET en faisant glisser ---
+                rect.setOnMousePressed(event -> {
+                    if (brushRadio.isSelected()) {
+                        paintCell(cell, rect);
+                    }
+                });
+                // --- Bucket / Cursor ---
+                rect.setOnMouseClicked(event -> {
+                    if (cursorRadio.isSelected()) {
+                        selectCell(cell, rect);
+                    } else if (bucketRadio.isSelected()) {
+                        bucketFill(cell);
+                    }
+                });
+
                 gridLayer.getChildren().add(rect);
             }
         }
@@ -227,25 +265,83 @@ public class ResearcherController {
         drawDistrictBordersOnCellEdges(cellWidth, cellHeight);
     }
 
+    // -------------------------------------------------------------------------
+    // Modes : Cursor / Brush / Bucket
+    // -------------------------------------------------------------------------
+
+    /** Cursor : affiche les infos SEIR de la cellule dans le panel gauche */
+    private void selectCell(Cell cell, Rectangle rect) {
+        SEIRData d = cell.getSeirData();
+        selectedCellLabel.setText(
+            cell.getCellId() + " | " + cell.getDistrictName()
+            + " | état: " + cell.getState()
+            + " | pop: " + cell.getPopulation()
+            + String.format(" | S:%.0f E:%.0f I:%.0f R:%.0f D:%.0f",
+                d.getSusceptible(), d.getExposed(), d.getInfected(), d.getRecovered(), d.getDead())
+        );
+    }
+
+    /** Brush : cycle HEALTHY→PARTIAL→INFECTED→CRITICAL sur la cellule sous le curseur */
+    private void paintCell(Cell cell, Rectangle rect) {
+        cell.setState(nextState(cell.getState()));
+        syncSeirToState(cell);
+        rect.setFill(getColorFor(cell));
+    }
+
+    /** Bucket : applique le prochain état à toutes les cellules du même arrondissement */
+    private void bucketFill(Cell clicked) {
+        String districtId = clicked.getDistrictId();
+        if (districtId == null) return;
+        CellState target = nextState(clicked.getState());
+        for (int row = 0; row < parisGrid.getRows(); row++) {
+            for (int col = 0; col < parisGrid.getCols(); col++) {
+                Cell cell = parisGrid.getCell(row, col);
+                if (cell != null && cell.isInsideParis() && districtId.equals(cell.getDistrictId())) {
+                    cell.setState(target);
+                    syncSeirToState(cell);
+                }
+            }
+        }
+        drawGrid(); // redessine tout l'arrondissement d'un coup
+    }
+
+    /**
+     * Synchronise les données SEIR avec l'état visuel posé manuellement.
+     * Permet que la simulation démarre cohérente même après un dessin.
+     */
+    private void syncSeirToState(Cell cell) {
+        int pop = cell.getPopulation();
+        if (pop <= 0) return;
+        switch (cell.getState()) {
+            case HEALTHY:  cell.setSeirData(new SEIRData(pop, 0, 0, 0, 0)); break;
+            case PARTIAL:  cell.setSeirData(new SEIRData((int)(pop*0.8), (int)(pop*0.2), 0, 0, 0)); break;
+            case INFECTED: cell.setSeirData(new SEIRData((int)(pop*0.6), 0, (int)(pop*0.4), 0, 0)); break;
+            case CRITICAL: cell.setSeirData(new SEIRData((int)(pop*0.3), 0, (int)(pop*0.6), (int)(pop*0.1), 0)); break;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Borders
+    // -------------------------------------------------------------------------
+
     private void drawDistrictBordersOnCellEdges(double cellWidth, double cellHeight) {
         for (int row = 0; row < parisGrid.getRows(); row++) {
             for (int col = 0; col < parisGrid.getCols(); col++) {
                 Cell cell = parisGrid.getCell(row, col);
                 if (cell == null || !cell.isInsideParis()) continue;
-
-                if (isDifferentDistrict(cell, row, col + 1)) addBorderLine((col+1)*cellWidth, row*cellHeight, (col+1)*cellWidth, (row+1)*cellHeight);
-                if (isDifferentDistrict(cell, row + 1, col)) addBorderLine(col*cellWidth, (row+1)*cellHeight, (col+1)*cellWidth, (row+1)*cellHeight);
-                if (isDifferentDistrict(cell, row, col - 1)) addBorderLine(col*cellWidth, row*cellHeight, col*cellWidth, (row+1)*cellHeight);
-                if (isDifferentDistrict(cell, row - 1, col)) addBorderLine(col*cellWidth, row*cellHeight, (col+1)*cellWidth, row*cellHeight);
+                if (isDifferentDistrict(cell, row, col + 1)) addBorderLine((col+1)*cellWidth, row*cellHeight,    (col+1)*cellWidth, (row+1)*cellHeight);
+                if (isDifferentDistrict(cell, row + 1, col)) addBorderLine(col*cellWidth,     (row+1)*cellHeight, (col+1)*cellWidth, (row+1)*cellHeight);
+                if (isDifferentDistrict(cell, row, col - 1)) addBorderLine(col*cellWidth,     row*cellHeight,     col*cellWidth,     (row+1)*cellHeight);
+                if (isDifferentDistrict(cell, row - 1, col)) addBorderLine(col*cellWidth,     row*cellHeight,     (col+1)*cellWidth, row*cellHeight);
             }
         }
     }
 
     private boolean isDifferentDistrict(Cell cell, int nRow, int nCol) {
         if (nRow < 0 || nRow >= parisGrid.getRows() || nCol < 0 || nCol >= parisGrid.getCols()) return true;
-        Cell neighbor = parisGrid.getCell(nRow, nCol);
-        if (neighbor == null || !neighbor.isInsideParis()) return true;
-        String cd = cell.getDistrictId(), nd = neighbor.getDistrictId();
+        Cell n = parisGrid.getCell(nRow, nCol);
+        if (n == null || !n.isInsideParis()) return true;
+        String cd = cell.getDistrictId(), nd = n.getDistrictId();
         return cd != null && nd != null && !cd.equals(nd);
     }
 
@@ -257,24 +353,23 @@ public class ResearcherController {
         gridLayer.getChildren().add(line);
     }
 
-    private void selectCell(Cell cell, Rectangle rect) {
-        if (!cell.isInsideParis()) return;
-        SEIRData d = cell.getSeirData();
-        selectedCellLabel.setText(
-            cell.getCellId() + " | " + cell.getDistrictName()
-            + " | état: " + cell.getState()
-            + " | pop: " + cell.getPopulation()
-            + String.format(" | S:%.0f E:%.0f I:%.0f R:%.0f D:%.0f",
-                d.getSusceptible(), d.getExposed(), d.getInfected(), d.getRecovered(), d.getDead())
-        );
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    private CellState nextState(CellState state) {
+        if (state == CellState.HEALTHY)  return CellState.PARTIAL;
+        if (state == CellState.PARTIAL)  return CellState.INFECTED;
+        if (state == CellState.INFECTED) return CellState.CRITICAL;
+        return CellState.HEALTHY;
     }
 
     private Color getColorFor(Cell cell) {
         switch (cell.getState()) {
-            case HEALTHY:  return Color.rgb(89, 180, 90, 0.28);
-            case PARTIAL:  return Color.rgb(255, 193, 7, 0.60);
-            case INFECTED: return Color.rgb(220, 53, 69, 0.72);
-            case CRITICAL: return Color.rgb(33, 150, 243, 0.65);
+            case HEALTHY:  return Color.rgb(89,  180, 90,  0.28);
+            case PARTIAL:  return Color.rgb(255, 193, 7,   0.60);
+            case INFECTED: return Color.rgb(220, 53,  69,  0.72);
+            case CRITICAL: return Color.rgb(0,   0,   0,   0.60);
             default:       return Color.rgb(180, 180, 180, 0.30);
         }
     }

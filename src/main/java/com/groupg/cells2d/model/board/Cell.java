@@ -24,6 +24,7 @@ public class Cell{
     private boolean insideParis;
      private String districtId;
     private String districtName;
+    private boolean isAlive;
 
     public Cell(String cellId, int population, int row, int col) {
         if(population < 0) {
@@ -35,6 +36,7 @@ public class Cell{
         this.col = col;
         this.state = CellState.HEALTHY;
         this.seirData = new SEIRData(population);
+        this.isAlive = true;
     }
 
     public Cell(String cellId, int population, CellState state, SEIRData seirData, int row , int col) {
@@ -137,6 +139,13 @@ public class Cell{
         this.state = state;
     }
 
+    public boolean isAlive() {
+        return isAlive;
+    }
+    public void setAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
     public SEIRData getSeirData() {
         return seirData;
     }
@@ -181,6 +190,12 @@ public class Cell{
             setState(CellState.INFECTED);
         } else {
             setState(CellState.CRITICAL);
+        }
+        if(this.population-this.seirData.getDead()<= 100){
+            this.isAlive = false;
+        }
+        else{
+            this.isAlive = true;
         }
     }
 }
