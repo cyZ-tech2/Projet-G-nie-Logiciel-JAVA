@@ -16,7 +16,6 @@ import com.groupg.cells2d.model.enums.SimStatus;
 import com.groupg.cells2d.stats.DistrictSnapshot;
 import com.groupg.cells2d.stats.Snapshot;
 import com.groupg.cells2d.stats.Statistics;
-import com.groupg.cells2d.model.board.ParisGridFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -26,7 +25,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -35,7 +33,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import com.groupg.cells2d.stats.DistrictSnapshot;
 import com.groupg.cells2d.data.SaveManager;
 import javafx.stage.FileChooser;
 import java.io.File;
@@ -45,7 +42,6 @@ import javafx.scene.image.WritableImage;
 import javafx.stage.DirectoryChooser;
 
 import javax.imageio.ImageIO;
-import java.io.File;
 import java.io.PrintWriter;
 public class ResearcherController {
 
@@ -904,7 +900,7 @@ public class ResearcherController {
         WebView webView = new WebView();
 
         String aboutPage = getClass()
-                .getResource("/com/groupg/cells2d/view/about.html")
+                .getResource("/com.groupg.cells2d.controller/about.html")
                 .toExternalForm();
 
         webView.getEngine().load(aboutPage);

@@ -99,7 +99,7 @@ public class SimulationEngine implements Serializable {
             while (this.status == SimStatus.RUNNING) {
                 step();
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
