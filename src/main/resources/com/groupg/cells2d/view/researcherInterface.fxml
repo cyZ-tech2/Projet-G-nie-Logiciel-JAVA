@@ -26,10 +26,10 @@
         <menus>
          <Menu mnemonicParsing="false" text="File">
             <items>
-               <MenuItem mnemonicParsing="false" text="New" />
+               <MenuItem mnemonicParsing="false" onAction="#onNewSimulation" text="New" />
                <MenuItem mnemonicParsing="false" onAction="#onLoadSimulation" text="Open" />
                <MenuItem mnemonicParsing="false" onAction="#onSaveSimulation" text="Save" />
-               <MenuItem mnemonicParsing="false" text="Close" />
+               <MenuItem mnemonicParsing="false" onAction="#onCloseApplication" text="Close" />
             </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Simulation">
@@ -41,7 +41,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="About" onAction="#onAbout" />
             </items>
           </Menu>
         </menus>

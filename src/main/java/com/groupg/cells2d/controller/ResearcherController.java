@@ -39,7 +39,7 @@ import com.groupg.cells2d.stats.DistrictSnapshot;
 import com.groupg.cells2d.data.SaveManager;
 import javafx.stage.FileChooser;
 import java.io.File;
-import javafx.scene.control.Alert;
+import javafx.scene.web.WebView;
 
 public class ResearcherController {
 
@@ -864,5 +864,48 @@ public class ResearcherController {
             e.printStackTrace();
             statusLabel.setText("Load error");
         }
+    }
+
+
+    /**
+     * Resets the current simulation and creates a new empty simulation.
+     */
+    @FXML
+    public void onNewSimulation() {
+        onStop();
+    }
+
+    /**
+     * Closes the current application window.
+     */
+    @FXML
+    public void onCloseApplication() {
+        try {
+            engine.pause();
+            mapPane.getScene().getWindow().hide();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusLabel.setText("Close error");
+        }
+    }
+
+    /**
+     * Displays the About page in a local web view.
+     */
+    @FXML
+    public void onAbout() {
+        WebView webView = new WebView();
+
+        String aboutPage = getClass()
+                .getResource("/com/groupg/cells2d/view/about.html")
+                .toExternalForm();
+
+        webView.getEngine().load(aboutPage);
+
+        Stage stage = new Stage();
+        stage.setTitle("About Cells2D");
+        stage.setScene(new Scene(webView, 700, 500));
+        stage.show();
     }
 }
