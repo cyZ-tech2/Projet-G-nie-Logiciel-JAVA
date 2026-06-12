@@ -22,6 +22,7 @@ public class Statistics {
         int partial = 0;
         int infected = 0;
         int critical = 0;
+        int recovered = 0;
         int total = 0;
 
         double susceptiblePopulation = 0;
@@ -64,6 +65,9 @@ public class Statistics {
                     case CRITICAL:
                         critical++;
                         break;
+                    case RECOVERED:
+                        recovered++;
+                        break;
                 }
             }
         }
@@ -76,7 +80,7 @@ public class Statistics {
 
         return new Snapshot(step,total,healthy,partial,infected,critical,
             susceptiblePopulation,exposedPopulation,infectedPopulation,
-                recoveredPopulation,deadPopulation,totalPopulation );        
+                recoveredPopulation,deadPopulation,totalPopulation,recovered );
     }
 
     /**
@@ -120,6 +124,9 @@ public class Statistics {
                         break;
                     case CRITICAL:
                         snapshot.addCriticalCell();
+                        break;
+                    case RECOVERED:
+                        snapshot.addRecoveredCell();
                         break;
                 }
 

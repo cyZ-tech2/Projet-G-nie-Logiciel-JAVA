@@ -14,6 +14,7 @@ public class DistrictSnapshot {
     private int partialCells;
     private int infectedCells;
     private int criticalCells;
+    private int recoveredCells;
 
     private double susceptiblePopulation;
     private double exposedPopulation;
@@ -44,6 +45,10 @@ public class DistrictSnapshot {
 
     public void addCriticalCell() {
         criticalCells++;
+        totalCells++;
+    }
+    public void addRecoveredCell() {
+        recoveredCells++;
         totalCells++;
     }
 
@@ -92,6 +97,7 @@ public class DistrictSnapshot {
     public int getCriticalCells() {
         return criticalCells;
     }
+    public int getRecoveredCells() {return recoveredCells;}
 
     public double getSusceptiblePopulation() {
         return susceptiblePopulation;
@@ -129,4 +135,6 @@ public class DistrictSnapshot {
         double totalPopulation = getTotalPopulation();
         return totalPopulation == 0 ? 0 : deadPopulation * 100.0 / totalPopulation;
     }
+
+
 }

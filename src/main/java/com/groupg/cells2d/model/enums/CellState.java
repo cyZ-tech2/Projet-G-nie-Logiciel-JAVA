@@ -4,5 +4,6 @@ public enum CellState {
     HEALTHY,
     PARTIAL,
     INFECTED,
-    CRITICAL
+    CRITICAL,
+    RECOVERED
 }

@@ -185,7 +185,12 @@ public class Cell implements Serializable {
      */
     public void updateState(double infectionRate){
         if(infectionRate < 0.10){
-            setState(CellState.HEALTHY);
+            if(seirData.getRecovered()>this.population/2){
+                setState(CellState.RECOVERED);
+            }
+            else {
+                setState(CellState.HEALTHY);
+            }
         } else if(infectionRate < 0.30){
             setState(CellState.PARTIAL);
         } else if(infectionRate < 0.60){

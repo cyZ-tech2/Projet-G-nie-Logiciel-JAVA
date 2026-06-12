@@ -16,6 +16,7 @@ import com.groupg.cells2d.model.enums.SimStatus;
 import com.groupg.cells2d.stats.DistrictSnapshot;
 import com.groupg.cells2d.stats.Snapshot;
 import com.groupg.cells2d.stats.Statistics;
+import javafx.animation.FillTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -40,6 +41,7 @@ import javafx.scene.web.WebView;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.WritableImage;
 import javafx.stage.DirectoryChooser;
+import javafx.util.Duration;
 
 import javax.imageio.ImageIO;
 import java.io.PrintWriter;
@@ -83,6 +85,8 @@ public class ResearcherController {
     @FXML private Label xiLabel;
     @FXML private Label statsLabel;
     @FXML private Label speedLabel;
+
+
 
     // --- State ---
     private Grid parisGrid;
@@ -284,12 +288,14 @@ public class ResearcherController {
                 if (cell == null || !cell.isInsideParis()) continue;
 
                 Rectangle rect = new Rectangle(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
+
                 rect.setStroke(Color.rgb(20, 20, 20, 0.22));
                 rect.setStrokeWidth(0.35);
                 rect.setFill(getColorFor(cell));
                 if(!cell.isAlive()){
                     rect.setStrokeWidth(3);
                     rect.setStroke(Color.rgb(255, 0, 0, 0.85));
+
                 }
 
                 // --- Cursor : clic simple pour sélectionner et afficher les infos ---
@@ -340,6 +346,7 @@ public class ResearcherController {
     /** Brush : cycle HEALTHY→PARTIAL→INFECTED→CRITICAL sur la cellule sous le curseur */
     private void paintCell(Cell cell, Rectangle rect) {
         cell.setState(nextState(cell.getState()));
+
         syncSeirToState(cell);
         rect.setFill(getColorFor(cell));
     }
@@ -417,6 +424,7 @@ public class ResearcherController {
         if (state == CellState.HEALTHY)  return CellState.PARTIAL;
         if (state == CellState.PARTIAL)  return CellState.INFECTED;
         if (state == CellState.INFECTED) return CellState.CRITICAL;
+        if (state == CellState.CRITICAL) return CellState.RECOVERED;
         return CellState.HEALTHY;
     }
 
@@ -426,16 +434,19 @@ public class ResearcherController {
             case PARTIAL:  return Color.rgb(255, 193, 7,   0.60);
             case INFECTED: return Color.rgb(220, 53,  69,  0.72);
             case CRITICAL: return Color.rgb(0,   0,   0,   0.60);
+            case RECOVERED: return Color.rgb(89, 90, 210, 0.45);
             default:       return Color.rgb(180, 180, 180, 0.30);
         }
     }
 
     private void updateStatisticsUI(Snapshot stats) {
         statsLabel.setText(
-                "Healthy : " + stats.getHealthyCells()
+                "Cellules :"+
+                "\nHealthy : " + stats.getHealthyCells()
                 + "\nPartial : " + stats.getPartialCells()
                 + "\nInfected : " + stats.getInfectedCells()
                 + "\nCritical : " + stats.getCriticalCells()
+                + "\nRecovered :" + stats.getRecoveredCells()
                 + "\nTotal : " + stats.getTotalCells()
                 + "\n\nPopulation"
                 + "\nTotal pop : " + String.format("%.0f", stats.getTotalPopulation())
@@ -492,6 +503,7 @@ public class ResearcherController {
         CheckBox thirdCheck = new CheckBox("Infected");
         CheckBox fourthCheck = new CheckBox("Critical");
         CheckBox fifthCheck = new CheckBox("Dead");
+        CheckBox sixthCheck = new CheckBox("Recovered");
 
         fifthCheck.setVisible(false);
         fifthCheck.setManaged(false);
@@ -501,6 +513,7 @@ public class ResearcherController {
         thirdCheck.setSelected(true);
         fourthCheck.setSelected(true);
         fifthCheck.setSelected(true);
+        sixthCheck.setSelected(true);
 
         Button updateButton = new Button("Update chart");
 
@@ -519,6 +532,7 @@ public class ResearcherController {
                 thirdCheck.setText("Infected");
                 fourthCheck.setText("Recovered");
                 fifthCheck.setText("Dead");
+                sixthCheck.setText("Recovered");
 
                 fifthCheck.setVisible(true);
                 fifthCheck.setManaged(true);
@@ -538,6 +552,9 @@ public class ResearcherController {
                 if (fifthCheck.isSelected()) {
                     chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Dead", "dead"));
                 }
+                if (sixthCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Recovered", "recovered"));
+                }
             } else {
                 yAxis.setLabel("Nombre de cellules");
                 chart.setTitle("Évolution des cellules");
@@ -546,6 +563,7 @@ public class ResearcherController {
                 secondCheck.setText("Partial");
                 thirdCheck.setText("Infected");
                 fourthCheck.setText("Critical");
+                sixthCheck.setText("Recovered");
 
                 fifthCheck.setVisible(false);
                 fifthCheck.setManaged(false);
@@ -562,6 +580,9 @@ public class ResearcherController {
                 if (fourthCheck.isSelected()) {
                     chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Critical", "critical"));
                 }
+                if (sixthCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Recovered", "recovered"));
+                }
             }
 
             updatePercentageLabel(percentageLabel, selectedDistrict, selectedStatType);
@@ -574,6 +595,7 @@ public class ResearcherController {
         thirdCheck.setOnAction(event -> updateButton.fire());
         fourthCheck.setOnAction(event -> updateButton.fire());
         fifthCheck.setOnAction(event -> updateButton.fire());
+        sixthCheck.setOnAction(event -> updateButton.fire());
 
         HBox checkBoxBox = new HBox(
                 12,
@@ -586,6 +608,7 @@ public class ResearcherController {
                 thirdCheck,
                 fourthCheck,
                 fifthCheck,
+                sixthCheck,
                 updateButton
         );
         checkBoxBox.setStyle("-fx-padding: 10; -fx-alignment: center-left;");
@@ -685,6 +708,8 @@ public class ResearcherController {
                 return snapshot.getInfectedPopulation();
             case "critical":
                 return snapshot.getDeadPopulation();
+            case "recovered":
+                return snapshot.getRecoveredPopulation();
             default:
                 return 0;
         }
@@ -705,6 +730,8 @@ public class ResearcherController {
                     return snapshot.getInfectedCells();
                 case "critical":
                     return snapshot.getCriticalCells();
+                case "recovered":
+                    return snapshot.getRecoveredCells();
                 default:
                     return 0;
             }
@@ -738,11 +765,12 @@ public class ResearcherController {
             if ("Cellules".equals(selectedStatType)) {
                 percentageLabel.setText(
                         String.format(
-                                "Global - Cellules | Healthy: %.2f%% | Partial: %.2f%% | Infected: %.2f%% | Critical: %.2f%%",
+                                "Global - Cellules | Healthy: %.2f%% | Partial: %.2f%% | Infected: %.2f%% | Critical: %.2f%% | Recovered: %.2f%% ",
                                 last.getHealthyCellPercentage(),
                                 last.getPartialCellPercentage(),
                                 last.getInfectedCellPercentage(),
-                                last.getCriticalCellPercentage()
+                                last.getCriticalCellPercentage(),
+                                last.getRecoveredCellPercentage()
                         )
                 );
             } else {
@@ -769,12 +797,13 @@ public class ResearcherController {
             if ("Cellules".equals(selectedStatType)) {
                 percentageLabel.setText(
                         String.format(
-                                "District %s - Cellules | Healthy: %.2f%% | Partial: %.2f%% | Infected: %.2f%% | Critical: %.2f%%",
+                                "Global - Cellules | Healthy: %.2f%% | Partial: %.2f%% | Infected: %.2f%% | Critical: %.2f%% | Recovered: %.2f%% ",
                                 selectedDistrict,
                                 percent(last.getHealthyCells(), last.getTotalCells()),
                                 percent(last.getPartialCells(), last.getTotalCells()),
                                 percent(last.getInfectedCells(), last.getTotalCells()),
-                                percent(last.getCriticalCells(), last.getTotalCells())
+                                percent(last.getCriticalCells(), last.getTotalCells()),
+                                percent(last.getRecoveredCells(),last.getTotalCells())
                         )
                 );
             } else {

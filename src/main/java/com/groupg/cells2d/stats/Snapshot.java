@@ -11,6 +11,7 @@ public class Snapshot {
     private final int infectedCells;
     private final int criticalCells;
     private final int partialCells;
+    private final int recoveredCells;
 
     private final double susceptiblePopulation;
     private final double exposedPopulation;
@@ -22,15 +23,16 @@ public class Snapshot {
     public Snapshot(
             int step, int totalCells, int healthyCells,
             int partialCells, int infectedCells, int criticalCells,
-            double susceptiblePopulation ,double exposedPopulation,
+            double susceptiblePopulation , double exposedPopulation,
             double infectedPopulation, double recoveredPopulation,
-            double deadPopulation,double totalPopulation) {
+            double deadPopulation, double totalPopulation,int recoveredCells) {
         this.step = step;
         this.totalCells = totalCells;
         this.healthyCells = healthyCells;
         this.partialCells = partialCells;
         this.infectedCells = infectedCells;
         this.criticalCells = criticalCells;
+        this.recoveredCells = recoveredCells;
         this.susceptiblePopulation = susceptiblePopulation;
         this.exposedPopulation = exposedPopulation;
         this.infectedPopulation = infectedPopulation;
@@ -59,6 +61,7 @@ public class Snapshot {
     public int getCriticalCells(){
         return criticalCells;
     }
+    public int getRecoveredCells(){return recoveredCells;}
     public double getInfectedCellPercentage() {
         if (totalCells == 0) {
             return 0;
@@ -85,6 +88,12 @@ public class Snapshot {
             return 0;
         }
         return (partialCells * 100.0) / totalCells;
+    }
+    public double getRecoveredCellPercentage() {
+        if (totalCells == 0) {
+            return 0;
+        }
+        return (recoveredCells * 100.0) / totalCells;
     }
 
     public double getSusceptiblePopulation() {
