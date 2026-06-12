@@ -39,6 +39,7 @@ import com.groupg.cells2d.stats.DistrictSnapshot;
 import com.groupg.cells2d.data.SaveManager;
 import javafx.stage.FileChooser;
 import java.io.File;
+import javafx.scene.control.Alert;
 
 public class ResearcherController {
 
@@ -814,8 +815,11 @@ public class ResearcherController {
                 }
                 //save simulation into the selected file
                 SaveManager.save(engine, path);
-                statusLabel.setText("Simulation saved successfully");
-            }
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Save");
+                alert.setHeaderText(null);
+                alert.setContentText("Simulation saved successfully");
+                alert.showAndWait();            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -849,7 +853,11 @@ public class ResearcherController {
                 updateStatusUI();
                 drawMap();
 
-                statusLabel.setText("Simulation loaded successfully");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Load");
+                alert.setHeaderText(null);
+                alert.setContentText("Simulation loaded successfully");
+                alert.showAndWait();
             }
 
         } catch (Exception e) {
