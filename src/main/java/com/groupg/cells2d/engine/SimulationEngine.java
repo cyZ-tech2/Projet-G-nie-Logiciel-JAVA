@@ -19,7 +19,7 @@ public class SimulationEngine implements Serializable {
     private  transient CellNeighborhood neighborhood; //on peut le reconstruire avec la grille
     private SimStatus status;
     private int stepCount;
-
+    private int stepDuration;
     private static final long serialVersionUID = 1L;
 
     /**
@@ -33,8 +33,12 @@ public class SimulationEngine implements Serializable {
         this.neighborhood=new CellNeighborhood(grid.getMap());
         this.status= SimStatus.IDLE;
         this.stepCount=0;
+        this.stepDuration=100;
     }
 
+    public int getStepDuration() {return stepDuration;}
+
+    public void setStepDuration(int stepDuration) {this.stepDuration = stepDuration;}
     /**
      * getter for status
      * @return status
@@ -99,7 +103,7 @@ public class SimulationEngine implements Serializable {
             while (this.status == SimStatus.RUNNING) {
                 step();
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(this.stepDuration);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }

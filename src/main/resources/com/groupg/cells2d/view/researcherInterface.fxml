@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TitledPane?>
@@ -18,7 +19,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ScrollPane?>
 
 <BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.groupg.cells2d.controller.ResearcherController">
    <top>
@@ -30,7 +30,7 @@
                <MenuItem mnemonicParsing="false" onAction="#onLoadSimulation" text="Open" />
                <MenuItem mnemonicParsing="false" onAction="#onSaveSimulation" text="Save" />
                <MenuItem mnemonicParsing="false" onAction="#onCloseApplication" text="Close" />
-               <MenuItem text="Export All" onAction="#onExportAll" />
+               <MenuItem onAction="#onExportAll" text="Export All" />
             </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Simulation">
@@ -42,7 +42,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" onAction="#onAbout" />
+              <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About" />
             </items>
           </Menu>
         </menus>
@@ -50,9 +50,9 @@
    </top>
 
    <left>
-      <ScrollPane fitToWidth="true"  hbarPolicy ="NEVER" vbarPolicy="AS_NEEDED" prefWidth="330.0" maxHeight="680" >
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="801.0" prefHeight="801.0" prefWidth="330.0" vbarPolicy="AS_NEEDED">
          <content>   
-            <VBox prefWidth="310.0" spacing="10.0" >
+            <VBox prefHeight="798.0" prefWidth="328.0" spacing="10.0">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
@@ -85,18 +85,19 @@
                         <Button fx:id="btnStep" onAction="#onStep" prefWidth="70" text="→ Step" />
                      </children>
                   </HBox>
+                  <Label fx:id="speedLabel" text="Vitesse:" />
+                  <Slider fx:id="speedSlider" max="1000.0" min="50.0" showTickMarks="true" />
 
                   <!-- Status info -->
-                  <Label fx:id="stepLabel"   text="Étape: 0"       style="-fx-font-size: 12;"/>
-                  <Label fx:id="statusLabel" text="Statut: IDLE"   style="-fx-font-size: 12;"/>
+                  <Label fx:id="stepLabel" style="-fx-font-size: 12;" text="Étape: 0" />
+                  <Label fx:id="statusLabel" style="-fx-font-size: 12;" text="Statut: IDLE" />
 
                   <!--Statistics-->
-                  <Label text="Statistiques"
-                  style="-fx-font-weight: bold; -fx-font-size: 13;" />
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Statistiques" />
 
-                  <Label fx:id="statsLabel" wrapText="true" prefWidth="280.0"/>
+                  <Label fx:id="statsLabel" prefWidth="280.0" wrapText="true" />
                   <Separator prefWidth="280.0" />
-                  <Button text=" Graphiques" onAction="#onShowStatisticsCharts" prefWidth="280.0"/>
+                  <Button onAction="#onShowStatisticsCharts" prefWidth="280.0" text=" Graphiques" />
 
                   <Accordion>
                   <panes>

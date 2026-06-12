@@ -74,6 +74,7 @@ public class ResearcherController {
     @FXML private Slider xiSlider;
     @FXML private Slider mortalitySlider;
     @FXML private Slider propagationSlider;
+    @FXML private Slider speedSlider;
     @FXML private Label mortalityLabel;
     @FXML private Label propagationLabel;
     @FXML private Label betaLabel;
@@ -81,6 +82,7 @@ public class ResearcherController {
     @FXML private Label sigmaLabel;
     @FXML private Label xiLabel;
     @FXML private Label statsLabel;
+    @FXML private Label speedLabel;
 
     // --- State ---
     private Grid parisGrid;
@@ -88,6 +90,7 @@ public class ResearcherController {
     private Propagation propagation;
     private double canvasWidth;
     private double canvasHeight;
+    private int speed;
     
     //---Satistics--
     private final List<Snapshot> statisticHistory = new ArrayList<>();
@@ -157,6 +160,13 @@ public class ResearcherController {
             propagationLabel.setText(String.format("Taux de propagation: %.2f", n.doubleValue()));
         });
         propagationLabel.setText(String.format("Taux de propagation: %.2f",propagation.getParams().getPropagationRate()));
+
+        speedSlider.setValue(engine.getStepDuration());
+        speedSlider.valueProperty().addListener((obs,o,n)->{
+            engine.setStepDuration(n.intValue());
+            speedLabel.setText(String.format("Vitesse: %d",n.intValue()));
+        });
+        speedLabel.setText(String.format("Vitesse: %d",engine.getStepDuration()));
     }
 
     // -------------------------------------------------------------------------
