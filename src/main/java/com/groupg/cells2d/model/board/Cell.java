@@ -1,6 +1,7 @@
 package com.groupg.cells2d.model.board;
 import com.groupg.cells2d.model.enums.CellState;
 import com.groupg.cells2d.model.exceptions.InvalidPopulationException;
+import java.io.Serializable;
 /**
  * Represents a simulation cell inside the epidemic grid.
  *
@@ -14,7 +15,7 @@ import com.groupg.cells2d.model.exceptions.InvalidPopulationException;
  * parameters and may interact with neighboring cells.
  * </p>
  */
-public class Cell{
+public class Cell implements Serializable {
     private String cellId;
     private int population;
     private CellState state; //A revoir car peut etre incoherent avec seirDATA
@@ -22,9 +23,10 @@ public class Cell{
     private int row;
     private int col; 
     private boolean insideParis;
-     private String districtId;
+    private String districtId;
     private String districtName;
     private boolean isAlive;
+    private static final long serialVersionUID = 1L;
 
     public Cell(String cellId, int population, int row, int col) {
         if(population < 0) {

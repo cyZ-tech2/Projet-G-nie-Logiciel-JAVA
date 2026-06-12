@@ -2,15 +2,16 @@ package com.groupg.cells2d.model.board;
 import java.util.ArrayList;
 import java.util.List;
 import com.groupg.cells2d.model.exceptions.InvalidGridCoordinatesException;
-
+import java.io.Serializable;
 /**
  * Represents the simulation grid composed of a 2D array of cells.
  * It manages the spatial structure and relations between cells.
  */
-public class Grid {
+public class Grid implements Serializable {
     private Cell[][] map; //Map <coordi, Cell>
     private int rows;
     private int cols;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new Grid with the specified dimensions.

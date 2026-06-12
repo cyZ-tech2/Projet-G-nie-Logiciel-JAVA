@@ -4,14 +4,16 @@ import com.groupg.cells2d.model.board.Cell;
 import com.groupg.cells2d.model.board.SEIRData;
 import com.groupg.cells2d.model.board.SimulationParams;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * takes the parameters of SEIR simulation from SimulationParams from model and applies the propagation on a cell
  */
 
-public class Propagation{
+public class Propagation implements Serializable{
     private SimulationParams params;
+    private static final long serialVersionUID = 1L;
 
     /**
      * constructor for Propagation for standard propagation

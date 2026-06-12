@@ -1,5 +1,7 @@
 package com.groupg.cells2d.model.board;
 
+import java.io.Serializable;
+
 import com.groupg.cells2d.model.exceptions.InvalidPopulationException;
 import com.groupg.cells2d.model.exceptions.InvalidSEIRStateException;
 
@@ -16,13 +18,14 @@ import com.groupg.cells2d.model.exceptions.InvalidSEIRStateException;
  * This class is used to simulate the evolution
  * of a disease inside a population cell.
  */
-public class SEIRData {
+public class SEIRData implements Serializable {
 
     private double susceptible;
     private double exposed;
     private double infected;
     private double recovered;
     private double dead;
+    private static final long serialVersionUID = 1L;
 
     /* Initialize the seed */
     public SEIRData(double totalPopulation) {

@@ -1,17 +1,19 @@
 package com.groupg.cells2d.model.board;
 
+import java.io.Serializable;
+
 /**
  * parameters of our SEIR formules
  */
 
-public class SimulationParams{
+public class SimulationParams implements Serializable {
     private double beta;    //transmission
     private double sigma;   //incubation
     private double gamma;   //recovery
     private double propagationRate;     //propagation
     private double mortalityRate;   //mortality
     private double xi; //waning imunity(seirs)
-
+    private static final long serialVersionUID = 1L;
     /**
      * constructor for standard propagation
      */

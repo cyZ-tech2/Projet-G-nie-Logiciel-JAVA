@@ -6,18 +6,21 @@ import com.groupg.cells2d.model.board.SEIRData;
 import com.groupg.cells2d.model.enums.SimStatus;
 
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * the heart class, principal loop that changes the state of our simulation
  * manages play, pause, stop and step by step simulation
  */
 
-public class SimulationEngine{
+public class SimulationEngine implements Serializable {
     private Grid grid;
     private Propagation propagation;
-    private CellNeighborhood neighborhood;
+    private  transient CellNeighborhood neighborhood; //on peut le reconstruire avec la grille
     private SimStatus status;
     private int stepCount;
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * constructor of SimulationEngine
@@ -120,5 +123,12 @@ public class SimulationEngine{
     public void stop(){
         this.status= SimStatus.FINISHED;
         this.stepCount=0;
+    }
+
+    /**
+     *  rebuild the Neighbourhood 
+     */
+    public void rebuildNeighborhood() {
+        this.neighborhood = new CellNeighborhood(grid.getMap());
     }
 }

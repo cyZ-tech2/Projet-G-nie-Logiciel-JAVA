@@ -2,6 +2,7 @@ package com.groupg.cells2d.engine;
 
 import com.groupg.cells2d.model.board.Cell;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,9 @@ import java.util.List;
  * not in Cell cause any cell doesn't need to know it's neighbors and all th deed needs to be done in engine
  */
 
-public class CellNeighborhood{
+public class CellNeighborhood implements Serializable {
     private Cell[][] cells;
+    private static final long serialVersionUID = 1L;
 
     /**
      * constructor of our class CellNeighborhood

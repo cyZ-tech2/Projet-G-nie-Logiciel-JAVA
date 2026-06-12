@@ -36,7 +36,9 @@ import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import com.groupg.cells2d.stats.DistrictSnapshot;
-
+import com.groupg.cells2d.data.SaveManager;
+import javafx.stage.FileChooser;
+import java.io.File;
 
 public class ResearcherController {
 
@@ -780,5 +782,79 @@ public class ResearcherController {
 
     private double percent(double value, double total) {
         return total == 0 ? 0 : value * 100.0 / total;
+    }
+
+
+    /**
+     *  Saves the current simulation state into a binary file.
+     * A file chooser is displayed to let the user select
+     * the destination file
+     */
+    @FXML
+    public void onSaveSimulation() {
+        try {
+            //Pause simulation before saving 
+            engine.pause();
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save simulation");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Simulation files", "*.dat")
+            );
+
+            //Open save dialog
+            File file = fileChooser.showSaveDialog(mapPane.getScene().getWindow());
+
+            if (file != null) {
+                String path = file.getAbsolutePath();
+
+                // Automatically add .dat extension if missing
+                if (!path.toLowerCase().endsWith(".dat")) {
+                    path += ".dat";
+                }
+                //save simulation into the selected file
+                SaveManager.save(engine, path);
+                statusLabel.setText("Simulation saved successfully");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusLabel.setText("Save error");
+        }
+    }
+
+    /**
+     * Loads a previously saved simulation from a binary file 
+     * Simulation is restired 
+     * Interface is refreshed
+     */
+    @FXML
+    public void onLoadSimulation() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load simulation");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Simulation files", "*.dat")
+            );
+
+            //Open the file selection dialog
+            File file = fileChooser.showOpenDialog(mapPane.getScene().getWindow());
+
+            if (file != null) {
+                //Restore simulation from file 
+                engine = SaveManager.load(file.getAbsolutePath());
+                parisGrid = engine.getGrid();
+                // Refresh interface after loading 
+                updateStatistics();
+                updateStatusUI();
+                drawMap();
+
+                statusLabel.setText("Simulation loaded successfully");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusLabel.setText("Load error");
+        }
     }
 }

@@ -24,14 +24,14 @@
    <top>
       <MenuBar>
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+         <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="New" />
-              <MenuItem mnemonicParsing="false" text="Open" />
-              <MenuItem mnemonicParsing="false" text="Save" />
-              <MenuItem mnemonicParsing="false" text="Close" />
+               <MenuItem mnemonicParsing="false" text="New" />
+               <MenuItem mnemonicParsing="false" onAction="#onLoadSimulation" text="Open" />
+               <MenuItem mnemonicParsing="false" onAction="#onSaveSimulation" text="Save" />
+               <MenuItem mnemonicParsing="false" text="Close" />
             </items>
-          </Menu>
+            </Menu>
           <Menu mnemonicParsing="false" text="Simulation">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#onPlay" text="Start" />
