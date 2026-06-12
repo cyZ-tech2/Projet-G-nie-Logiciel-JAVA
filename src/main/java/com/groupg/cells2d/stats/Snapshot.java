@@ -12,20 +12,31 @@ public class Snapshot {
     private final int criticalCells;
     private final int partialCells;
 
+    private final double susceptiblePopulation;
+    private final double exposedPopulation;
+    private final double infectedPopulation;
+    private final double recoveredPopulation;
+    private final double deadPopulation;
+    private final double totalPopulation;
+
     public Snapshot(
-            int step,
-            int totalCells,
-            int healthyCells,
-            int partialCells,
-            int infectedCells,
-            int criticalCells
-    ) {
+            int step, int totalCells, int healthyCells,
+            int partialCells, int infectedCells, int criticalCells,
+            double susceptiblePopulation ,double exposedPopulation,
+            double infectedPopulation, double recoveredPopulation,
+            double deadPopulation,double totalPopulation) {
         this.step = step;
         this.totalCells = totalCells;
         this.healthyCells = healthyCells;
         this.partialCells = partialCells;
         this.infectedCells = infectedCells;
         this.criticalCells = criticalCells;
+        this.susceptiblePopulation = susceptiblePopulation;
+        this.exposedPopulation = exposedPopulation;
+        this.infectedPopulation = infectedPopulation;
+        this.recoveredPopulation = recoveredPopulation;
+        this.deadPopulation = deadPopulation;
+        this.totalPopulation = totalPopulation;
     }
 
 
@@ -74,6 +85,30 @@ public class Snapshot {
             return 0;
         }
         return (partialCells * 100.0) / totalCells;
+    }
+
+    public double getSusceptiblePopulation() {
+    return susceptiblePopulation;
+    }
+
+    public double getExposedPopulation() {
+        return exposedPopulation;
+    }
+
+    public double getInfectedPopulation() {
+        return infectedPopulation;
+    }
+
+    public double getRecoveredPopulation() {
+        return recoveredPopulation;
+    }
+
+    public double getDeadPopulation() {
+        return deadPopulation;
+    }
+
+    public double getTotalPopulation() {
+        return totalPopulation;
     }
 
 

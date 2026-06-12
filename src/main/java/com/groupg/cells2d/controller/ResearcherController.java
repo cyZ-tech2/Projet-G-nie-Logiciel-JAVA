@@ -2,6 +2,7 @@ package com.groupg.cells2d.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.groupg.cells2d.engine.Propagation;
 import com.groupg.cells2d.engine.SimulationEngine;
@@ -12,6 +13,7 @@ import com.groupg.cells2d.model.board.SimulationParams;
 import com.groupg.cells2d.model.board.ParisGridFactory;
 import com.groupg.cells2d.model.enums.CellState;
 import com.groupg.cells2d.model.enums.SimStatus;
+import com.groupg.cells2d.stats.DistrictSnapshot;
 import com.groupg.cells2d.stats.Snapshot;
 import com.groupg.cells2d.stats.Statistics;
 import com.groupg.cells2d.model.board.ParisGridFactory;
@@ -22,9 +24,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -34,9 +33,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import com.groupg.cells2d.stats.DistrictSnapshot;
+
 
 public class ResearcherController {
 
@@ -83,8 +83,11 @@ public class ResearcherController {
     private Propagation propagation;
     private double canvasWidth;
     private double canvasHeight;
+    
+    //---Satistics--
     private final List<Snapshot> statisticHistory = new ArrayList<>();
     private int lastRecordedStep = -1;
+    private final List<Map<String, DistrictSnapshot>> districtHistory = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -182,7 +185,7 @@ public class ResearcherController {
         statisticHistory.clear();
 
         updateStatistics();
-        seedInitialInfection();
+        //seedInitialInfection();
         
         updateStatusUI();
         drawMap();
@@ -202,12 +205,7 @@ public class ResearcherController {
         Thread t = new Thread(() -> {
             while (engine.getStatus() == SimStatus.RUNNING) {
                 Platform.runLater(() -> { drawGrid(); updateStatusUI(); });
-                Platform.runLater(() -> {
-                    Snapshot stats = Statistics.compute(parisGrid, engine.getStepCount());
-
-                    statisticHistory.add(stats);
-                    updateStatisticsUI(stats);
-
+                Platform.runLater(() -> {                  
                     updateStatistics();
                     drawGrid();
                     updateStatusUI();
@@ -424,12 +422,20 @@ public class ResearcherController {
                 + "\nInfected : " + stats.getInfectedCells()
                 + "\nCritical : " + stats.getCriticalCells()
                 + "\nTotal : " + stats.getTotalCells()
+                + "\n\nPopulation"
+                + "\nTotal pop : " + String.format("%.0f", stats.getTotalPopulation())
+                + "\nSusceptible : " + String.format("%.0f", stats.getSusceptiblePopulation())
+                + "\nExposed : " + String.format("%.0f", stats.getExposedPopulation())
+                + "\nInfected pop : " + String.format("%.0f", stats.getInfectedPopulation())
+                + "\nRecovered : " + String.format("%.0f", stats.getRecoveredPopulation())
+                + "\nDead : " + String.format("%.0f", stats.getDeadPopulation())
         );
     }
 
+   
     @FXML
-public void onShowStatisticsCharts() {
-    Stage stage = new Stage();
+    public void onShowStatisticsCharts() {
+        Stage stage = new Stage();
         stage.setTitle("Graphiques statistiques");
 
         NumberAxis xAxis = new NumberAxis();
@@ -444,85 +450,178 @@ public void onShowStatisticsCharts() {
         LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
         chart.setTitle("Évolution des cellules");
 
-        CheckBox healthyCheck = new CheckBox("Healthy");
-        CheckBox partialCheck = new CheckBox("Partial");
-        CheckBox infectedCheck = new CheckBox("Infected");
-        CheckBox criticalCheck = new CheckBox("Critical");
+        ComboBox<String> districtComboBox = new ComboBox<>();
+        districtComboBox.getItems().add("Global");
+        districtComboBox.setValue("Global");
+        districtComboBox.setPrefWidth(220);
 
-        if (!statisticHistory.isEmpty()) {
-            Snapshot last = statisticHistory.get(statisticHistory.size() - 1);
+        if (!districtHistory.isEmpty()) {
+            Map<String, DistrictSnapshot> lastStep =
+                    districtHistory.get(districtHistory.size() - 1);
 
-            percentageLabel.setText(
-                    String.format(
-                            "Healthy: %.2f%% | Partial: %.2f%% | Infected: %.2f%% | Critical: %.2f%%",
-                            last.getHealthyCellPercentage(),
-                            last.getPartialCellPercentage(),
-                            last.getInfectedCellPercentage(),
-                            last.getCriticalCellPercentage()
-                    )
-            );
-}
-        healthyCheck.setSelected(true);
-        partialCheck.setSelected(true);
-        infectedCheck.setSelected(true);
-        criticalCheck.setSelected(true);
+            lastStep.keySet().stream()
+                    .sorted((a, b) -> Integer.compare(
+                            Integer.parseInt(a),
+                            Integer.parseInt(b)
+                    ))
+                    .forEach(districtComboBox.getItems()::add);
+        }
+
+        ComboBox<String> statTypeComboBox = new ComboBox<>();
+        statTypeComboBox.getItems().addAll("Cellules", "Population");
+        statTypeComboBox.setValue("Cellules");
+        statTypeComboBox.setPrefWidth(140);
+
+        CheckBox firstCheck = new CheckBox("Healthy");
+        CheckBox secondCheck = new CheckBox("Partial");
+        CheckBox thirdCheck = new CheckBox("Infected");
+        CheckBox fourthCheck = new CheckBox("Critical");
+        CheckBox fifthCheck = new CheckBox("Dead");
+
+        fifthCheck.setVisible(false);
+        fifthCheck.setManaged(false);
+
+        firstCheck.setSelected(true);
+        secondCheck.setSelected(true);
+        thirdCheck.setSelected(true);
+        fourthCheck.setSelected(true);
+        fifthCheck.setSelected(true);
 
         Button updateButton = new Button("Update chart");
 
         updateButton.setOnAction(event -> {
             chart.getData().clear();
 
-            if (healthyCheck.isSelected()) {
-                chart.getData().add(createSeries("Healthy", "healthy"));
+            String selectedDistrict = districtComboBox.getValue();
+            String selectedStatType = statTypeComboBox.getValue();
+
+            if ("Population".equals(selectedStatType)) {
+                yAxis.setLabel("Population");
+                chart.setTitle("Évolution de la population");
+
+                firstCheck.setText("Susceptible");
+                secondCheck.setText("Exposed");
+                thirdCheck.setText("Infected");
+                fourthCheck.setText("Recovered");
+                fifthCheck.setText("Dead");
+
+                fifthCheck.setVisible(true);
+                fifthCheck.setManaged(true);
+
+                if (firstCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Susceptible", "healthy"));
+                }
+                if (secondCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Exposed", "partial"));
+                }
+                if (thirdCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Infected", "infected"));
+                }
+                if (fourthCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Recovered", "recovered"));
+                }
+                if (fifthCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Dead", "dead"));
+                }
+            } else {
+                yAxis.setLabel("Nombre de cellules");
+                chart.setTitle("Évolution des cellules");
+
+                firstCheck.setText("Healthy");
+                secondCheck.setText("Partial");
+                thirdCheck.setText("Infected");
+                fourthCheck.setText("Critical");
+
+                fifthCheck.setVisible(false);
+                fifthCheck.setManaged(false);
+
+                if (firstCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Healthy", "healthy"));
+                }
+                if (secondCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Partial", "partial"));
+                }
+                if (thirdCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Infected", "infected"));
+                }
+                if (fourthCheck.isSelected()) {
+                    chart.getData().add(createSeries(selectedDistrict, selectedStatType, "Critical", "critical"));
+                }
             }
-            if (partialCheck.isSelected()) {
-                chart.getData().add(createSeries("Partial", "partial"));
-            }
-            if (infectedCheck.isSelected()) {
-                chart.getData().add(createSeries("Infected", "infected"));
-            }
-            if (criticalCheck.isSelected()) {
-                chart.getData().add(createSeries("Critical", "critical"));
-            }
+
+            updatePercentageLabel(percentageLabel, selectedDistrict, selectedStatType);
         });
+
+        districtComboBox.setOnAction(event -> updateButton.fire());
+        statTypeComboBox.setOnAction(event -> updateButton.fire());
+        firstCheck.setOnAction(event -> updateButton.fire());
+        secondCheck.setOnAction(event -> updateButton.fire());
+        thirdCheck.setOnAction(event -> updateButton.fire());
+        fourthCheck.setOnAction(event -> updateButton.fire());
+        fifthCheck.setOnAction(event -> updateButton.fire());
+
+        HBox checkBoxBox = new HBox(
+                12,
+                new Label("Zone :"),
+                districtComboBox,
+                new Label("Stats :"),
+                statTypeComboBox,
+                firstCheck,
+                secondCheck,
+                thirdCheck,
+                fourthCheck,
+                fifthCheck,
+                updateButton
+        );
+        checkBoxBox.setStyle("-fx-padding: 10; -fx-alignment: center-left;");
+
+        VBox root = new VBox(10, percentageLabel, checkBoxBox, chart);
 
         updateButton.fire();
 
-        HBox checkBoxBox = new HBox(10, healthyCheck, partialCheck, infectedCheck, criticalCheck, updateButton);
-        VBox root = new VBox(10,percentageLabel, checkBoxBox, chart);
-
-        Scene scene = new Scene(root, 900, 600);
+        Scene scene = new Scene(root, 1000, 600);
         stage.setScene(scene);
         stage.show();
     }
 
-    private XYChart.Series<Number, Number> createSeries(String name, String type) {
+    private XYChart.Series<Number, Number> createSeries(
+        String selectedDistrict,
+        String selectedStatType,
+        String name,
+        String type ) {
+
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(name);
 
-        for (Snapshot snapshot : statisticHistory) {
-            int value = 0;
-
-            switch (type) {
-                case "healthy":
-                    value = snapshot.getHealthyCells();
-                    break;
-                case "partial":
-                    value = snapshot.getPartialCells();
-                    break;
-                case "infected":
-                    value = snapshot.getInfectedCells();
-                    break;
-                case "critical":
-                    value = snapshot.getCriticalCells();
-                    break;
+        if ("Global".equals(selectedDistrict)) {
+            for (Snapshot snapshot : statisticHistory) {
+                series.getData().add(
+                        new XYChart.Data<>(
+                                snapshot.getStep(),
+                                getGlobalValue(snapshot, selectedStatType, type)
+                        )
+                );
             }
+        } else {
+            for (Map<String, DistrictSnapshot> stepMap : districtHistory) {
+                DistrictSnapshot snapshot = stepMap.get(selectedDistrict);
 
-            series.getData().add(new XYChart.Data<>(snapshot.getStep(), value));
+                if (snapshot == null) {
+                    continue;
+                }
+
+                series.getData().add(
+                        new XYChart.Data<>(
+                                snapshot.getStep(),
+                                getDistrictValue(snapshot, selectedStatType, type)
+                        )
+                );
+            }
         }
 
         return series;
     }
+
     private void updateStatistics() {
          if (engine.getStepCount() == lastRecordedStep) {
             return;
@@ -531,9 +630,155 @@ public void onShowStatisticsCharts() {
         Snapshot stats = Statistics.compute(parisGrid, engine.getStepCount());
 
         statisticHistory.add(stats);
+        districtHistory.add(Statistics.computeByDistrict(parisGrid, engine.getStepCount()));
         updateStatisticsUI(stats);
 
         lastRecordedStep = engine.getStepCount();
     }
 
+   private double getGlobalValue(
+        Snapshot snapshot,
+        String selectedStatType,
+        String type) {
+
+        if ("Cellules".equals(selectedStatType)) {
+            switch (type) {
+                case "healthy":
+                    return snapshot.getHealthyCells();
+                case "partial":
+                    return snapshot.getPartialCells();
+                case "infected":
+                    return snapshot.getInfectedCells();
+                case "critical":
+                    return snapshot.getCriticalCells();
+                    case "recovered":
+                    return snapshot.getRecoveredPopulation();
+                case "dead":
+                    return snapshot.getDeadPopulation();
+                default:
+                    return 0;
+            }
+        }
+
+        // Population
+        switch (type) {
+            case "healthy":
+                return snapshot.getSusceptiblePopulation();
+            case "partial":
+                return snapshot.getExposedPopulation();
+            case "infected":
+                return snapshot.getInfectedPopulation();
+            case "critical":
+                return snapshot.getDeadPopulation();
+            default:
+                return 0;
+        }
+    }
+
+   private double getDistrictValue(
+        DistrictSnapshot snapshot,
+        String selectedStatType,
+        String type) {
+
+        if ("Cellules".equals(selectedStatType)) {
+            switch (type) {
+                case "healthy":
+                    return snapshot.getHealthyCells();
+                case "partial":
+                    return snapshot.getPartialCells();
+                case "infected":
+                    return snapshot.getInfectedCells();
+                case "critical":
+                    return snapshot.getCriticalCells();
+                default:
+                    return 0;
+            }
+        }
+
+        // Population
+        switch (type) {
+            case "healthy":
+                return snapshot.getSusceptiblePopulation();
+            case "partial":
+                return snapshot.getExposedPopulation();
+            case "infected":
+                return snapshot.getInfectedPopulation();
+            case "critical":
+                return snapshot.getDeadPopulation();
+            default:
+                return 0;
+        }
+    }
+
+    private void updatePercentageLabel(
+        Label percentageLabel,
+        String selectedDistrict,
+        String selectedStatType) {
+
+        if ("Global".equals(selectedDistrict)) {
+            if (statisticHistory.isEmpty()) return;
+
+            Snapshot last = statisticHistory.get(statisticHistory.size() - 1);
+
+            if ("Cellules".equals(selectedStatType)) {
+                percentageLabel.setText(
+                        String.format(
+                                "Global - Cellules | Healthy: %.2f%% | Partial: %.2f%% | Infected: %.2f%% | Critical: %.2f%%",
+                                last.getHealthyCellPercentage(),
+                                last.getPartialCellPercentage(),
+                                last.getInfectedCellPercentage(),
+                                last.getCriticalCellPercentage()
+                        )
+                );
+            } else {
+                percentageLabel.setText(
+                        String.format(
+                                "Global - Population | Susceptible: %.2f%% | Exposed: %.2f%% | Infected: %.2f%% | Recovered: %.2f%% | Dead: %.2f%%",
+                                percent(last.getSusceptiblePopulation(), last.getTotalPopulation()),
+                                percent(last.getExposedPopulation(), last.getTotalPopulation()),
+                                percent(last.getInfectedPopulation(), last.getTotalPopulation()),
+                                percent(last.getRecoveredPopulation(), last.getTotalPopulation()),
+                                percent(last.getDeadPopulation(), last.getTotalPopulation())
+                        )
+                );
+            }
+        } else {
+            if (districtHistory.isEmpty()) return;
+
+            Map<String, DistrictSnapshot> lastStep =
+                    districtHistory.get(districtHistory.size() - 1);
+
+            DistrictSnapshot last = lastStep.get(selectedDistrict);
+            if (last == null) return;
+
+            if ("Cellules".equals(selectedStatType)) {
+                percentageLabel.setText(
+                        String.format(
+                                "District %s - Cellules | Healthy: %.2f%% | Partial: %.2f%% | Infected: %.2f%% | Critical: %.2f%%",
+                                selectedDistrict,
+                                percent(last.getHealthyCells(), last.getTotalCells()),
+                                percent(last.getPartialCells(), last.getTotalCells()),
+                                percent(last.getInfectedCells(), last.getTotalCells()),
+                                percent(last.getCriticalCells(), last.getTotalCells())
+                        )
+                );
+            } else {
+                percentageLabel.setText(
+                        String.format(
+                                "District %s - Population | Susceptible: %.2f%% | Exposed: %.2f%% | Infected: %.2f%% | Recovered: %.2f%% | Dead: %.2f%%",
+                                selectedDistrict,
+                                percent(last.getSusceptiblePopulation(), last.getTotalPopulation()),
+                                percent(last.getExposedPopulation(), last.getTotalPopulation()),
+                                percent(last.getInfectedPopulation(), last.getTotalPopulation()),
+                                percent(last.getRecoveredPopulation(), last.getTotalPopulation()),
+                                percent(last.getDeadPopulation(), last.getTotalPopulation())
+                        )
+                );
+            }
+        }
+    }
+
+    private double percent(double value, double total) {
+        return total == 0 ? 0 : value * 100.0 / total;
+    }
 }

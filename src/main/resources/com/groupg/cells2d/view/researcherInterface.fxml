@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
 
 <BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.groupg.cells2d.controller.ResearcherController">
    <top>
@@ -48,126 +49,130 @@
    </top>
 
    <left>
-      <VBox prefWidth="310.0" spacing="10.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-         <children>
-            <HBox prefHeight="27.0" prefWidth="290.0" style="-fx-alignment: center;">
+      <ScrollPane fitToWidth="true" hbarPolicy ="NEVER" prefWidth="330.0">
+         <content>   
+            <VBox prefWidth="310.0" spacing="10.0" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
                <children>
-                  <RadioButton fx:id="cursorRadio" mnemonicParsing="false" selected="true" text="Cursor">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                     <toggleGroup>
-                        <ToggleGroup fx:id="mode" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="brushRadio" mnemonicParsing="false" text="Brush" toggleGroup="$mode">
-                     <padding>
-                        <Insets right="10.0" />
-                     </padding>
-                  </RadioButton>
-                  <RadioButton fx:id="bucketRadio" mnemonicParsing="false" text="Bucket" toggleGroup="$mode" />
-               </children>
-            </HBox>
-            <!-- Simulation controls -->
-            <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Contrôles" />
-            <HBox spacing="6.0">
-               <children>
-                  <Button fx:id="btnPlay" onAction="#onPlay" prefWidth="70" text="▶ Play" />
-                  <Button fx:id="btnPause" onAction="#onPause" prefWidth="70" text="⏸ Pause" />
-                  <Button fx:id="btnStop" onAction="#onStop" prefWidth="70" text="⏹ Stop" />
-                  <Button fx:id="btnStep" onAction="#onStep" prefWidth="70" text="→ Step" />
-               </children>
-            </HBox>
+                  <HBox prefHeight="27.0" prefWidth="290.0" style="-fx-alignment: center;">
+                     <children>
+                        <RadioButton fx:id="cursorRadio" mnemonicParsing="false" selected="true" text="Cursor">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="mode" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="brushRadio" mnemonicParsing="false" text="Brush" toggleGroup="$mode">
+                           <padding>
+                              <Insets right="10.0" />
+                           </padding>
+                        </RadioButton>
+                        <RadioButton fx:id="bucketRadio" mnemonicParsing="false" text="Bucket" toggleGroup="$mode" />
+                     </children>
+                  </HBox>
+                  <!-- Simulation controls -->
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Contrôles" />
+                  <HBox spacing="6.0">
+                     <children>
+                        <Button fx:id="btnPlay" onAction="#onPlay" prefWidth="70" text="▶ Play" />
+                        <Button fx:id="btnPause" onAction="#onPause" prefWidth="70" text="⏸ Pause" />
+                        <Button fx:id="btnStop" onAction="#onStop" prefWidth="70" text="⏹ Stop" />
+                        <Button fx:id="btnStep" onAction="#onStep" prefWidth="70" text="→ Step" />
+                     </children>
+                  </HBox>
 
-            <!-- Status info -->
-            <Label fx:id="stepLabel"   text="Étape: 0"       style="-fx-font-size: 12;"/>
-            <Label fx:id="statusLabel" text="Statut: IDLE"   style="-fx-font-size: 12;"/>
+                  <!-- Status info -->
+                  <Label fx:id="stepLabel"   text="Étape: 0"       style="-fx-font-size: 12;"/>
+                  <Label fx:id="statusLabel" text="Statut: IDLE"   style="-fx-font-size: 12;"/>
 
-            <!--Statistics-->
-            <Label text="Statistiques"
-            style="-fx-font-weight: bold; -fx-font-size: 13;" />
+                  <!--Statistics-->
+                  <Label text="Statistiques"
+                  style="-fx-font-weight: bold; -fx-font-size: 13;" />
 
-            <Label fx:id="statsLabel" wrapText="true" prefWidth="280.0"/>
-            <Separator prefWidth="280.0" />
-             <Button text="📊 Graphiques" onAction="#onShowStatisticsCharts" prefWidth="280.0"/>
+                  <Label fx:id="statsLabel" wrapText="true" prefWidth="280.0"/>
+                  <Separator prefWidth="280.0" />
+                  <Button text="📊 Graphiques" onAction="#onShowStatisticsCharts" prefWidth="280.0"/>
 
-             <Accordion>
-              <panes>
-                <TitledPane animated="false" text="Paramètres SEIR">
-                     <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
+                  <Accordion>
+                  <panes>
+                     <TitledPane animated="false" text="Paramètres SEIR">
+                           <content>
+                              <VBox prefHeight="200.0" prefWidth="100.0">
+                                 <children>
 
-                                                <Label fx:id="betaLabel" text="β (transmission): 0.30" />
-                              <Slider fx:id="betaSlider" max="1.0" min="0.0" prefWidth="280.0" showTickLabels="true" showTickMarks="true" value="0.3" />
+                                                      <Label fx:id="betaLabel" text="β (transmission): 0.30" />
+                                    <Slider fx:id="betaSlider" max="1.0" min="0.0" prefWidth="280.0" showTickLabels="true" showTickMarks="true" value="0.3" />
 
-                              <Label fx:id="gammaLabel" text="γ (guérison): 0.10" />
-                              <Slider fx:id="gammaSlider" max="0.5" min="0.0" prefWidth="280.0" showTickLabels="true" showTickMarks="true" value="0.1" />
-                              <Label fx:id="sigmaLabel" text="σ (incubation period/rate):" />
-                              <Slider fx:id="sigmaSlider" max="1.0" showTickLabels="true" showTickMarks="true" value="0.2" />
-                              <Label text="Xi (Waning imunity, SEIRS):" fx:id="xiLabel" />
-                              <Slider max="1.0" showTickLabels="true" showTickMarks="true" fx:id="xiSlider" />
-                              <Label fx:id="mortalityLabel" text="Taux de mortalité:" />
-                              <Slider fx:id="mortalitySlider" max="1.0" showTickLabels="true" showTickMarks="true" />
-                              <Label fx:id="propagationLabel" layoutX="20.0" layoutY="252.0" text="Taux de propagation (déplacement):" />
-                              <Slider fx:id="propagationSlider" layoutX="20.0" layoutY="270.0" max="1.0" showTickLabels="true" showTickMarks="true" />
-                           </children>
-                        </VBox>
-                     </content>
-                  </TitledPane>
-              </panes>
-            </Accordion>
-            <Separator prefWidth="200.0" />
-            <Label layoutX="20.0" layoutY="731.0" style="-fx-font-weight: bold;" text="Légende" />
-            <HBox prefHeight="18.0" prefWidth="457.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="6">
-                     <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(89,180,90,0.6);" />
-                     <Label text="Sain (HEALTHY)">
-                        <HBox.margin>
-                           <Insets right="5.0" />
-                        </HBox.margin>
-                     </Label>
+                                    <Label fx:id="gammaLabel" text="γ (guérison): 0.10" />
+                                    <Slider fx:id="gammaSlider" max="0.5" min="0.0" prefWidth="280.0" showTickLabels="true" showTickMarks="true" value="0.1" />
+                                    <Label fx:id="sigmaLabel" text="σ (incubation period/rate):" />
+                                    <Slider fx:id="sigmaSlider" max="1.0" showTickLabels="true" showTickMarks="true" value="0.2" />
+                                    <Label text="Xi (Waning imunity, SEIRS):" fx:id="xiLabel" />
+                                    <Slider max="1.0" showTickLabels="true" showTickMarks="true" fx:id="xiSlider" />
+                                    <Label fx:id="mortalityLabel" text="Taux de mortalité:" />
+                                    <Slider fx:id="mortalitySlider" max="1.0" showTickLabels="true" showTickMarks="true" />
+                                    <Label fx:id="propagationLabel" layoutX="20.0" layoutY="252.0" text="Taux de propagation (déplacement):" />
+                                    <Slider fx:id="propagationSlider" layoutX="20.0" layoutY="270.0" max="1.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                              </VBox>
+                           </content>
+                        </TitledPane>
+                  </panes>
+                  </Accordion>
+                  <Separator prefWidth="200.0" />
+                  <Label layoutX="20.0" layoutY="731.0" style="-fx-font-weight: bold;" text="Légende" />
+                  <HBox prefHeight="18.0" prefWidth="457.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(89,180,90,0.6);" />
+                           <Label text="Sain (HEALTHY)">
+                              <HBox.margin>
+                                 <Insets right="5.0" />
+                              </HBox.margin>
+                           </Label>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(255,193,7,0.8);" />
+                           <Label text="Partiel (PARTIAL)" />
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="0.0" prefWidth="290.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(220,53,69,0.9);" />
+                           <Label text="Infecté (INFECTED)">
+                              <HBox.margin>
+                                 <Insets right="5.0" />
+                              </HBox.margin>
+                           </Label>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(0, 0, 0, 0.6);" />
+                           <Label text="Critique (CRITICAL)" />
+                        </HBox>
+                     </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="6">
-                     <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(255,193,7,0.8);" />
-                     <Label text="Partiel (PARTIAL)" />
+                     <children>
+                        <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: WHITE; -fx-border-color: RED; -fx-border-width: 3;" />
+                        <Label text="Cellule morte (&lt;100 habitants)" />
+                     </children>
                   </HBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="0.0" prefWidth="290.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="6">
-                     <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(220,53,69,0.9);" />
-                     <Label text="Infecté (INFECTED)">
-                        <HBox.margin>
-                           <Insets right="5.0" />
-                        </HBox.margin>
-                     </Label>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="6">
-                     <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(0, 0, 0, 0.6);" />
-                     <Label text="Critique (CRITICAL)" />
-                  </HBox>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="6">
-               <children>
-                  <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: WHITE; -fx-border-color: RED; -fx-border-width: 3;" />
-                  <Label text="Cellule morte (&lt;100 habitants)" />
-               </children>
-            </HBox>
 
-            <Separator prefWidth="280.0" />
+                  <Separator prefWidth="280.0" />
 
-            <!-- Cell info -->
-            <Label style="-fx-font-weight: bold;" text="Cellule sélectionnée" />
-            <Label fx:id="selectedCellLabel" prefWidth="280.0" text="Clique sur une cellule dans Paris." wrapText="true" />
-         </children>
-      </VBox>
+                  <!-- Cell info -->
+                  <Label style="-fx-font-weight: bold;" text="Cellule sélectionnée" />
+                  <Label fx:id="selectedCellLabel" prefWidth="280.0" text="Clique sur une cellule dans Paris." wrapText="true" />
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
    </left>
 
    <center>
