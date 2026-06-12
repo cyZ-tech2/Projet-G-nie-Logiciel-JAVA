@@ -30,6 +30,7 @@
                <MenuItem mnemonicParsing="false" onAction="#onLoadSimulation" text="Open" />
                <MenuItem mnemonicParsing="false" onAction="#onSaveSimulation" text="Save" />
                <MenuItem mnemonicParsing="false" onAction="#onCloseApplication" text="Close" />
+               <MenuItem text="Export All" onAction="#onExportAll" />
             </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Simulation">

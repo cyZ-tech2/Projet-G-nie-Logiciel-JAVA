@@ -5,7 +5,8 @@ module com.groupg.cells2d {
     requires java.desktop;
     requires com.google.errorprone.annotations;
     requires javafx.web;
-
+    requires javafx.swing;
+    
     opens com.groupg.cells2d to javafx.fxml;
     exports com.groupg.cells2d;
     exports com.groupg.cells2d.view;

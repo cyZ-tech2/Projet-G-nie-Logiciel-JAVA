@@ -40,7 +40,13 @@ import com.groupg.cells2d.data.SaveManager;
 import javafx.stage.FileChooser;
 import java.io.File;
 import javafx.scene.web.WebView;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
+import javafx.stage.DirectoryChooser;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.PrintWriter;
 public class ResearcherController {
 
     // --- Map ---
@@ -907,5 +913,48 @@ public class ResearcherController {
         stage.setTitle("About Cells2D");
         stage.setScene(new Scene(webView, 700, 500));
         stage.show();
+    }
+    // ----- Exportation des stats -----//
+    /**
+     * Exports all main simulation data:
+     * statistics as CSV, statistics as TXT, and the current map as PNG.
+     */
+    @FXML
+    public void onExportAll() {
+        try {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Choose export folder");
+
+            File folder = directoryChooser.showDialog(mapPane.getScene().getWindow());
+
+            if (folder != null) {
+
+                File csvFile = new File(folder, "statistics.csv");
+                try (PrintWriter writer = new PrintWriter(csvFile)) {
+                    writer.println("Statistic,Value");
+                    writer.println("Step," + engine.getStepCount());
+                    writer.println("Statistics,\"" + statsLabel.getText().replace("\n", " | ") + "\"");
+                }
+
+                File txtFile = new File(folder, "statistics.txt");
+                try (PrintWriter writer = new PrintWriter(txtFile)) {
+                    writer.println("Cells2D Simulation Statistics");
+                    writer.println("-----------------------------");
+                    writer.println("Step: " + engine.getStepCount());
+                    writer.println();
+                    writer.println(statsLabel.getText());
+                }
+
+                File pngFile = new File(folder, "map.png");
+                WritableImage image = mapPane.snapshot(null, null);
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", pngFile);
+
+                statusLabel.setText("Export completed successfully");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusLabel.setText("Export error");
+        }
     }
 }
