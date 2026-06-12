@@ -63,6 +63,7 @@ public class ResearcherController {
     @FXML private Button btnPause;
     @FXML private Button btnStop;
     @FXML private Button btnStep;
+    @FXML private Button btnRewind;
 
     // --- Status ---
     @FXML private Label stepLabel;
@@ -219,6 +220,18 @@ public class ResearcherController {
         }
     }
 
+    @FXML public void onRewind() {
+        if (engine.getStatus() != SimStatus.RUNNING) {
+            if (engine.rewind()) {
+                parisGrid = engine.getGrid();
+                lastRecordedStep = -1; // force stats refresh
+                updateStatistics();
+                updateStatusUI();
+                drawGrid();
+            }
+        }
+    }
+
 
     private void startUIRefreshLoop() {
         Thread t = new Thread(() -> {
@@ -305,7 +318,7 @@ public class ResearcherController {
                     }
                 });
 
-                // --- Brush : peint la cellule au clic ET en faisant glisser ---
+                // --- Brush : peint la cellule au clic  ---
                 rect.setOnMousePressed(event -> {
                     if (brushRadio.isSelected()) {
                         paintCell(cell, rect);

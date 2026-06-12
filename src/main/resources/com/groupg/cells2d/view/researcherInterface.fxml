@@ -83,6 +83,7 @@
                         <Button fx:id="btnPause" onAction="#onPause" prefWidth="70" text="⏸ Pause" />
                         <Button fx:id="btnStop" onAction="#onStop" prefWidth="70" text="⏹ Stop" />
                         <Button fx:id="btnStep" onAction="#onStep" prefWidth="70" text="→ Step" />
+                        <Button fx:id="btnRewind" onAction="#onRewind" prefWidth="80" text="⏪ Rewind" />
                      </children>
                   </HBox>
                   <Label fx:id="speedLabel" text="Vitesse:" />

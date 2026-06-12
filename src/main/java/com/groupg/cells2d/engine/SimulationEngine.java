@@ -5,6 +5,8 @@ import com.groupg.cells2d.model.board.Grid;
 import com.groupg.cells2d.model.board.SEIRData;
 import com.groupg.cells2d.model.enums.SimStatus;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.io.Serializable;
 
@@ -16,11 +18,13 @@ import java.io.Serializable;
 public class SimulationEngine implements Serializable {
     private Grid grid;
     private Propagation propagation;
-    private  transient CellNeighborhood neighborhood; //on peut le reconstruire avec la grille
+    private transient CellNeighborhood neighborhood;
     private SimStatus status;
     private int stepCount;
     private int stepDuration;
     private static final long serialVersionUID = 1L;
+    private static final int MAX_HISTORY = 100;
+    private final Deque<Grid> history = new ArrayDeque<>();
 
     /**
      * constructor of SimulationEngine
@@ -63,6 +67,10 @@ public class SimulationEngine implements Serializable {
      * based on their neighbors and the propagation rules
      */
     public void step(){
+        // Save snapshot before modifying
+        history.push(deepCopyGrid(grid));
+        if (history.size() > MAX_HISTORY) history.pollLast();
+
         int rows=grid.getRows();
         int cols= grid.getCols();
 
@@ -127,6 +135,45 @@ public class SimulationEngine implements Serializable {
     public void stop(){
         this.status= SimStatus.FINISHED;
         this.stepCount=0;
+    }
+
+    /**
+     * Reverts the simulation to the previous step.
+     * @return true if rewind was possible, false if no history
+     */
+    public boolean rewind() {
+        if (history.isEmpty()) return false;
+        this.grid = history.pop();
+        this.neighborhood = new CellNeighborhood(grid.getMap());
+        if (stepCount > 0) stepCount--;
+        return true;
+    }
+
+    public boolean canRewind() {
+        return !history.isEmpty();
+    }
+
+    private Grid deepCopyGrid(Grid source) {
+        int rows = source.getRows();
+        int cols = source.getCols();
+        Grid copy = new Grid(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                com.groupg.cells2d.model.board.Cell orig = source.getMap()[i][j];
+                if (orig == null) continue;
+                com.groupg.cells2d.model.board.SEIRData sd = orig.getSeirData();
+                com.groupg.cells2d.model.board.SEIRData sdCopy = new com.groupg.cells2d.model.board.SEIRData(
+                    sd.getSusceptible(), sd.getExposed(), sd.getInfected(), sd.getRecovered(), sd.getDead());
+                com.groupg.cells2d.model.board.Cell cellCopy = new com.groupg.cells2d.model.board.Cell(
+                    orig.getCellId(), orig.getPopulation(), orig.getState(), sdCopy, orig.getRow(), orig.getCol());
+                cellCopy.setInsideParis(orig.isInsideParis());
+                cellCopy.setDistrictId(orig.getDistrictId());
+                cellCopy.setDistrictName(orig.getDistrictName());
+                cellCopy.setAlive(orig.isAlive());
+                copy.setCell(i, j, cellCopy);
+            }
+        }
+        return copy;
     }
 
     /**
