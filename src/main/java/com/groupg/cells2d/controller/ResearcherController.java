@@ -84,7 +84,7 @@ public class ResearcherController {
     private double canvasWidth;
     private double canvasHeight;
     private final List<Snapshot> statisticHistory = new ArrayList<>();
-
+    private int lastRecordedStep = -1;
 
     @FXML
     public void initialize() {
@@ -179,6 +179,11 @@ public class ResearcherController {
             propagation.getParams().getMortalityRate()
         ));
         engine = new SimulationEngine(parisGrid, propagation);
+        statisticHistory.clear();
+
+        updateStatistics();
+        seedInitialInfection();
+        
         updateStatusUI();
         drawMap();
     }
@@ -186,11 +191,7 @@ public class ResearcherController {
     @FXML public void onStep() {
         if (engine.getStatus() != SimStatus.RUNNING) {
             engine.step();
-            Snapshot stats =
-                Statistics.compute(parisGrid, engine.getStepCount());
-
-            statisticHistory.add(stats);
-            updateStatisticsUI(stats);
+            updateStatistics();
             updateStatusUI();
             drawGrid();
         }
@@ -207,6 +208,7 @@ public class ResearcherController {
                     statisticHistory.add(stats);
                     updateStatisticsUI(stats);
 
+                    updateStatistics();
                     drawGrid();
                     updateStatusUI();
                 });
@@ -218,6 +220,7 @@ public class ResearcherController {
                 Snapshot stats = Statistics.compute(parisGrid, engine.getStepCount());
                 statisticHistory.add(stats);
                 updateStatisticsUI(stats);
+                updateStatistics(); 
                 drawGrid(); updateStatusUI(); });
         });
         t.setDaemon(true);
@@ -435,6 +438,9 @@ public void onShowStatisticsCharts() {
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Nombre de cellules");
 
+        Label percentageLabel = new Label();
+        percentageLabel.setStyle("-fx-font-weight: bold;");
+
         LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
         chart.setTitle("Évolution des cellules");
 
@@ -443,6 +449,19 @@ public void onShowStatisticsCharts() {
         CheckBox infectedCheck = new CheckBox("Infected");
         CheckBox criticalCheck = new CheckBox("Critical");
 
+        if (!statisticHistory.isEmpty()) {
+            Snapshot last = statisticHistory.get(statisticHistory.size() - 1);
+
+            percentageLabel.setText(
+                    String.format(
+                            "Healthy: %.2f%% | Partial: %.2f%% | Infected: %.2f%% | Critical: %.2f%%",
+                            last.getHealthyCellPercentage(),
+                            last.getPartialCellPercentage(),
+                            last.getInfectedCellPercentage(),
+                            last.getCriticalCellPercentage()
+                    )
+            );
+}
         healthyCheck.setSelected(true);
         partialCheck.setSelected(true);
         infectedCheck.setSelected(true);
@@ -470,7 +489,7 @@ public void onShowStatisticsCharts() {
         updateButton.fire();
 
         HBox checkBoxBox = new HBox(10, healthyCheck, partialCheck, infectedCheck, criticalCheck, updateButton);
-        VBox root = new VBox(10, checkBoxBox, chart);
+        VBox root = new VBox(10,percentageLabel, checkBoxBox, chart);
 
         Scene scene = new Scene(root, 900, 600);
         stage.setScene(scene);
@@ -503,6 +522,18 @@ public void onShowStatisticsCharts() {
         }
 
         return series;
+    }
+    private void updateStatistics() {
+         if (engine.getStepCount() == lastRecordedStep) {
+            return;
+        }
+
+        Snapshot stats = Statistics.compute(parisGrid, engine.getStepCount());
+
+        statisticHistory.add(stats);
+        updateStatisticsUI(stats);
+
+        lastRecordedStep = engine.getStepCount();
     }
 
 }

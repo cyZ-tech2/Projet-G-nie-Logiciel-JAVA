@@ -62,6 +62,21 @@ public class Snapshot {
         return (criticalCells * 100.0) / totalCells;
     }
 
+    public double getHealthyCellPercentage() {
+        if (totalCells == 0) {
+            return 0;
+        }
+        return (healthyCells * 100.0) / totalCells;
+    }
+
+    public double getPartialCellPercentage() {
+        if (totalCells == 0) {
+            return 0;
+        }
+        return (partialCells * 100.0) / totalCells;
+    }
+
+
 
     
 }
