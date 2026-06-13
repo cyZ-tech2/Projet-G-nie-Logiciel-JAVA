@@ -27,7 +27,7 @@ class PatientCaseTest {
     private static EnvironmentVariables envVars = new EnvironmentVariables("ENCRYPTION_KEY", generateAesKey());
 
     /**
-     * Génère une clé AES 256 bits encodée en Base64 pour les tests d'encryption.
+     * Generates a Base64-encoded 256-bit AES key for encryption tests.
      * @return Base64 AES key string
      */
     private static String generateAesKey() {
@@ -42,7 +42,7 @@ class PatientCaseTest {
 
     /**
      * Verifies that encryption followed by decryption returns the original plaintext.
-     * @throws Exception
+     * @throws Exception encryption/decryption error
      */
     @Test
     void encryptDecryptTest() throws Exception {
@@ -56,9 +56,9 @@ class PatientCaseTest {
     }
 
     /**
-     * Teste le chargement -> décryptage -> encryption -> sauvegarde des données
-     * @param tmp
-     * @throws Exception
+     * Verifies loading -> decrypt -> encrypt -> saving of data
+     * @param tmp Temporary file
+     * @throws Exception encryption/decryption error
      */
     @Test
     void saveAndLoadTest(@TempDir Path tmp) throws Exception {
@@ -81,9 +81,9 @@ class PatientCaseTest {
     }
 
     /**
-     * Vérifie que plusieurs sauvegardes s'ajoutent au lieu de s'écraser.
-     * @param tmp Fichier temporaire
-     * @throws Exception
+     * Check that save files get appended instead of overwritten.
+     * @param tmp Temp file
+     * @throws Exception encryption/decryption error
      */
     @Test
     void twoSavesAccumulate(@TempDir Path tmp) throws Exception {
@@ -101,11 +101,11 @@ class PatientCaseTest {
     }
 
     /**
-     * L'ouverture d'un fichier vide ne doit pas renvoyer d'erreur
-     * @param tmp Fichier temporaire
+     * Check for missing file errors
+     * @param tmp Temp file
      */
     @Test
-    void missingFileDoesNotThrow(@TempDir Path tmp) {
+    void missingFileTest(@TempDir Path tmp) {
         GsonManager gson = new GsonManager();
         Path missing = tmp.resolve("ghost.enc");
         JsonRepository<PatientCase> repo = new JsonRepository<>(gson, PatientCase.class, missing.toString());
@@ -115,9 +115,9 @@ class PatientCaseTest {
     }
 
     /**
-     * Le fichier doit bien être encrypté
-     * @param tmp
-     * @throws Exception Fichier temporaire
+     * Save file must be encrypted
+     * @param tmp Temp file
+     * @throws Exception encryption/decryption error
      */
     @Test
     void savedFileIsEncrypted(@TempDir Path tmp) throws Exception {

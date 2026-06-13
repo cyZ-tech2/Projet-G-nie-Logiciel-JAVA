@@ -4,12 +4,10 @@ import com.groupg.cells2d.data.SaveManager;
 import com.groupg.cells2d.model.board.Cell;
 import com.groupg.cells2d.model.board.Grid;
 import com.groupg.cells2d.model.board.SEIRData;
-import com.groupg.cells2d.model.board.SimulationParams;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -103,6 +101,6 @@ class EngineTest {
                 1e-9
         );
 
-        new File(filePath).delete();
+        assertTrue(new File(filePath).delete());
     }
 }

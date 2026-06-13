@@ -4,9 +4,14 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Objects;
 
 import com.groupg.cells2d.view.Login;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 
 /**
@@ -29,6 +34,9 @@ public class Launcher {
 
     @Parameter(names = {"--skipsave", "-S"}, description = "Skip saving at end of simulation (in console mode)")
     private boolean skipSave = false;
+
+    @Parameter(names = {"--genkey", "-g"}, description = "Generates a 256-bit AES key and outputs it in Base64")
+    private boolean genkey = false;
 
     /**
      * Parses CLI arguments and starts the application in the appropriate mode.
@@ -58,6 +66,11 @@ public class Launcher {
                 if(!launcher.skipSave) {
                     console.save(launcher.savePath);
                 }
+            } else if (launcher.genkey) {
+                KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+                keyGen.init(256);
+                SecretKey key = keyGen.generateKey();
+                System.out.println(Base64.getEncoder().encodeToString(key.getEncoded()));
             } else {
                 // Default: launch the JavaFX graphical interface
                 Login.main(args);
@@ -66,6 +79,8 @@ public class Launcher {
         } catch (ParameterException e) {
             System.err.println("Error: " + e.getMessage());
             jc.usage();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 }

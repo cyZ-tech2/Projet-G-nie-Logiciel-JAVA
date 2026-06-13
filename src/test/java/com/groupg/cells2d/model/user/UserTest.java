@@ -1,15 +1,7 @@
 package com.groupg.cells2d.model.user;
 
-import com.groupg.cells2d.data.AppConfig;
-import com.groupg.cells2d.data.JsonRepository;
 import com.groupg.cells2d.data.PasswordHash;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
