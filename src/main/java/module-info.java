@@ -13,5 +13,5 @@ module com.groupg.cells2d {
     opens com.groupg.cells2d.view to javafx.fxml;
     exports com.groupg.cells2d.controller;
     opens com.groupg.cells2d.controller to javafx.fxml;
-
+    opens com.groupg.cells2d.model.user to com.google.gson;
 }
