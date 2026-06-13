@@ -18,6 +18,13 @@ Then simply run this command, which uses the bundled *maven* wrapper (or you can
 
 This command will package the application into a `.jar` file, which you can easily run at any time.
 
+You can also run unitary tests using Maven:
+
+| Linux             | Windows             |
+|-------------------|---------------------| 
+| ```./mvnw test``` | ```mvnw.cmd test``` |
+
+
 ## How to run
 
 *(Note : running the application also requires Java 22, due to JavaFX 24.)*
