@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>About - Researcher Interface</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 25px; line-height: 1.6; color: #2c3e50; }
+        h1   { color: #1a6a3a; border-bottom: 2px solid #1a6a3a; padding-bottom: 8px; }
+        h2   { color: #2c3e50; margin-top: 20px; }
+        .badge { display: inline-block; background: #1a6a3a; color: white;
+                 padding: 2px 10px; border-radius: 12px; font-size: 0.85em; }
+        ul li { margin-bottom: 4px; }
+        .param { font-family: monospace; background: #f0f0f0; padding: 1px 6px; border-radius: 4px; }
+        .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>Cells2D &mdash; Interface Chercheur</h1>
+    <p><span class="badge">v1.0</span>&nbsp; PGL ING1-GI 2025&ndash;2026</p>
+
+    <h2>Description</h2>
+    <p>
+        L'interface chercheur permet de simuler la propagation d'une épidémie sur une grille 2D
+        représentant Paris, à l'aide d'un modèle <strong>SEIRS</strong>
+        (Susceptible &rarr; Exposed &rarr; Infected &rarr; Recovered &rarr; Susceptible).
+    </p>
+
+    <h2>Contrôles</h2>
+    <ul>
+        <li><strong>▶</strong> &mdash; Lancer la simulation</li>
+        <li><strong>⏸</strong> &mdash; Mettre en pause</li>
+        <li><strong>⏹</strong> &mdash; Réinitialiser</li>
+        <li><strong>⏭</strong> &mdash; Exécuter un pas</li>
+        <li><strong>⏮</strong> &mdash; Revenir au pas précédent (Rewind)</li>
+    </ul>
+
+    <h2>Modes de dessin</h2>
+    <ul>
+        <li><strong>Cursor</strong> &mdash; Sélectionner une cellule pour afficher ses statistiques</li>
+        <li><strong>Brush</strong> &mdash; Changer l'état d'une cellule au clic</li>
+        <li><strong>Bucket</strong> &mdash; Changer l'état de tout un arrondissement</li>
+    </ul>
+
+    <h2>Paramètres SEIR</h2>
+    <ul>
+        <li><span class="param">β</span> &mdash; Taux de transmission</li>
+        <li><span class="param">σ</span> &mdash; Taux d'incubation (1/durée d'incubation)</li>
+        <li><span class="param">γ</span> &mdash; Taux de guérison (1/durée de maladie)</li>
+        <li><span class="param">ξ</span> &mdash; Déclin de l'immunité / nouveaux variants</li>
+        <li><span class="param">μ</span> &mdash; Taux de mortalité</li>
+        <li><span class="param">p</span> &mdash; Taux de propagation géographique</li>
+    </ul>
+
+    <h2>Légende</h2>
+    <div class="legend">
+        <div class="legend-item"><div class="dot" style="background:rgba(89,180,90,0.8)"></div> Sain</div>
+        <div class="legend-item"><div class="dot" style="background:rgba(255,193,7,0.9)"></div> Partiel</div>
+        <div class="legend-item"><div class="dot" style="background:rgba(220,53,69,0.9)"></div> Infecté</div>
+        <div class="legend-item"><div class="dot" style="background:rgba(0,0,0,0.7)"></div> Critique</div>
+        <div class="legend-item"><div class="dot" style="background:rgba(89,90,210,0.8)"></div> Rétabli</div>
+        <div class="legend-item"><div class="dot" style="background:white; border: 3px solid red;"></div> Morte</div>
+    </div>
+
+    <h2>Fichiers</h2>
+    <ul>
+        <li><strong>Save</strong> &mdash; Sauvegarde la simulation dans un fichier <code>.dat</code></li>
+        <li><strong>Open</strong> &mdash; Charge une simulation sauvegardée</li>
+        <li><strong>Export All</strong> &mdash; Exporte les statistiques (CSV + TXT) et la carte (PNG)</li>
+    </ul>
+</body>
+</html>
