@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -36,7 +37,6 @@
       </MenuBar>
    </top>
 
-   <!-- Carte centrale (lecture seule, sélection de cellule) -->
    <center>
       <StackPane fx:id="mapPane" prefHeight="800.0" prefWidth="1000.0"
                  style="-fx-background-color: white;" BorderPane.alignment="CENTER">
@@ -48,7 +48,6 @@
       </StackPane>
    </center>
 
-   <!-- Panneau gauche -->
    <left>
       <VBox prefHeight="1080.0" prefWidth="300.0" spacing="10.0" style="-fx-padding: 10;">
          <children>
@@ -57,11 +56,13 @@
             <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Simulation" />
             <HBox spacing="6.0">
                <children>
-                  <Button fx:id="btnPlay"  onAction="#onPlay"  prefWidth="85" text="▶ Play" />
-                  <Button fx:id="btnPause" onAction="#onPause" prefWidth="85" text="⏸ Pause" />
-                  <Button fx:id="btnStop"  onAction="#onStop"  prefWidth="85" text="⏹ Stop" />
+                  <Button fx:id="btnPlay"  onAction="#onPlay"  prefWidth="140" text="▶ Play" />
+                  <Button fx:id="btnPause" onAction="#onPause" prefWidth="140" text="⏸ Pause" />
                </children>
             </HBox>
+            <Label fx:id="speedLabel" text="Vitesse : 1000 ms/step" />
+            <Slider fx:id="speedSlider" min="100" max="3000" value="1000"
+                    blockIncrement="100" majorTickUnit="500" showTickMarks="true" />
             <Label fx:id="stepLabel"   text="Étape : 0" />
             <Label fx:id="statusLabel" text="Statut : IDLE" />
 
@@ -71,11 +72,10 @@
 
             <!-- Formulaire patient -->
             <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Ajouter un cas patient" />
-            <Label text="ID cas (auto)" style="-fx-font-size: 11; -fx-text-fill: #666;" />
             <TextField fx:id="caseIdField" promptText="ID du cas (auto)" editable="false"
                        style="-fx-background-color: #f0f0f0;" />
             <ComboBox fx:id="ageGroupCombo" promptText="Groupe d'âge" maxWidth="Infinity" />
-            <TextField fx:id="symptomsField" promptText="Symptômes (séparés par virgule)" />
+            <TextField fx:id="symptomsField"  promptText="Symptômes (séparés par virgule)" />
             <TextField fx:id="caseCountField" promptText="Nombre de cas infectés" />
             <Label fx:id="selectedCellLabel"
                    text="👆 Cliquez sur la carte pour sélectionner la cellule"
