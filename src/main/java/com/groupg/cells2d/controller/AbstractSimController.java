@@ -64,10 +64,19 @@ public abstract class AbstractSimController {
     /** Permet à chaque sous-classe d'ajouter ses propres décorations sur la cellule (surbrillance, etc.). */
     protected abstract Color getCellStrokeColor(Cell cell);
     protected abstract double getCellStrokeWidth(Cell cell);
+//
+     //Controle
+     //
 
+    @FXML public void onCloseApplication() {
+        try { engine.pause(); mapPane.getScene().getWindow().hide(); }
+        catch (Exception e) { e.printStackTrace(); }
+    }
     // -------------------------------------------------------------------------
     // Simulation controls (communs)
     // -------------------------------------------------------------------------
+
+
 
     @FXML
     public void onLogout() {
