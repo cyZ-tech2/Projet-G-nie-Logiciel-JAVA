@@ -8,6 +8,8 @@ module com.groupg.cells2d {
     requires javafx.swing;
     requires jcommander;
 
+    exports com.groupg.cells2d.model.enums;
+
     opens com.groupg.cells2d to javafx.fxml, jcommander;
     exports com.groupg.cells2d;
     exports com.groupg.cells2d.view;
