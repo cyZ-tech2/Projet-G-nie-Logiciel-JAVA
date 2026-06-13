@@ -7,6 +7,7 @@ import com.groupg.cells2d.data.PasswordHash;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public abstract class   User {
