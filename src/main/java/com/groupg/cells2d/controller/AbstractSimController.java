@@ -64,19 +64,38 @@ public abstract class AbstractSimController {
     /** Permet à chaque sous-classe d'ajouter ses propres décorations sur la cellule (surbrillance, etc.). */
     protected abstract Color getCellStrokeColor(Cell cell);
     protected abstract double getCellStrokeWidth(Cell cell);
-//
-     //Controle
-     //
 
-    @FXML public void onCloseApplication() {
-        try { engine.pause(); mapPane.getScene().getWindow().hide(); }
-        catch (Exception e) { e.printStackTrace(); }
-    }
     // -------------------------------------------------------------------------
     // Simulation controls (communs)
     // -------------------------------------------------------------------------
 
+    /** Path to the about HTML file — implemented by each sub-controller. */
+    protected abstract String getAboutResourcePath();
 
+    @FXML
+    public void onAbout() {
+        try {
+            javafx.scene.web.WebView webView = new javafx.scene.web.WebView();
+            webView.getEngine().load(
+                getClass().getResource(getAboutResourcePath()).toExternalForm());
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("About Cells2D");
+            stage.setScene(new javafx.scene.Scene(webView, 700, 500));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onCloseApplication() {
+        try {
+            engine.pause();
+            mapPane.getScene().getWindow().hide();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     public void onLogout() {
@@ -238,7 +257,11 @@ public abstract class AbstractSimController {
         statisticHistory.add(stats);
         districtHistory.add(Statistics.computeByDistrict(parisGrid, engine.getStepCount()));
         lastRecordedStep = engine.getStepCount();
+        onStatisticsUpdated(stats);
     }
+
+    /** Hook appelé après chaque mise à jour des stats. Surchargé par les sous-classes si besoin. */
+    protected void onStatisticsUpdated(Snapshot stats) {}
 
     @FXML
     public void onShowStatisticsCharts() {
