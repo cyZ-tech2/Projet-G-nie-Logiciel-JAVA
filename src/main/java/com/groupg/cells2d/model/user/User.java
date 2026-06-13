@@ -40,9 +40,8 @@ public abstract class   User {
 
     public static boolean login(String username, String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
-        String jsonPath = User.class.getResource("/com/groupg/cells2d/model/user/users.json").getPath();
         JsonRepository<User> repo = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class,
-            jsonPath);
+            "src/main/resources/com/groupg/cells2d/model/user/users.json");
         repo.load();
         for (User user : repo.getAll()) {
             if (user.getUsername().equals(username)) {
@@ -54,9 +53,8 @@ public abstract class   User {
 
     public static User get(String username)
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
-        String jsonPath = User.class.getResource("/com/groupg/cells2d/model/user/users.json").getPath();
         JsonRepository<User> repo = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class,
-            jsonPath);
+            "src/main/resources/com/groupg/cells2d/model/user/users.json");
         repo.load();
         for (User user : repo.getAll()) {
             if (user.getUsername().equals(username)) return user;
