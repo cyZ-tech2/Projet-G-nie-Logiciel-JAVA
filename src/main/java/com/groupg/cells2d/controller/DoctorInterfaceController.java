@@ -21,27 +21,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the doctor interface.
+ * Provides a simplified simulation view (play / pause / speed) alongside
+ * a patient case form that registers new infections directly on the grid.
+ * The simulation state is automatically persisted between sessions via
+ * {@link com.groupg.cells2d.data.SaveManager#autoSave(com.groupg.cells2d.engine.SimulationEngine)}.
+ */
 public class DoctorInterfaceController extends AbstractSimController implements Initializable {
 
-    // --- Formulaire patient ---
+    // --- Patient form fields ---
     @FXML private TextField          caseIdField;
     @FXML private ComboBox<AgeGroup> ageGroupCombo;
     @FXML private TextField          symptomsField;
     @FXML private TextField          caseCountField;
     @FXML private Label              selectedCellLabel;
 
-    // --- Controls ---
+    // --- Simulation controls ---
     @FXML private Button btnPlay;
     @FXML private Button btnPause;
     @FXML private Slider speedSlider;
     @FXML private Label  speedLabel;
 
-    // --- State ---
+    // --- Internal state ---
     private Cell selectedCell = null;
     private int  nextCaseId   = 1;
 
     // -------------------------------------------------------------------------
-    // Initialisation
+    // Initialization
     // -------------------------------------------------------------------------
 
     @Override
@@ -64,9 +71,9 @@ public class DoctorInterfaceController extends AbstractSimController implements 
         speedSlider.setValue(engine.getStepDuration());
         speedSlider.valueProperty().addListener((obs, o, n) -> {
             engine.setStepDuration(n.intValue());
-            speedLabel.setText(String.format("Vitesse : %d ms/step", n.intValue()));
+            speedLabel.setText(String.format("Vitesse : %d ms/étape", n.intValue()));
         });
-        speedLabel.setText(String.format("Vitesse : %d ms/step", engine.getStepDuration()));
+        speedLabel.setText(String.format("Vitesse : %d ms/étape", engine.getStepDuration()));
 
         updateCaseIdField();
         updateStatistics();
@@ -86,7 +93,7 @@ public class DoctorInterfaceController extends AbstractSimController implements 
     }
 
     // -------------------------------------------------------------------------
-    // Hook : clic sur cellule (sélection pour formulaire)
+    // Cell click hook (selects a cell for the patient form)
     // -------------------------------------------------------------------------
 
     @Override
@@ -114,7 +121,7 @@ public class DoctorInterfaceController extends AbstractSimController implements 
     }
 
     // -------------------------------------------------------------------------
-    // onPause override : autoSave
+    // onPause override — triggers auto-save for the doctor view
     // -------------------------------------------------------------------------
 
     @Override
@@ -124,13 +131,23 @@ public class DoctorInterfaceController extends AbstractSimController implements 
     }
 
     // -------------------------------------------------------------------------
-    // Formulaire patient
+    // Patient form
     // -------------------------------------------------------------------------
 
+    /**
+     * Writes the next available case ID into the read-only case ID field.
+     */
     private void updateCaseIdField() {
         caseIdField.setText(String.valueOf(nextCaseId));
     }
 
+    /**
+     * Validates the patient form, creates a new {@link com.groupg.cells2d.model.user.PatientCase},
+     * transfers the declared number of individuals from S to I in the selected
+     * cell's SEIR data, and triggers an auto-save.
+     * Shows a warning label if the form is incomplete.
+     * @param event the action event fired by the submit button
+     */
     @FXML
     public void submitCase(ActionEvent event) {
         if (selectedCell == null) {
@@ -160,7 +177,7 @@ public class DoctorInterfaceController extends AbstractSimController implements 
             return;
         }
 
-        // Transfère N personnes S → I
+        // Transfer N people from Susceptible to Infected
         com.groupg.cells2d.model.board.SEIRData sd = selectedCell.getSeirData();
         double transferable = Math.min(count, sd.getSusceptible());
         sd.setSusceptible(sd.getSusceptible() - transferable);

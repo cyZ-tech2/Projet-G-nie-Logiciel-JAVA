@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class Cell implements Serializable {
     private String cellId;
     private int population;
-    private CellState state; //A revoir car peut etre incoherent avec seirDATA
+    private CellState state; // must remain consistent with seirData values
     private SEIRData seirData;
     private int row;
     private int col; 
@@ -28,6 +28,13 @@ public class Cell implements Serializable {
     private boolean isAlive;
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a healthy cell with a fully susceptible population.
+     * @param cellId     unique cell identifier
+     * @param population initial population (must be ≥ 0)
+     * @param row        row index in the grid
+     * @param col        column index in the grid
+     */
     public Cell(String cellId, int population, int row, int col) {
         if(population < 0) {
             throw new InvalidPopulationException(population);
@@ -41,6 +48,16 @@ public class Cell implements Serializable {
         this.isAlive = true;
     }
 
+    /**
+     * Creates a cell with an explicit epidemic state and SEIR data.
+     * Used when restoring a cell from a saved snapshot.
+     * @param cellId     unique cell identifier
+     * @param population total population (must be ≥ 0)
+     * @param state      initial epidemic state
+     * @param seirData   initial SEIR compartment values
+     * @param row        row index in the grid
+     * @param col        column index in the grid
+     */
     public Cell(String cellId, int population, CellState state, SEIRData seirData, int row , int col) {
         if(population < 0) {
             throw new InvalidPopulationException(population);
@@ -64,7 +81,7 @@ public class Cell implements Serializable {
         seirData.computeNextStep();
     }
     */
-    public void addCase(PatientCase c) { //Simple version : if a patient is added , the cell becomes infected 
+    public void addCase(PatientCase c) { // simplified rule: any new patient case marks the cell as infected
         this.state = CellState.INFECTED;
     }
     /**
@@ -81,7 +98,7 @@ public class Cell implements Serializable {
     }
     /**
      * Computes the mortality rate.
-     *s
+     *
      * @return mortality rate
      */
     public double getMortalityRate() {
@@ -92,89 +109,113 @@ public class Cell implements Serializable {
         return seirData.getDead() / population;
     }
 
-    /* Override */
+    // -------------------------------------------------------------------------
+    // Object overrides
+    // -------------------------------------------------------------------------
 
     @Override
     public String toString() {
         return "Cell{" + "cellId='" + cellId + '\'' + ", population=" + population + ", state=" + state + ", coordinates=" + "(" +col + "," + row + ")" + '}';
     }
 
-    /* Getters and setters */
+    // -------------------------------------------------------------------------
+    // Getters and setters
+    // -------------------------------------------------------------------------
 
+    /** Returns the row index of this cell in the grid. */
     public int getRow() {
         return row;
     }
     
+    /** Sets the row index of this cell in the grid. */
     public void setRow (int row) {
         this.row = row;
     }
 
-     public int getCol() {
+    /** Returns the column index of this cell in the grid. */
+    public int getCol() {
         return col;
     }
     
+    /** Sets the column index of this cell in the grid. */
     public void setCol(int col) {
         this.col = col;
     }
 
+    /** Returns the unique identifier of this cell. */
     public String getCellId() {
         return cellId;
     }
 
+    /** Sets the unique identifier of this cell. */
     public void setCellId(String cellId) {
         this.cellId = cellId;
     }
 
+    /** Returns the total population of this cell. */
     public int getPopulation() {
         return population;
     }
 
+    /** Sets the total population of this cell. */
     public void setPopulation(int population) {
         this.population = population;
     }
 
+    /** Returns the current epidemic state of this cell. */
     public CellState getState() {
         return state;
     }
 
+    /** Sets the epidemic state of this cell. */
     public void setState(CellState state) {
         this.state = state;
     }
 
+    /** Returns true if the cell still has a living population (more than 100 survivors). */
     public boolean isAlive() {
         return isAlive;
     }
+    /** Explicitly marks this cell as alive or dead. */
     public void setAlive(boolean isAlive) {
         this.isAlive = isAlive;
     }
 
+    /** Returns the SEIR compartment data for this cell. */
     public SEIRData getSeirData() {
         return seirData;
     }
 
+    /** Replaces the SEIR data of this cell. */
     public void setSeirData(SEIRData seirData) {
         this.seirData = seirData;
     }
 
+    /** Returns true if this cell falls within the Paris boundary mask. */
     public boolean isInsideParis() {
         return insideParis;
     }
 
+    /** Marks whether this cell is inside the Paris boundary mask. */
     public void setInsideParis( boolean insideParis){
         this.insideParis = insideParis;
     }
-     public String getDistrictId() {
+    /** Returns the arrondissement identifier assigned to this cell. */
+    public String getDistrictId() {
         return districtId;
     }
 
+    /** Sets the arrondissement identifier for this cell. */
     public void setDistrictId(String districtId) {
         this.districtId = districtId;
     }
 
+    /** Returns the human-readable arrondissement name of this cell. */
     public String getDistrictName() {
         return districtName;
     }
 
+    /** Sets the human-readable arrondissement name for this cell. */
     public void setDistrictName(String districtName) {
         this.districtName = districtName;
     }

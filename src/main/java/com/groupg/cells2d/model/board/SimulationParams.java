@@ -3,20 +3,18 @@ package com.groupg.cells2d.model.board;
 import java.io.Serializable;
 
 /**
- * parameters of our SEIR formules
+ * Holds all numeric parameters used by the SEIRD propagation model.
  */
 
 public class SimulationParams implements Serializable {
-    private double beta;    //transmission
-    private double sigma;   //incubation
-    private double gamma;   //recovery
-    private double propagationRate;     //propagation
-    private double mortalityRate;   //mortality
-    private double xi; //waning imunity(seirs)
+    private double beta;    // transmission rate
+    private double sigma;   // incubation rate (exposed → infectious)
+    private double gamma;   // recovery rate
+    private double propagationRate;     // spatial spread rate between cells
+    private double mortalityRate;   // fraction of infected individuals who die
+    private double xi; // waning immunity rate (SEIRS extension)
     private static final long serialVersionUID = 1L;
-    /**
-     * constructor for standard propagation
-     */
+    /** Creates a parameter set with default COVID-like values. */
     public SimulationParams(){
         this.beta=0.3;
         this.sigma=0.2;
@@ -27,11 +25,12 @@ public class SimulationParams implements Serializable {
     }
 
     /**
-     * constructor for custom propagation
-     * @param beta transmission rate
-     * @param sigma incubation rate
-     * @param gamma recovery rate
-     * @param propagationRate mobility rate between cells
+     * Creates a custom parameter set.
+     * @param beta            transmission rate
+     * @param sigma           incubation rate
+     * @param gamma           recovery rate
+     * @param propagationRate spatial spread rate between cells
+     * @param mortalityRate   mortality rate
      */
     public SimulationParams(double beta, double sigma, double gamma, double propagationRate, double mortalityRate){
         this.beta=beta;
@@ -101,10 +100,18 @@ public class SimulationParams implements Serializable {
      */
     public double getMortalityRate(){return mortalityRate;}
 
+    /**
+     * Returns the waning immunity rate (SEIRS extension).
+     * @return xi
+     */
     public double getXi() {
         return xi;
     }
 
+    /**
+     * Sets the waning immunity rate.
+     * @param xi new waning immunity rate
+     */
     public void setXi(double xi) {
         this.xi = xi;
     }

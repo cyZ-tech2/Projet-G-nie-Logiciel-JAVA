@@ -9,6 +9,11 @@ import java.util.Objects;
 import com.groupg.cells2d.view.Login;
 
 
+/**
+ * Application entry point.
+ * Parses command-line arguments with JCommander and dispatches to either
+ * the {@link ConsoleLauncher} (headless) or the JavaFX login window.
+ */
 public class Launcher {
     @Parameter(names = {"--console", "-c"}, description = "Launch in console mode")
     private boolean console = false;
@@ -25,6 +30,10 @@ public class Launcher {
     @Parameter(names = {"--skipsave", "-S"}, description = "Skip saving at end of simulation (in console mode)")
     private boolean skipSave = false;
 
+    /**
+     * Parses CLI arguments and starts the application in the appropriate mode.
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         Launcher launcher = new Launcher();
         JCommander jc = JCommander.newBuilder()
@@ -50,7 +59,7 @@ public class Launcher {
                     console.save(launcher.savePath);
                 }
             } else {
-                // Pass all original args to Login
+                // Default: launch the JavaFX graphical interface
                 Login.main(args);
             }
 

@@ -10,12 +10,26 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public abstract class   User {
+/**
+ * Abstract base class for all application users.
+ * Stores credentials (username + hashed password) and provides
+ * static helper methods to authenticate and look up users
+ * from the JSON user repository.
+ */
+public abstract class User {
 
     private final double       id;
     private final String       username;
     private final PasswordHash passwordHash;
 
+    /**
+     * Creates a new user and hashes the provided plain-text password.
+     * @param id       numeric user identifier
+     * @param username login name
+     * @param password plain-text password (hashed immediately; not stored)
+     * @throws NoSuchAlgorithmException if PBKDF2 is unavailable
+     * @throws InvalidKeySpecException  if the key specification is invalid
+     */
     public User(double id, String username, String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         this.id           = id;
@@ -23,8 +37,11 @@ public abstract class   User {
         this.passwordHash = new PasswordHash(password);
     }
 
+    /** Returns the numeric identifier of this user. */
     public double       getId()           { return id; }
+    /** Returns the login name of this user. */
     public String       getUsername()     { return username; }
+    /** Returns the hashed password object for credential verification. */
     public PasswordHash getPasswordHash() { return passwordHash; }
 
     @Override
@@ -39,6 +56,15 @@ public abstract class   User {
     @Override
     public int hashCode() { return Objects.hash(username); }
 
+    /**
+     * Validates a username / password pair against the user repository.
+     * @param username the login name to look up
+     * @param password the plain-text password to verify
+     * @return true if credentials are valid, false otherwise
+     * @throws NoSuchAlgorithmException if PBKDF2 is unavailable
+     * @throws InvalidKeySpecException  if the key specification is invalid
+     * @throws IOException              if the repository file cannot be read
+     */
     public static boolean login(String username, String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         JsonRepository<User> repo = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class,
@@ -52,6 +78,14 @@ public abstract class   User {
         return false;
     }
 
+    /**
+     * Retrieves the {@link User} object for the given username from the repository.
+     * @param username the login name to look up
+     * @return the matching user, or null if not found
+     * @throws NoSuchAlgorithmException if PBKDF2 is unavailable
+     * @throws InvalidKeySpecException  if the key specification is invalid
+     * @throws IOException              if the repository file cannot be read
+     */
     public static User get(String username)
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         JsonRepository<User> repo = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class,

@@ -6,8 +6,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * JavaFX Application entry point.
+ * Loads the login FXML and shows the initial login window.
+ */
 public class Login extends Application {
 
+    /**
+     * Launches the JavaFX application.
+     * @param args command-line arguments forwarded to JavaFX
+     */
     public static void main(String[] args) {
         launch(args);
     }

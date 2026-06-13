@@ -27,7 +27,7 @@ public class SEIRData implements Serializable {
     private double dead;
     private static final long serialVersionUID = 1L;
 
-    /* Initialize the seed */
+    // Creates a fully susceptible population (all individuals in S compartment)
     public SEIRData(double totalPopulation) {
         if (totalPopulation < 0) {
             throw new InvalidPopulationException((int)totalPopulation);
@@ -39,6 +39,15 @@ public class SEIRData implements Serializable {
         this.dead        = 0;
     }
 
+    /**
+     * Creates a fully specified SEIR state.
+     * All values must be non-negative.
+     * @param susceptible  number of susceptible individuals
+     * @param exposed      number of exposed (latent) individuals
+     * @param infected     number of infectious individuals
+     * @param recovered    number of recovered (immune) individuals
+     * @param dead         cumulative number of deaths
+     */
     public SEIRData(double susceptible, double exposed, double infected, double recovered, double dead) {
         if (susceptible < 0 || exposed < 0 || infected < 0 || recovered < 0 || dead < 0) {
             throw new InvalidSEIRStateException();
@@ -61,42 +70,52 @@ public class SEIRData implements Serializable {
     }
 
 
+    /** Returns the number of susceptible individuals. */
     public double getSusceptible() {
         return susceptible;
     }
 
+    /** Sets the number of susceptible individuals. */
     public void setSusceptible(double susceptible) {
         this.susceptible = susceptible;
     }
 
+    /** Returns the number of exposed (latent) individuals. */
     public double getExposed() {
         return exposed;
     }
 
+    /** Sets the number of exposed (latent) individuals. */
     public void setExposed(double exposed) {
         this.exposed = exposed;
     }
 
+    /** Returns the number of infectious individuals. */
     public double getInfected() {
         return infected;
     }
 
+    /** Sets the number of infectious individuals. */
     public void setInfected(double infected) {
         this.infected = infected;
     }
 
+    /** Returns the number of recovered (immune) individuals. */
     public double getRecovered() {
         return recovered;
     }
 
+    /** Sets the number of recovered individuals. */
     public void setRecovered(double recovered) {
         this.recovered = recovered;
     }
 
+    /** Returns the cumulative number of deaths. */
     public double getDead() {
         return dead;
     }
 
+    /** Sets the cumulative number of deaths. */
     public void setDead(double dead) {
         this.dead = dead;
     }

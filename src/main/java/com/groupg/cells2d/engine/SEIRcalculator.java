@@ -3,25 +3,27 @@ package com.groupg.cells2d.engine;
 import com.groupg.cells2d.model.board.SEIRData;
 
 /**
- * SEIR formules for the calculator of susceptible, exposed, infected, recovered and dead people
+ * Stateless utility class that computes one SEIRD propagation step.
+ * Implements the compartmental epidemic model (S, E, I, R, D).
  * @see <a href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology">SEIRD Model</a>
  */
 
 public class SEIRcalculator{
 
-    private SEIRcalculator(){} // prevents instantiation
+    private SEIRcalculator(){} // utility class — not instantiable
 
     /**
-     * method to calculate the number of people (susceptible, exposed, infected, recovered and dead)
-     * @param seirData the initial values
-     * @param beta transmission rate of the infection
-     * @param sigma incubation period/rate of the infection (sleeping state without symptômes of a disease)
-     * @param gamma recovery rate (people not dying during the disease)
-     * @param mortalityRate percentage of people dying because of the disease
-     * @param propagationRate the movability of the infection
-     * @param avgNeighborInfected average infected population from the neighbors
-     * @param population people
-     * @return new values for seirData
+     * Computes the next SEIRD state for a single cell.
+     * @param seirData           current compartment values
+     * @param beta               transmission rate
+     * @param sigma              incubation rate (latent → infectious)
+     * @param gamma              recovery rate
+     * @param mortalityRate      fraction of infectious individuals who die
+     * @param propagationRate    spatial spread factor between neighbouring cells
+     * @param avgNeighborInfected cumulative infected count from neighbouring cells
+     * @param population         total cell population
+     * @param xi                 waning immunity rate (SEIRS extension)
+     * @return updated SEIR data for the next step
      */
     public static SEIRData compute(SEIRData seirData, double beta, double sigma, double gamma, double mortalityRate, double propagationRate, double avgNeighborInfected, int population,double xi){
         double s=seirData.getSusceptible();
@@ -30,15 +32,15 @@ public class SEIRcalculator{
         double r=seirData.getRecovered();
         double d=seirData.getDead();
 
-        if(population==0){return seirData;}     //if no population nothing to do, also to not divide by 0
+        if(population==0){return seirData;}     // nothing to compute for empty cells; also avoids division by zero
 
-        //local infections, in the cell itself
+        // Local transmission within the cell
         double localTransmission=(beta*s*i)/population;
 
-        //neighbors infected (spacial propagation), infected people from neighboring cells expose our cell population
+        // Spatial transmission from neighbouring cells
         double spatialTransmission=propagationRate*avgNeighborInfected*(s/population);
 
-        //formules of SEIRD propagation model
+        // SEIRD differential equations
 
         double waningImmunity = xi * r;
 
@@ -48,7 +50,7 @@ public class SEIRcalculator{
         double dR=(1-mortalityRate)*gamma*i - waningImmunity;
         double dD=mortalityRate*gamma*i;
 
-        //verify that values don't become negative
+        // Clamp all compartments to zero to prevent negative populations
         double newS = Math.max(0, s + dS);
         double newE = Math.max(0, e + dE);
         double newI = Math.max(0, i + dI);

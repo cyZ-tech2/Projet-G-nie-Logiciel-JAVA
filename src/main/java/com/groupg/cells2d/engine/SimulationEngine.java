@@ -11,8 +11,8 @@ import java.util.List;
 import java.io.Serializable;
 
 /**
- * the heart class, principal loop that changes the state of our simulation
- * manages play, pause, stop and step by step simulation
+ * Core simulation class. Drives the main loop that advances the epidemic state.
+ * Manages play, pause, stop, and step-by-step execution.
  */
 
 public class SimulationEngine implements Serializable {
@@ -27,9 +27,9 @@ public class SimulationEngine implements Serializable {
     private final Deque<Grid> history = new ArrayDeque<>();
 
     /**
-     * constructor of SimulationEngine
-     * @param grid the entire map of our cells
-     * @param propagation parameters for our propagation and state changements
+     * Builds a new SimulationEngine.
+     * @param grid       the full cell map to simulate
+     * @param propagation propagation rules and SEIR parameters
      */
     public SimulationEngine(Grid grid, Propagation propagation){
         this.grid=grid;
@@ -40,41 +40,49 @@ public class SimulationEngine implements Serializable {
         this.stepDuration=100;
     }
 
+    /**
+     * Returns the delay between two automatic simulation steps in milliseconds.
+     * @return step duration in ms
+     */
     public int getStepDuration() {return stepDuration;}
 
+    /**
+     * Sets the delay between two automatic simulation steps.
+     * @param stepDuration duration in milliseconds
+     */
     public void setStepDuration(int stepDuration) {this.stepDuration = stepDuration;}
     /**
-     * getter for status
-     * @return status
+     * Returns the current simulation status.
+     * @return current status
      */
     public SimStatus getStatus(){return status;}
 
     /**
-     * getter for stepCount
-     * @return stepCount
+     * Returns the number of simulation steps completed.
+     * @return step count
      */
     public int getStepCount(){return stepCount;}
 
     /**
-     * getter for our grid
+     * Returns the simulation grid.
      * @return the grid
      */
     public Grid getGrid(){return grid;}
 
     /**
-     * moves our simulation step by step for determined period of time
-     * executes one simulation step : updates all cells in the grid
-     * based on their neighbors and the propagation rules
+     * Advances the simulation by one step.
+     * Updates every cell based on its neighbours and the propagation rules.
+     * The previous grid state is pushed onto the history stack for rewinding.
      */
     public void step(){
-        // Save snapshot before modifying
+        // Push a copy onto the history stack before mutating
         history.push(deepCopyGrid(grid));
         if (history.size() > MAX_HISTORY) history.pollLast();
 
         int rows=grid.getRows();
         int cols= grid.getCols();
 
-        //place to keep new states
+        // Buffer for the next SEIR state of each cell
         SEIRData[][] newDataBuffer=new SEIRData[rows][cols];
 
         for(int i=0;i<rows;i++){
@@ -100,9 +108,9 @@ public class SimulationEngine implements Serializable {
     }
 
     /**
-     * begins our simulation changes the state to running
-     * starts the simulation in a separate thread
-     * updates the grid every 500ms until paused or stopped
+     * Starts the simulation on a background daemon thread.
+     * The thread advances one step every {@code stepDuration} ms
+     * until the status is no longer RUNNING.
      */
     public void play(){
         this.status= SimStatus.RUNNING;
@@ -121,15 +129,14 @@ public class SimulationEngine implements Serializable {
     }
 
     /**
-     * pauses the simulation
-     * can be resumed with play
+     * Pauses the simulation. Call {@link #play()} to resume.
      */
     public void pause(){
         this.status= SimStatus.PAUSED;
     }
 
     /**
-     * stops the simulation definitively and resets the step counter to 0
+     * Stops the simulation and resets the step counter to zero.
      */
     public void stop(){
         this.status= SimStatus.FINISHED;
@@ -148,10 +155,20 @@ public class SimulationEngine implements Serializable {
         return true;
     }
 
+    /**
+     * Returns true if there is at least one previous state in the history stack.
+     * @return true if rewinding is possible
+     */
     public boolean canRewind() {
         return !history.isEmpty();
     }
 
+    /**
+     * Creates a deep copy of a grid including all cell states and SEIR data.
+     * Used to push a snapshot onto the history stack before each step.
+     * @param source the grid to copy
+     * @return an independent copy
+     */
     private Grid deepCopyGrid(Grid source) {
         int rows = source.getRows();
         int cols = source.getCols();
@@ -176,7 +193,7 @@ public class SimulationEngine implements Serializable {
     }
 
     /**
-     *  rebuild the Neighbourhood 
+     * Rebuilds the cell neighbourhood index after deserialisation or a grid swap.
      */
     public void rebuildNeighborhood() {
         this.neighborhood = new CellNeighborhood(grid.getMap());

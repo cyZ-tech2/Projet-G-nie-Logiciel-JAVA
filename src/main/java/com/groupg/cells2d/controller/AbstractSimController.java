@@ -28,50 +28,55 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Classe mère partagée entre ResearcherController et DoctorInterfaceController.
- * Contient le rendu de la carte, la boucle de simulation, les statistiques et les graphiques.
+ * Base controller shared by ResearcherController and DoctorInterfaceController.
+ * Handles map rendering, simulation loop, statistics, and chart display.
  */
 public abstract class AbstractSimController {
 
-    // --- Map (injectés par les sous-classes via FXML) ---
+    // --- Map layers (injected by sub-controllers via FXML) ---
     @FXML protected StackPane mapPane;
     @FXML protected ImageView mapImageView;
     @FXML protected Pane      districtLayer;
     @FXML protected Pane      gridLayer;
 
-    // --- Status ---
+    // --- Status labels ---
     @FXML protected Label stepLabel;
     @FXML protected Label statusLabel;
 
-    // --- State partagé ---
+    // --- Shared state ---
     protected Grid             parisGrid;
     protected SimulationEngine engine;
     protected double           canvasWidth;
     protected double           canvasHeight;
 
-    // --- Statistiques ---
+    // --- Statistics ---
     protected final List<Snapshot>                        statisticHistory = new ArrayList<>();
     protected final List<Map<String, DistrictSnapshot>>   districtHistory  = new ArrayList<>();
     protected int lastRecordedStep = -1;
 
     // -------------------------------------------------------------------------
-    // Méthodes abstraites — implémentées différemment par chaque sous-classe
+    // Abstract methods — implemented differently in each sub-class
     // -------------------------------------------------------------------------
 
-    /** Appelée après chaque clic sur une cellule de la carte. */
+    /** Called after each click on a map cell. */
     protected abstract void onCellClicked(Cell cell);
 
-    /** Permet à chaque sous-classe d'ajouter ses propres décorations sur la cellule (surbrillance, etc.). */
+    /** Allows each sub-class to apply custom cell decorations (highlight, border, etc.). */
     protected abstract Color getCellStrokeColor(Cell cell);
+    /** Returns the stroke width to apply to the given cell's rectangle. */
     protected abstract double getCellStrokeWidth(Cell cell);
 
     // -------------------------------------------------------------------------
-    // Simulation controls (communs)
+    // Simulation controls (shared)
     // -------------------------------------------------------------------------
 
     /** Path to the about HTML file — implemented by each sub-controller. */
     protected abstract String getAboutResourcePath();
 
+    /**
+     * Opens the "About" HTML page in a modal WebView window.
+     * The page path is provided by each sub-controller.
+     */
     @FXML
     public void onAbout() {
         try {
@@ -87,6 +92,9 @@ public abstract class AbstractSimController {
         }
     }
 
+    /**
+     * Pauses the simulation and closes the main application window.
+     */
     @FXML
     public void onCloseApplication() {
         try {
@@ -97,6 +105,9 @@ public abstract class AbstractSimController {
         }
     }
 
+    /**
+     * Pauses the simulation and navigates back to the login screen.
+     */
     @FXML
     public void onLogout() {
         try {
@@ -112,6 +123,10 @@ public abstract class AbstractSimController {
         }
     }
 
+    /**
+     * Starts the simulation if it is not already running,
+     * then launches the UI refresh loop.
+     */
     @FXML
     public void onPlay() {
         if (engine.getStatus() != SimStatus.RUNNING) {
@@ -121,12 +136,19 @@ public abstract class AbstractSimController {
         updateStatusUI();
     }
 
+    /**
+     * Pauses the simulation and refreshes the status labels.
+     */
     @FXML
     public void onPause() {
         engine.pause();
         updateStatusUI();
     }
 
+    /**
+     * Spawns a daemon thread that refreshes the map, statistics, and status
+     * labels every ~520 ms while the simulation is running.
+     */
     protected void startUIRefreshLoop() {
         Thread t = new Thread(() -> {
             while (engine.getStatus() == SimStatus.RUNNING) {
@@ -147,15 +169,23 @@ public abstract class AbstractSimController {
         t.start();
     }
 
+    /**
+     * Updates the step and status labels with the current engine state.
+     * Safe to call from any thread (null-checks both labels).
+     */
     protected void updateStatusUI() {
         if (stepLabel   != null) stepLabel.setText("Étape : "  + engine.getStepCount());
         if (statusLabel != null) statusLabel.setText("Statut : " + engine.getStatus());
     }
 
     // -------------------------------------------------------------------------
-    // Rendu de la carte
+    // Map rendering
     // -------------------------------------------------------------------------
 
+    /**
+     * Computes the canvas dimensions preserving the Paris map aspect ratio,
+     * resizes all overlay layers accordingly, and redraws the grid.
+     */
     protected void drawMap() {
         if (mapPane == null || mapPane.getWidth() <= 0 || mapPane.getHeight() <= 0) return;
 
@@ -179,6 +209,11 @@ public abstract class AbstractSimController {
         drawGrid();
     }
 
+    /**
+     * Clears and redraws every Paris cell as a coloured rectangle,
+     * then overlays the district borders.
+     * Sub-classes may override this to add extra interaction handlers.
+     */
     protected void drawGrid() {
         gridLayer.getChildren().clear();
 
@@ -203,6 +238,11 @@ public abstract class AbstractSimController {
         drawDistrictBorders(cellWidth, cellHeight);
     }
 
+    /**
+     * Returns the fill colour corresponding to the cell's epidemic state.
+     * @param cell the cell to colour
+     * @return RGBA fill colour
+     */
     protected Color getFillColorFor(Cell cell) {
         switch (cell.getState()) {
             case HEALTHY:   return Color.rgb(89,  180, 90,  0.28);
@@ -215,9 +255,15 @@ public abstract class AbstractSimController {
     }
 
     // -------------------------------------------------------------------------
-    // Bordures de districts
+    // District border rendering
     // -------------------------------------------------------------------------
 
+    /**
+     * Draws a 1.5 px black border segment wherever two adjacent Paris cells
+     * belong to different arrondissements.
+     * @param cellWidth  pixel width of one cell
+     * @param cellHeight pixel height of one cell
+     */
     private void drawDistrictBorders(double cellWidth, double cellHeight) {
         for (int row = 0; row < parisGrid.getRows(); row++) {
             for (int col = 0; col < parisGrid.getCols(); col++) {
@@ -231,6 +277,10 @@ public abstract class AbstractSimController {
         }
     }
 
+    /**
+     * Returns true if the neighbour at (nRow, nCol) belongs to a different
+     * district than {@code cell}, or if the neighbour is out of bounds / outside Paris.
+     */
     private boolean isDifferentDistrict(Cell cell, int nRow, int nCol) {
         if (nRow < 0 || nRow >= parisGrid.getRows() || nCol < 0 || nCol >= parisGrid.getCols()) return true;
         Cell n = parisGrid.getCell(nRow, nCol);
@@ -239,6 +289,10 @@ public abstract class AbstractSimController {
         return cd != null && nd != null && !cd.equals(nd);
     }
 
+    /**
+     * Adds a semi-transparent black line segment to the grid layer.
+     * The line is mouse-transparent so it does not intercept cell clicks.
+     */
     private void addBorderLine(double x1, double y1, double x2, double y2) {
         Line line = new Line(x1, y1, x2, y2);
         line.setStroke(Color.rgb(0, 0, 0, 0.85));
@@ -248,9 +302,13 @@ public abstract class AbstractSimController {
     }
 
     // -------------------------------------------------------------------------
-    // Statistiques
+    // Statistics
     // -------------------------------------------------------------------------
 
+    /**
+     * Records a new statistics snapshot for the current step (if not already done)
+     * and notifies sub-classes via {@link #onStatisticsUpdated(Snapshot)}.
+     */
     protected void updateStatistics() {
         if (engine.getStepCount() == lastRecordedStep) return;
         Snapshot stats = Statistics.compute(parisGrid, engine.getStepCount());
@@ -260,9 +318,13 @@ public abstract class AbstractSimController {
         onStatisticsUpdated(stats);
     }
 
-    /** Hook appelé après chaque mise à jour des stats. Surchargé par les sous-classes si besoin. */
+    /** Hook called after each statistics update. Override in sub-classes if needed. */
     protected void onStatisticsUpdated(Snapshot stats) {}
 
+    /**
+     * Opens an interactive chart window showing cell-state or population
+     * evolution over time, filterable by district and series type.
+     */
     @FXML
     public void onShowStatisticsCharts() {
         Stage stage = new Stage();
@@ -362,6 +424,14 @@ public abstract class AbstractSimController {
         stage.show();
     }
 
+    /**
+     * Builds one named data series for the statistics chart.
+     * @param dist     district ID or "Global"
+     * @param statType "Cellules" or "Population"
+     * @param name     series display name
+     * @param type     internal key ("healthy", "infected", etc.)
+     * @return populated chart series
+     */
     private XYChart.Series<Number, Number> createSeries(String dist, String statType, String name, String type) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(name);
@@ -378,6 +448,13 @@ public abstract class AbstractSimController {
         return series;
     }
 
+    /**
+     * Extracts the value for the given statistic type from a global snapshot.
+     * @param s        the snapshot to read
+     * @param statType "Cellules" or "Population"
+     * @param type     compartment key
+     * @return the numeric value, or 0 if unknown
+     */
     private double getGlobalValue(Snapshot s, String statType, String type) {
         if ("Cellules".equals(statType)) switch (type) {
             case "healthy":   return s.getHealthyCells();
@@ -398,6 +475,13 @@ public abstract class AbstractSimController {
         }
     }
 
+    /**
+     * Extracts the value for the given statistic type from a district snapshot.
+     * @param s        the district snapshot to read
+     * @param statType "Cellules" or "Population"
+     * @param type     compartment key
+     * @return the numeric value, or 0 if unknown
+     */
     private double getDistrictValue(DistrictSnapshot s, String statType, String type) {
         if ("Cellules".equals(statType)) switch (type) {
             case "healthy":   return s.getHealthyCells();
@@ -416,6 +500,13 @@ public abstract class AbstractSimController {
         }
     }
 
+    /**
+     * Refreshes the summary percentage label above the chart
+     * for the currently selected district and statistic type.
+     * @param lbl      the label to update
+     * @param dist     district ID or "Global"
+     * @param statType "Cellules" or "Population"
+     */
     private void updatePercentageLabel(Label lbl, String dist, String statType) {
         if ("Global".equals(dist)) {
             if (statisticHistory.isEmpty()) return;
@@ -461,6 +552,13 @@ public abstract class AbstractSimController {
         }
     }
 
+    /**
+     * Computes the percentage of {@code v} relative to {@code total}.
+     * Returns 0 if {@code total} is zero to avoid division by zero.
+     * @param v     partial value
+     * @param total total value
+     * @return percentage in [0, 100]
+     */
     protected double percent(double v, double total) {
         return total == 0 ? 0 : v * 100.0 / total;
     }

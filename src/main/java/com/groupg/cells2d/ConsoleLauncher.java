@@ -12,13 +12,25 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
 
+/**
+ * Headless (command-line) simulation launcher.
+ * Prompts the user for grid dimensions and SEIR parameters via stdin,
+ * runs the simulation step by step, and prints a live ASCII grid to stdout.
+ * Used when the {@code --console} flag is passed to {@link Launcher}.
+ */
 public class ConsoleLauncher {
     private int steps;
     private SimulationEngine engine;
 
+    /** Creates a new console launcher with no engine loaded. */
     public ConsoleLauncher() {
     }
 
+    /**
+     * Loads a previously saved simulation from a file and prompts the user
+     * for the number of steps to run.
+     * @param loadPath path to the {@code .dat} save file
+     */
     public void load(String loadPath) {
         try {
             this.engine = SaveManager.load(loadPath);
@@ -33,6 +45,10 @@ public class ConsoleLauncher {
         }
     }
 
+    /**
+     * Saves the current simulation state to a file.
+     * @param savePath destination file path
+     */
     public void save(String savePath) {
         try {
             SaveManager.save(this.engine, savePath);
@@ -42,6 +58,11 @@ public class ConsoleLauncher {
         }
     }
 
+    /**
+     * Interactively prompts the user via stdin for grid dimensions,
+     * number of steps, and all SEIR parameters, then initialises
+     * a new simulation engine with a partially infected grid.
+     */
     public void populate() {
         Scanner scanner = new Scanner(System.in);
         scanner.useLocale(Locale.US); // for display and input consistency (only use .)
@@ -72,6 +93,11 @@ public class ConsoleLauncher {
     }
 
 
+    /**
+     * Runs the simulation for the configured number of steps,
+     * printing the ASCII grid and SEIR totals after each step.
+     * Sleeps 300 ms between steps for readability.
+     */
     public void run() {
         try {
             printLegend();
@@ -95,6 +121,13 @@ public class ConsoleLauncher {
         }
     }
 
+    /**
+     * Creates a uniform grid where every cell has a population of 100
+     * and starts fully susceptible.
+     * @param rows number of grid rows
+     * @param cols number of grid columns
+     * @return the initialised grid
+     */
     private static Grid createGrid(int rows, int cols) {
         Grid grid = new Grid(rows, cols);
         for (int i = 0; i < rows; i++) {
@@ -107,6 +140,13 @@ public class ConsoleLauncher {
         return grid;
     }
 
+    /**
+     * Seeds the centre of the grid with a small cluster of infected cells
+     * to start the epidemic spreading.
+     * @param grid the grid to seed
+     * @param rows total rows
+     * @param cols total columns
+     */
     private static void infectInitialCells(Grid grid, int rows, int cols) {
         int cr = rows / 2, cc = cols / 2;
         infectCell(grid, cr, cc, 40, 60);
@@ -116,14 +156,29 @@ public class ConsoleLauncher {
         if (cc - 1 >= 0)   infectCell(grid, cr, cc - 1, 70, 30);
     }
 
+    /**
+     * Sets the SEIR data of a single cell to the given susceptible and infected counts.
+     * @param grid        the grid containing the cell
+     * @param row         cell row
+     * @param col         cell column
+     * @param susceptible susceptible population
+     * @param infected    infected population
+     */
     private static void infectCell(Grid grid, int row, int col, double susceptible, double infected) {
         grid.getCell(row, col).setSeirData(new SEIRData(susceptible, 0, infected, 0, 0));
     }
 
+    /**
+     * Prints the ASCII character legend to stdout.
+     */
     private static void printLegend() {
         System.out.println("\nLegend:\n. = Healthy\nE = Exposed\nI = Infected\nR = Recovered\nD = Dead");
     }
 
+    /**
+     * Prints the current grid state as an ASCII diagram to stdout.
+     * @param grid the grid to display
+     */
     private static void printGrid(Grid grid) {
         for (int i = 0; i < grid.getRows(); i++) {
             for (int j = 0; j < grid.getCols(); j++) {
@@ -133,6 +188,13 @@ public class ConsoleLauncher {
         }
     }
 
+    /**
+     * Returns a single character representing the dominant epidemic compartment
+     * of a cell's SEIR data: 'I' (infected), 'E' (exposed), 'D' (dead),
+     * 'R' (recovered), or '.' (susceptible / healthy).
+     * @param data the SEIR data to evaluate
+     * @return display character
+     */
     private static char getCellStateLetter(SEIRData data) {
         if (data.getInfected() > 0.1)  return 'I';
         if (data.getExposed()  > 0.1)  return 'E';
@@ -141,6 +203,12 @@ public class ConsoleLauncher {
         return '.';
     }
 
+    /**
+     * Prints a one-line summary of total S, E, I, R, D compartment values
+     * across all cells for the given step.
+     * @param grid the grid to aggregate
+     * @param step current simulation step
+     */
     private static void printTotals(Grid grid, int step) {
         double s = 0, e = 0, i = 0, r = 0, d = 0;
         for (int row = 0; row < grid.getRows(); row++) {
@@ -153,6 +221,12 @@ public class ConsoleLauncher {
         System.out.printf("Step %d | S=%.2f | E=%.2f | I=%.2f | R=%.2f | D=%.2f%n", step, s, e, i, r, d);
     }
 
+    /**
+     * Simple additional spatial spread pass: for every cell with more than 1 infected
+     * individual, transfers 5 people from susceptible to exposed in each of the
+     * 4 cardinal neighbours. Applied after each engine step in the console mode.
+     * @param grid the grid to update
+     */
     private static void spreadToNeighbors(Grid grid) {
         SEIRData[][] next = new SEIRData[grid.getRows()][grid.getCols()];
         for (int i = 0; i < grid.getRows(); i++) {
@@ -184,6 +258,14 @@ public class ConsoleLauncher {
                 grid.getCell(i, j).setSeirData(next[i][j]);
     }
 
+    /**
+     * Prompts the user until a valid integer in [min, max] is entered.
+     * @param sc    the scanner to read from
+     * @param label the prompt label
+     * @param min   minimum acceptable value (inclusive)
+     * @param max   maximum acceptable value (inclusive)
+     * @return the validated integer
+     */
     private static int readInt(Scanner sc, String label, int min, int max) {
         while (true) {
             System.out.print(label + " (" + min + " - " + max + "): ");
@@ -195,6 +277,14 @@ public class ConsoleLauncher {
         }
     }
 
+    /**
+     * Prompts the user until a valid double in [min, max] is entered.
+     * @param sc    the scanner to read from
+     * @param label the prompt label
+     * @param min   minimum acceptable value (inclusive)
+     * @param max   maximum acceptable value (inclusive)
+     * @return the validated double
+     */
     private static double readDouble(Scanner sc, String label, double min, double max) {
         while (true) {
             System.out.print(label + " (" + min + " - " + max + "): ");

@@ -8,7 +8,15 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Manual smoke test for the {@link PatientCase} encryption and persistence flow.
+ * Not part of the automated test suite.
+ */
 public class PatientCaseTest {
+    /**
+     * Runs the manual patient-case smoke test.
+     * @param args unused
+     */
     public static void main(String[] args)
             throws NoSuchPaddingException, IllegalBlockSizeException,
                    NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {

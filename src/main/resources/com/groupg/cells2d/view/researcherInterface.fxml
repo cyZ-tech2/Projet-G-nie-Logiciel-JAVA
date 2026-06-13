@@ -27,26 +27,26 @@
    <top>
       <MenuBar>
          <menus>
-            <Menu mnemonicParsing="false" text="File">
+            <Menu mnemonicParsing="false" text="Fichier">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onNewSimulation" text="New" />
-                  <MenuItem mnemonicParsing="false" onAction="#onLoadSimulation" text="Open" />
-                  <MenuItem mnemonicParsing="false" onAction="#onSaveSimulation" text="Save" />
-                  <MenuItem mnemonicParsing="false" onAction="#onCloseApplication" text="Close" />
-                  <MenuItem onAction="#onExportAll" text="Export All" />
-                  <MenuItem mnemonicParsing="false" onAction="#onLogout" text="Deconnexion" />
+                  <MenuItem mnemonicParsing="false" onAction="#onNewSimulation" text="Nouvelle simulation" />
+                  <MenuItem mnemonicParsing="false" onAction="#onLoadSimulation" text="Ouvrir" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveSimulation" text="Enregistrer" />
+                  <MenuItem mnemonicParsing="false" onAction="#onCloseApplication" text="Quitter" />
+                  <MenuItem onAction="#onExportAll" text="Tout exporter" />
+                  <MenuItem mnemonicParsing="false" onAction="#onLogout" text="Déconnexion" />
                </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Simulation">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onPlay"  text="Start" />
+                  <MenuItem mnemonicParsing="false" onAction="#onPlay"  text="Démarrer" />
                   <MenuItem mnemonicParsing="false" onAction="#onPause" text="Pause" />
-                  <MenuItem mnemonicParsing="false" onAction="#onStop"  text="Reset" />
+                  <MenuItem mnemonicParsing="false" onAction="#onStop"  text="Réinitialiser" />
                </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Help">
+            <Menu mnemonicParsing="false" text="Aide">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onAbout" text="About" />
+                  <MenuItem mnemonicParsing="false" onAction="#onAbout" text="À propos" />
                </items>
             </Menu>
          </menus>
@@ -63,77 +63,77 @@
                </padding>
                <children>
 
-                  <!-- Modes dessin -->
+                  <!-- Drawing modes -->
                   <HBox prefHeight="27.0" prefWidth="290.0" style="-fx-alignment: center;">
                      <children>
-                        <RadioButton fx:id="cursorRadio" mnemonicParsing="false" selected="true" text="Cursor">
+                        <RadioButton fx:id="cursorRadio" mnemonicParsing="false" selected="true" text="Curseur">
                            <HBox.margin><Insets right="10.0" /></HBox.margin>
                            <toggleGroup><ToggleGroup fx:id="mode" /></toggleGroup>
                         </RadioButton>
-                        <RadioButton fx:id="brushRadio" mnemonicParsing="false" text="Brush" toggleGroup="$mode">
+                        <RadioButton fx:id="brushRadio" mnemonicParsing="false" text="Pinceau" toggleGroup="$mode">
                            <padding><Insets right="10.0" /></padding>
                         </RadioButton>
-                        <RadioButton fx:id="bucketRadio" mnemonicParsing="false" text="Bucket" toggleGroup="$mode" />
+                        <RadioButton fx:id="bucketRadio" mnemonicParsing="false" text="Remplissage" toggleGroup="$mode" />
                      </children>
                   </HBox>
 
-                  <!-- Contrôles simulation — icônes uniquement + tooltips -->
+                  <!-- Simulation controls — icons only + tooltips -->
                   <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Contrôles" />
                   <HBox spacing="4.0">
                      <children>
                         <Button fx:id="btnPlay"   onAction="#onPlay"   prefWidth="52" text="▶"  style="-fx-font-size: 16;">
-                           <tooltip><Tooltip text="Play" /></tooltip>
+                           <tooltip><Tooltip text="Démarrer" /></tooltip>
                         </Button>
                         <Button fx:id="btnPause"  onAction="#onPause"  prefWidth="52" text="⏸"  style="-fx-font-size: 16;">
                            <tooltip><Tooltip text="Pause" /></tooltip>
                         </Button>
                         <Button fx:id="btnStop"   onAction="#onStop"   prefWidth="52" text="⏹"  style="-fx-font-size: 16;">
-                           <tooltip><Tooltip text="Stop / Reset" /></tooltip>
+                           <tooltip><Tooltip text="Arrêter / Réinitialiser" /></tooltip>
                         </Button>
                         <Button fx:id="btnStep"   onAction="#onStep"   prefWidth="52" text="⏭"  style="-fx-font-size: 16;">
-                           <tooltip><Tooltip text="Step" /></tooltip>
+                           <tooltip><Tooltip text="Pas suivant" /></tooltip>
                         </Button>
                         <Button fx:id="btnRewind" onAction="#onRewind" prefWidth="52" text="⏮"  style="-fx-font-size: 16;">
-                           <tooltip><Tooltip text="Rewind" /></tooltip>
+                           <tooltip><Tooltip text="Pas précédent" /></tooltip>
                         </Button>
                      </children>
                   </HBox>
 
-                  <Label fx:id="speedLabel" text="Vitesse:" />
+                  <Label fx:id="speedLabel" text="Vitesse : 100 ms/étape" />
                   <Slider fx:id="speedSlider" max="1000.0" min="50.0" showTickMarks="true" />
 
-                  <Label fx:id="stepLabel"   style="-fx-font-size: 12;" text="Étape: 0" />
-                  <Label fx:id="statusLabel" style="-fx-font-size: 12;" text="Statut: IDLE" />
+                  <Label fx:id="stepLabel"   style="-fx-font-size: 12;" text="Étape : 0" />
+                  <Label fx:id="statusLabel" style="-fx-font-size: 12;" text="Statut : IDLE" />
 
-                  <!-- Statistiques -->
+                  <!-- Statistics -->
                   <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Statistiques" />
                   <Label fx:id="statsLabel" prefWidth="280.0" wrapText="true" />
                   <Separator prefWidth="280.0" />
                   <Button onAction="#onShowStatisticsCharts" prefWidth="280.0" text="Graphiques" />
 
-                  <!-- Paramètres SEIR -->
+                  <!-- SEIR parameters -->
                   <Accordion>
                      <panes>
-                        <TitledPane animated="false" text="Parametres SEIR">
+                        <TitledPane animated="false" text="Paramètres SEIR">
                            <content>
                               <VBox prefWidth="100.0">
                                  <children>
-                                    <Label fx:id="betaLabel" text="beta (transmission): 0.30" />
+                                    <Label fx:id="betaLabel" text="β (transmission) : 0.30" />
                                     <Slider fx:id="betaSlider" max="1.0" min="0.0" prefWidth="280.0"
                                             showTickLabels="true" showTickMarks="true" value="0.3" />
-                                    <Label fx:id="gammaLabel" text="gamma (guerison): 0.10" />
+                                    <Label fx:id="gammaLabel" text="γ (guérison) : 0.10" />
                                     <Slider fx:id="gammaSlider" max="0.5" min="0.0" prefWidth="280.0"
                                             showTickLabels="true" showTickMarks="true" value="0.1" />
-                                    <Label fx:id="sigmaLabel" text="sigma (incubation): 0.20" />
+                                    <Label fx:id="sigmaLabel" text="σ (incubation) : 0.20" />
                                     <Slider fx:id="sigmaSlider" max="1.0"
                                             showTickLabels="true" showTickMarks="true" value="0.2" />
-                                    <Label fx:id="xiLabel" text="xi (declin immunite, SEIRS): 0.00" />
+                                    <Label fx:id="xiLabel" text="ξ (déclin immunité) : 0.00" />
                                     <Slider fx:id="xiSlider" max="1.0"
                                             showTickLabels="true" showTickMarks="true" />
-                                    <Label fx:id="mortalityLabel" text="Taux de mortalite:" />
+                                    <Label fx:id="mortalityLabel" text="Taux de mortalité : 0.00" />
                                     <Slider fx:id="mortalitySlider" max="1.0"
                                             showTickLabels="true" showTickMarks="true" />
-                                    <Label fx:id="propagationLabel" text="Taux de propagation:" />
+                                    <Label fx:id="propagationLabel" text="Taux de propagation : 0.00" />
                                     <Slider fx:id="propagationSlider" max="1.0"
                                             showTickLabels="true" showTickMarks="true" />
                                  </children>
@@ -145,8 +145,8 @@
 
                   <Separator prefWidth="200.0" />
 
-                  <!-- Legende -->
-                  <Label style="-fx-font-weight: bold;" text="Legende" />
+                  <!-- Legend -->
+                  <Label style="-fx-font-weight: bold;" text="Légende" />
                   <HBox spacing="10.0">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="6">
@@ -159,7 +159,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="6">
                            <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(220,53,69,0.9);" />
-                           <Label text="Infecte" />
+                           <Label text="Infecté" />
                         </HBox>
                      </children>
                   </HBox>
@@ -171,7 +171,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="6">
                            <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(89,90,210,0.6);" />
-                           <Label text="Retabli" />
+                           <Label text="Rétabli" />
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="6">
                            <Pane prefHeight="16" prefWidth="16"
@@ -183,10 +183,10 @@
 
                   <Separator prefWidth="280.0" />
 
-                  <!-- Cellule selectionnee -->
-                  <Label style="-fx-font-weight: bold;" text="Cellule selectionnee" />
+                  <!-- Selected cell info -->
+                  <Label style="-fx-font-weight: bold;" text="Cellule sélectionnée" />
                   <Label fx:id="selectedCellLabel" prefWidth="280.0"
-                         text="Clique sur une cellule dans Paris." wrapText="true" />
+                         text="Cliquez sur une cellule dans Paris." wrapText="true" />
 
                </children>
             </VBox>

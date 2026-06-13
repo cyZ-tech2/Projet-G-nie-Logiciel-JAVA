@@ -6,7 +6,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * Handles Serialization and deserialization of each class
+ * Configures a Gson instance with polymorphic type adapters
+ * and exposes helpers for serialising and deserialising typed sets.
  */
 public class GsonManager {
 
@@ -14,18 +15,18 @@ public class GsonManager {
     private Gson gson;
 
     /**
-     * Registers Hierarchy between a class and its childs
-     * @param baseClass highest class in the hierarchy
-     * @param subtypes Maps a name with a class inheriting from T
-     * @return
-     * @param <T>
-     *
+     * Registers a polymorphic type hierarchy so Gson can serialise/deserialise
+     * concrete sub-types by their string label.
+     * @param <T>       base type
+     * @param baseClass root of the hierarchy
+     * @param subtypes  map of label → concrete sub-type
+     * @return this instance for chaining
      */
     public <T> GsonManager registerHierarchy(Class<T> baseClass, Map<String, Class<? extends T>> subtypes) {
-        RuntimeTypeAdapterFactory<T> factory = RuntimeTypeAdapterFactory.of(baseClass, "type"); //creates an adapter for the base class
-        subtypes.forEach((label, type) -> factory.registerSubtype(type, label)); //takes all the subtypes and adds it to the factory
-        builder.registerTypeAdapterFactory(factory); // registers the factory to the builder, so it can be used to serialize or deserialize
-        this.gson = null; //  resets gson cache
+        RuntimeTypeAdapterFactory<T> factory = RuntimeTypeAdapterFactory.of(baseClass, "type");
+        subtypes.forEach((label, type) -> factory.registerSubtype(type, label));
+        builder.registerTypeAdapterFactory(factory);
+        this.gson = null; // invalidate cached Gson so the new factory is picked up
         return this;
     }
 
@@ -42,29 +43,33 @@ public class GsonManager {
 //        return this;
 //    }
 
+    /**
+     * Returns the configured {@link Gson} instance, building it lazily if needed.
+     * @return the shared Gson instance
+     */
     public Gson get() {
         if (gson == null) gson = builder.create();
         return gson;
     }
 
     /**
-     * Serializes a Set to Json
-     * @param set
-     * @param baseClass
-     * @return
-     * @param <T>
+     * Serialises a set to a JSON string, preserving concrete type information.
+     * @param <T>       element type
+     * @param set       the set to serialise
+     * @param baseClass element base class
+     * @return JSON string
      */
     public <T> String setToJson(Set<T> set, Class<T> baseClass) {
-        Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType(); //Saves the type of the set
+        Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType();
         return get().toJson(set, type);
     }
 
     /**
-     * Deserializes a json to a Hashsetx
-     * @param json
-     * @param baseClass
-     * @return
-     * @param <T>
+     * Deserialises a JSON string into a {@link java.util.HashSet}.
+     * @param <T>       element type
+     * @param json      JSON string to parse
+     * @param baseClass element base class
+     * @return populated set
      */
     public <T> Set<T> jsonToSet(String json, Class<T> baseClass) {
         Type type = TypeToken.getParameterized(HashSet.class, baseClass).getType();

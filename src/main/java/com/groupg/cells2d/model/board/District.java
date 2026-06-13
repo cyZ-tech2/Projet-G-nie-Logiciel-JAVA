@@ -71,27 +71,34 @@ public class District extends Grid {
         quarantine = false;
     }
 
-    /**
-     * Getters and setters
-     */
+    // -------------------------------------------------------------------------
+    // Getters and setters
+    // -------------------------------------------------------------------------
+
+    /** Returns the district identifier. */
     public String getId() {
         return id;
     }
 
+    /** Sets the district identifier. */
     public void setId(String id) {
         this.id = id;
     }
+    /** Returns the district name. */
     public String getName() {
         return name;
     }
 
+    /** Sets the district name. */
     public void setName(String name) {
         this.name = name;
     }
+    /** Returns true if this district is under quarantine / lockdown. */
     public boolean isQuarantine() {
         return quarantine;
     }
 
+    /** Explicitly sets the quarantine flag for this district. */
     public void setQuarantine(boolean quarantine) {
         this.quarantine = quarantine;
     }

@@ -7,10 +7,20 @@ import com.groupg.cells2d.model.board.SEIRData;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Stateless utility class that computes {@link Snapshot} and
+ * {@link DistrictSnapshot} objects from a {@link com.groupg.cells2d.model.board.Grid}.
+ */
 public class Statistics {
 
-    private Statistics() {}
+    private Statistics() {} // utility class — not instantiable
 
+    /**
+     * Computes a global statistics snapshot for the given grid at the given step.
+     * @param grid the simulation grid to analyse
+     * @param step current step number
+     * @return a new immutable snapshot
+     */
     public static Snapshot compute(Grid grid, int step) {
         int healthy = 0, partial = 0, infected = 0, critical = 0, recovered = 0, total = 0;
         double susceptiblePop = 0, exposedPop = 0, infectedPop = 0, recoveredPop = 0, deadPop = 0;
@@ -44,6 +54,13 @@ public class Statistics {
             susceptiblePop, exposedPop, infectedPop, recoveredPop, deadPop, totalPop, recovered);
     }
 
+    /**
+     * Computes per-district statistics snapshots for the given grid at the given step.
+     * Only cells flagged as inside Paris are included.
+     * @param grid the simulation grid to analyse
+     * @param step current step number
+     * @return map of arrondissement ID → district snapshot
+     */
     public static Map<String, DistrictSnapshot> computeByDistrict(Grid grid, int step) {
         Map<String, DistrictSnapshot> districtStats = new HashMap<>();
 

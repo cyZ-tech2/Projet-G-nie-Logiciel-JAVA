@@ -27,25 +27,31 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.PrintWriter;
 
+/**
+ * Controller for the researcher interface.
+ * Extends {@link AbstractSimController} with full SEIR parameter sliders,
+ * drawing modes (cursor / brush / bucket), step-by-step controls,
+ * and save / load / export features.
+ */
 public class ResearcherController extends AbstractSimController {
 
-    // --- Modes ---
+    // --- Drawing modes ---
     @FXML private RadioButton cursorRadio;
     @FXML private RadioButton brushRadio;
     @FXML private RadioButton bucketRadio;
 
-    // --- Controls ---
+    // --- Simulation controls ---
     @FXML private Button btnPlay;
     @FXML private Button btnPause;
     @FXML private Button btnStop;
     @FXML private Button btnStep;
     @FXML private Button btnRewind;
 
-    // --- Status ---
+    // --- Status labels ---
     @FXML private Label selectedCellLabel;
     @FXML private Label statsLabel;
 
-    // --- Sliders ---
+    // --- Parameter sliders ---
     @FXML private Slider betaSlider;
     @FXML private Slider gammaSlider;
     @FXML private Slider sigmaSlider;
@@ -64,9 +70,13 @@ public class ResearcherController extends AbstractSimController {
     private Propagation propagation;
 
     // -------------------------------------------------------------------------
-    // Initialisation
+    // Initialization
     // -------------------------------------------------------------------------
 
+    /**
+     * Initialises the Paris grid, simulation engine, slider bindings,
+     * and map resize listeners. Called automatically by JavaFX after FXML injection.
+     */
     @FXML
     public void initialize() {
         parisGrid   = ParisGridFactory.createDefaultParisGrid();
@@ -85,9 +95,13 @@ public class ResearcherController extends AbstractSimController {
     }
 
     // -------------------------------------------------------------------------
-    // Sliders
+    // Slider bindings
     // -------------------------------------------------------------------------
 
+    /**
+     * Binds each FXML slider to its corresponding SEIR parameter and label.
+     * Called once during initialisation.
+     */
     private void bindSliders() {
         betaSlider.setValue(propagation.getParams().getBeta());
         betaSlider.valueProperty().addListener((obs, o, n) -> {
@@ -134,15 +148,19 @@ public class ResearcherController extends AbstractSimController {
         speedSlider.setValue(engine.getStepDuration());
         speedSlider.valueProperty().addListener((obs, o, n) -> {
             engine.setStepDuration(n.intValue());
-            speedLabel.setText(String.format("Vitesse: %d", n.intValue()));
+            speedLabel.setText(String.format("Vitesse : %d ms/étape", n.intValue()));
         });
-        speedLabel.setText(String.format("Vitesse: %d", engine.getStepDuration()));
+        speedLabel.setText(String.format("Vitesse : %d ms/étape", engine.getStepDuration()));
     }
 
     // -------------------------------------------------------------------------
-    // Contrôles spécifiques chercheur
+    // Researcher-specific controls
     // -------------------------------------------------------------------------
 
+    /**
+     * Stops the current simulation, rebuilds the grid and engine from scratch
+     * while preserving the current SEIR parameter values, and resets all history.
+     */
     @FXML public void onStop() {
         engine.stop();
         parisGrid   = ParisGridFactory.createDefaultParisGrid();
@@ -162,6 +180,10 @@ public class ResearcherController extends AbstractSimController {
         drawMap();
     }
 
+    /**
+     * Advances the simulation by exactly one step when not already running,
+     * then refreshes statistics, status labels, and the grid display.
+     */
     @FXML public void onStep() {
         if (engine.getStatus() != SimStatus.RUNNING) {
             engine.step();
@@ -171,6 +193,10 @@ public class ResearcherController extends AbstractSimController {
         }
     }
 
+    /**
+     * Reverts the simulation to the previous step when not running.
+     * Does nothing if the history stack is empty.
+     */
     @FXML public void onRewind() {
         if (engine.getStatus() != SimStatus.RUNNING) {
             if (engine.rewind()) {
@@ -184,7 +210,7 @@ public class ResearcherController extends AbstractSimController {
     }
 
     // -------------------------------------------------------------------------
-    // Hook : clic sur cellule (cursor / brush / bucket)
+    // Cell click hook (cursor / brush / bucket modes)
     // -------------------------------------------------------------------------
 
     @Override
@@ -194,7 +220,7 @@ public class ResearcherController extends AbstractSimController {
         } else if (bucketRadio.isSelected()) {
             bucketFill(cell);
         }
-        // brush est géré via onMousePressed dans drawGrid override
+        // brush mode is handled via onMousePressed inside the drawGrid override
     }
 
     @Override
@@ -224,10 +250,16 @@ public class ResearcherController extends AbstractSimController {
             }
         }
 
-        // Bordures districts via méthode parente (réflexion non accessible → on redessine ici)
+        // District borders — redrawn locally because parent method is private
         drawDistrictBordersInternal(cellWidth, cellHeight);
     }
 
+    /**
+     * Local copy of the district border drawing logic.
+     * Needed because the parent's version is {@code private}.
+     * @param cellWidth  pixel width of one cell
+     * @param cellHeight pixel height of one cell
+     */
     private void drawDistrictBordersInternal(double cellWidth, double cellHeight) {
         for (int row = 0; row < parisGrid.getRows(); row++) {
             for (int col = 0; col < parisGrid.getCols(); col++) {
@@ -241,6 +273,10 @@ public class ResearcherController extends AbstractSimController {
         }
     }
 
+    /**
+     * Returns true if the neighbour at (nRow, nCol) is in a different district
+     * than {@code cell}, or is out of bounds / outside Paris.
+     */
     private boolean isDifferentDistrictR(Cell cell, int nRow, int nCol) {
         if (nRow < 0 || nRow >= parisGrid.getRows() || nCol < 0 || nCol >= parisGrid.getCols()) return true;
         Cell n = parisGrid.getCell(nRow, nCol);
@@ -249,6 +285,10 @@ public class ResearcherController extends AbstractSimController {
         return cd != null && nd != null && !cd.equals(nd);
     }
 
+    /**
+     * Adds a semi-transparent black line to the grid layer (researcher version).
+     * The line is mouse-transparent so it does not intercept cell clicks.
+     */
     private void addBorderLineR(double x1, double y1, double x2, double y2) {
         javafx.scene.shape.Line line = new javafx.scene.shape.Line(x1, y1, x2, y2);
         line.setStroke(Color.rgb(0, 0, 0, 0.85));
@@ -269,9 +309,13 @@ public class ResearcherController extends AbstractSimController {
     }
 
     // -------------------------------------------------------------------------
-    // Modes dessin
+    // Drawing modes
     // -------------------------------------------------------------------------
 
+    /**
+     * Displays detailed SEIR information for the clicked cell in the info label.
+     * @param cell the cell to inspect
+     */
     private void selectCell(Cell cell) {
         SEIRData d = cell.getSeirData();
         selectedCellLabel.setText(
@@ -282,12 +326,23 @@ public class ResearcherController extends AbstractSimController {
                 d.getSusceptible(), d.getExposed(), d.getInfected(), d.getRecovered(), d.getDead()));
     }
 
+    /**
+     * Cycles the cell to its next state and updates its SEIR data and fill colour.
+     * Used by the brush drawing mode on mouse-press events.
+     * @param cell the cell to paint
+     * @param rect the JavaFX rectangle representing the cell
+     */
     private void paintCell(Cell cell, javafx.scene.shape.Rectangle rect) {
         cell.setState(nextState(cell.getState()));
         syncSeirToState(cell);
         rect.setFill(getFillColorFor(cell));
     }
 
+    /**
+     * Applies the next epidemic state to every cell in the same district
+     * as the clicked cell, then redraws the grid.
+     * @param clicked the cell that was clicked
+     */
     private void bucketFill(Cell clicked) {
         String districtId = clicked.getDistrictId();
         if (districtId == null) return;
@@ -304,6 +359,12 @@ public class ResearcherController extends AbstractSimController {
         drawGrid();
     }
 
+    /**
+     * Resets the SEIR compartments to values consistent with the cell's
+     * current epidemic state. Used after manually changing a cell's state
+     * via brush or bucket mode.
+     * @param cell the cell whose SEIR data must be synchronised
+     */
     private void syncSeirToState(Cell cell) {
         int pop = cell.getPopulation();
         if (pop <= 0) return;
@@ -315,6 +376,12 @@ public class ResearcherController extends AbstractSimController {
         }
     }
 
+    /**
+     * Returns the next epidemic state in the manual painting cycle:
+     * HEALTHY → PARTIAL → INFECTED → CRITICAL → RECOVERED → HEALTHY.
+     * @param state the current state
+     * @return the next state
+     */
     private CellState nextState(CellState state) {
         if (state == CellState.HEALTHY)   return CellState.PARTIAL;
         if (state == CellState.PARTIAL)   return CellState.INFECTED;
@@ -328,6 +395,11 @@ public class ResearcherController extends AbstractSimController {
         updateStatisticsUI(stats);
     }
 
+    /**
+     * Formats and displays the latest global statistics snapshot
+     * in the sidebar statistics label.
+     * @param stats the snapshot to display
+     */
     private void updateStatisticsUI(Snapshot stats) {
         statsLabel.setText(
             "Cellules :"
@@ -347,9 +419,13 @@ public class ResearcherController extends AbstractSimController {
     }
 
     // -------------------------------------------------------------------------
-    // Sauvegarde / chargement / export
+    // Save / load / export
     // -------------------------------------------------------------------------
 
+    /**
+     * Opens a file-save dialog and serialises the current simulation engine
+     * to a {@code .dat} file. Pauses the simulation beforehand.
+     */
     @FXML public void onSaveSimulation() {
         try {
             engine.pause();
@@ -366,6 +442,10 @@ public class ResearcherController extends AbstractSimController {
         } catch (Exception e) { e.printStackTrace(); statusLabel.setText("Save error"); }
     }
 
+    /**
+     * Opens a file-open dialog and deserialises a previously saved simulation,
+     * replacing the current engine and grid.
+     */
     @FXML public void onLoadSimulation() {
         try {
             FileChooser fc = new FileChooser();
@@ -383,6 +463,9 @@ public class ResearcherController extends AbstractSimController {
         } catch (Exception e) { e.printStackTrace(); statusLabel.setText("Load error"); }
     }
 
+    /**
+     * Resets the simulation to its initial state (delegates to {@link #onStop()}).
+     */
     @FXML public void onNewSimulation() { onStop(); }
 
     @Override
@@ -390,6 +473,11 @@ public class ResearcherController extends AbstractSimController {
         return "/com/groupg/cells2d/controller/about_researcher.html";
     }
 
+    /**
+     * Prompts the user for an export directory, then writes
+     * {@code statistics.csv}, {@code statistics.txt}, and a {@code map.png}
+     * snapshot of the current map view into that directory.
+     */
     @FXML public void onExportAll() {
         try {
             DirectoryChooser dc = new DirectoryChooser();

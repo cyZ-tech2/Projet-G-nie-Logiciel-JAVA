@@ -8,46 +8,45 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * takes the parameters of SEIR simulation from SimulationParams from model and applies the propagation on a cell
+ * Reads SEIR parameters from a {@link SimulationParams} instance and applies
+ * the propagation formula to a single cell based on its neighbours.
  */
 
 public class Propagation implements Serializable{
     private SimulationParams params;
     private static final long serialVersionUID = 1L;
 
-    /**
-     * constructor for Propagation for standard propagation
-     */
-    public Propagation(){this.params = new SimulationParams();} // standard
+    /** Creates a Propagation instance with default SEIR parameters. */
+    public Propagation(){this.params = new SimulationParams();}
 
     /**
-     * constructor for Propagation for customised propagation
-     * @param params the values we want to give to variables of SEIRcalculator
+     * Creates a Propagation instance with custom SEIR parameters.
+     * @param params the SEIR parameter set to use
      */
-    public Propagation(SimulationParams params){this.params = params;} // custom
+    public Propagation(SimulationParams params){this.params = params;}
 
     /**
-     * getter for params
-     * @return the params we need beta,sigma,gamma etc
+     * Returns the current simulation parameter set.
+     * @return simulation parameters (beta, sigma, gamma, etc.)
      */
     public SimulationParams getParams(){return params;}
 
     /**
-     * setter for params if we want to change them manually
-     * @param params our simulation parameters
+     * Replaces the current parameter set.
+     * @param params new simulation parameters
      */
     public void setParams(SimulationParams params){this.params = params;}
 
     /**
-     * Applies SEIR propagation to a cell based on its neighbors
-     * @param cell the target cell to update
-     * @param neighbors the list of neighboring cells
-     * @return SEIRdata next compute step
+     * Applies one SEIR propagation step to a cell.
+     * @param cell      the target cell to update
+     * @param neighbors the list of directly adjacent cells
+     * @return the updated SEIR data for the next simulation step
      */
     public SEIRData apply(Cell cell, List<Cell> neighbors){
         if(cell.getPopulation()==0){return cell.getSeirData();}
 
-        double totalNeighborInfected=0; //average infected population from the neighbors
+        double totalNeighborInfected = 0; // cumulative infected count across all neighbours
         for(Cell neighbor : neighbors){
             totalNeighborInfected += neighbor.getSeirData().getInfected();
         }

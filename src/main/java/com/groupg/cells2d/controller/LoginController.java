@@ -14,6 +14,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * JavaFX controller for the login screen.
+ * Validates credentials against the user repository and redirects the user
+ * to either the researcher or doctor interface depending on their role.
+ */
 public class LoginController {
 
     @FXML private TextField     usernameField;
