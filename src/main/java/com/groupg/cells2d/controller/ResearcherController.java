@@ -381,10 +381,7 @@ public class ResearcherController extends AbstractSimController {
 
     @FXML public void onNewSimulation() { onStop(); }
 
-    @FXML public void onCloseApplication() {
-        try { engine.pause(); mapPane.getScene().getWindow().hide(); }
-        catch (Exception e) { e.printStackTrace(); }
-    }
+
 
     @FXML public void onAbout() {
         WebView webView = new WebView();
