@@ -24,8 +24,13 @@ public class SEIRcalculator{
      * @param population         total cell population
      * @param xi                 waning immunity rate (SEIRS extension)
      * @return updated SEIR data for the next step
+     * @throws IllegalArgumentException if seirData is null
+     * @throws IllegalArgumentException if population is negative
      */
     public static SEIRData compute(SEIRData seirData, double beta, double sigma, double gamma, double mortalityRate, double propagationRate, double avgNeighborInfected, int population,double xi){
+        if(seirData == null) throw new IllegalArgumentException("seirData cannot be null");
+        if(population < 0) throw new IllegalArgumentException("population cannot be negative");
+
         double s=seirData.getSusceptible();
         double e=seirData.getExposed();
         double i=seirData.getInfected();

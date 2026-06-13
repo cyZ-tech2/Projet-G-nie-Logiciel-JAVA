@@ -30,8 +30,14 @@ public class SimulationEngine implements Serializable {
      * Builds a new SimulationEngine.
      * @param grid       the full cell map to simulate
      * @param propagation propagation rules and SEIR parameters
+     * @throws IllegalArgumentException if grid is null
+     * @throws IllegalArgumentException if propagation is null
      */
     public SimulationEngine(Grid grid, Propagation propagation){
+        if(grid == null) throw new IllegalArgumentException("grid cannot be null");
+        if(propagation == null) throw new IllegalArgumentException("propagation cannot be null");
+
+
         this.grid=grid;
         this.propagation=propagation;
         this.neighborhood=new CellNeighborhood(grid.getMap());
@@ -48,9 +54,14 @@ public class SimulationEngine implements Serializable {
 
     /**
      * Sets the delay between two automatic simulation steps.
-     * @param stepDuration duration in milliseconds
+     * @param stepDuration duration in milliseconds (must be positive)
+     * @throws IllegalArgumentException if stepDuration is zero or negative
      */
-    public void setStepDuration(int stepDuration) {this.stepDuration = stepDuration;}
+    public void setStepDuration(int stepDuration) {
+        if(stepDuration <= 0) throw new IllegalArgumentException("stepDuration must be positive");
+        this.stepDuration = stepDuration;
+    }
+
     /**
      * Returns the current simulation status.
      * @return current status
@@ -73,8 +84,13 @@ public class SimulationEngine implements Serializable {
      * Advances the simulation by one step.
      * Updates every cell based on its neighbours and the propagation rules.
      * The previous grid state is pushed onto the history stack for rewinding.
+     * @throws IllegalStateException if neighborhood is null call rebuildNeighborhood() first
+     * @throws IllegalStateException if grid is null
      */
     public void step(){
+        if(neighborhood == null) throw new IllegalStateException("neighborhood is null, call rebuildNeighborhood() first");
+        if(grid == null) throw new IllegalStateException("grid is null");
+
         // Push a copy onto the history stack before mutating
         history.push(deepCopyGrid(grid));
         if (history.size() > MAX_HISTORY) history.pollLast();
@@ -111,8 +127,10 @@ public class SimulationEngine implements Serializable {
      * Starts the simulation on a background daemon thread.
      * The thread advances one step every {@code stepDuration} ms
      * until the status is no longer RUNNING.
+     * @throws IllegalStateException if simulation already running
      */
     public void play(){
+        if(this.status == SimStatus.RUNNING) throw new IllegalStateException("simulation is already running");
         this.status= SimStatus.RUNNING;
         Thread thread=new Thread(()-> {
             while (this.status == SimStatus.RUNNING) {
@@ -194,8 +212,10 @@ public class SimulationEngine implements Serializable {
 
     /**
      * Rebuilds the cell neighbourhood index after deserialisation or a grid swap.
+     * @throws IllegalStateException if grid is null, neighborhood cannot be rebuilded
      */
-    public void rebuildNeighborhood() {
+    public void rebuildNeighborhood(){
+        if(grid == null) throw new IllegalStateException("grid is null, cannot rebuild neighborhood");
         this.neighborhood = new CellNeighborhood(grid.getMap());
     }
 }

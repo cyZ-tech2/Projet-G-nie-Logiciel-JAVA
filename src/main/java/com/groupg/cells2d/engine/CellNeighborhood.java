@@ -19,8 +19,12 @@ public class CellNeighborhood implements Serializable {
     /**
      * Builds the neighbourhood resolver for the given cell map.
      * @param cells 2D array of all cells in the grid
+     * @throws IllegalArgumentException if cells array is null
+     * @throws IllegalArgumentException if cells array is empty
      */
     public CellNeighborhood(Cell[][] cells){
+        if(cells == null) throw new IllegalArgumentException("cells array cannot be null");
+        if(cells.length == 0) throw new IllegalArgumentException("cells array cannot be empty");
         this.cells=cells;
     }
 
@@ -39,6 +43,8 @@ public class CellNeighborhood implements Serializable {
      * @return list of valid neighbouring cells
      */
     public List<Cell> getNeighbors(Cell cell){
+        if(cell == null) return new ArrayList<>();
+        if(cells[0] == null || cells[0].length == 0) return new ArrayList<>();
         List<Cell> neighbors=new ArrayList<>();
         int[][] directions={
                 {-1,0},{1,0},{0,-1},{0,1},   // cardinal directions: top, bottom, left, right
