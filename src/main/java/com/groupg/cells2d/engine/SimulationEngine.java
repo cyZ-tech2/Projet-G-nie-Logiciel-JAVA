@@ -103,7 +103,6 @@ public class SimulationEngine implements Serializable {
      * begins our simulation changes the state to running
      * starts the simulation in a separate thread
      * updates the grid every 500ms until paused or stopped
-     * @throws InterruptedException if the thread is interrupted
      */
     public void play(){
         this.status= SimStatus.RUNNING;

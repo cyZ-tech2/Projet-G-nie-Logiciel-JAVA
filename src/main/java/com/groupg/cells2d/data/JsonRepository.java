@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * Stores a set and add serialization and deserialization functionalities while keeping types
- * @param <T>
+ * @param <T> type
  */
 public class JsonRepository<T> {
 

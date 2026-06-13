@@ -42,7 +42,7 @@ public class Propagation implements Serializable{
      * Applies SEIR propagation to a cell based on its neighbors
      * @param cell the target cell to update
      * @param neighbors the list of neighboring cells
-     * @returnAp
+     * @return SEIRdata next compute step
      */
     public SEIRData apply(Cell cell, List<Cell> neighbors){
         if(cell.getPopulation()==0){return cell.getSeirData();}

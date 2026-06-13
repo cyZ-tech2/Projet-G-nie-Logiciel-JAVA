@@ -154,6 +154,7 @@ import java.util.Map;
  * <pre>{@code
  * Shape shape = gson.fromJson(json, Shape.class);
  * }</pre>
+ * @param <T> base type
  */
     public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
         private final Class<?> baseType;

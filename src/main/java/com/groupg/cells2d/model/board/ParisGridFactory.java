@@ -6,6 +6,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Builds the simulation grid directly from the simplified Paris image
+ * paris-districts.png.
+ *
+ * The image is used as the visual background. The grid is generated over the
+ * same 265x190 coordinate system, so the cells are aligned with the map.
+ * District membership is assigned once in the backend: one cell = one district.
+ */
 public final class ParisGridFactory {
 
     public static final int    DEFAULT_ROWS = 38;
@@ -31,8 +39,10 @@ public final class ParisGridFactory {
                 double centerX = (col + 0.5) * MAP_WIDTH  / cols;
                 double centerY = (row + 0.5) * MAP_HEIGHT / rows;
                 boolean insideParis = isInsideParisImage(image, centerX, centerY);
+                // Si ell est dans paris -> population = 1200 sinon 0
                 Cell cell = new Cell("PARIS-" + row + "-" + col, insideParis ? 1200 : 0, row, col);
                 cell.setInsideParis(insideParis);
+                //si insideparis on lui attribut un district
                 if (insideParis) {
                     DistrictSeed district = nearestDistrict(centerX, centerY);
                     cell.setDistrictId(district.id);
