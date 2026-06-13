@@ -20,7 +20,7 @@ public class PatientCaseRepo {
     /** The shared encrypted repository used to persist all patient cases. */
     public static final JsonRepository<PatientCase> patientCaseRepo = new JsonRepository<>(
         AppConfig.GSON_MANAGER, PatientCase.class,
-        "src/main/java/com/groupg/cells2d/model/user/data/patients.txt");
+        "src/main/resources/com/groupg/cells2d/model/user/patients.txt");
 
     /**
      * Adds a patient case to the repository and immediately encrypts and saves the file.
