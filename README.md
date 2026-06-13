@@ -25,3 +25,13 @@ This command will package the application into a `.jar` file, which you can easi
 ## How to run
 
 *(Note : running the application also requires Java 22, due to JavaFX 24.)*
+
+Make sure that you already have built the jar package. 
+
+### Command-line version
+
+First run the jar app:
+
+```java -jar target/cells2d-1.0-SNAPSHOT.jar --console```
+
+You will then have to input your simulation parameters (rows, columns, SEIR, etc)
