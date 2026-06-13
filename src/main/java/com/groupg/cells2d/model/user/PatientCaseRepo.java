@@ -10,16 +10,15 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Stores the patientcases
- */
 public class PatientCaseRepo {
 
-    public static JsonRepository<PatientCase> patientCaseRepo = new JsonRepository<>(AppConfig.GSON_MANAGER,PatientCase.class,"src/main/java/com/groupg/cells2d/model/user/data/patients.txt");
+    public static final JsonRepository<PatientCase> patientCaseRepo = new JsonRepository<>(
+        AppConfig.GSON_MANAGER, PatientCase.class,
+        "src/main/java/com/groupg/cells2d/model/user/data/patients.txt");
 
-    public static void addCase(PatientCase patientCase) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public static void addCase(PatientCase patientCase)
+            throws NoSuchPaddingException, IllegalBlockSizeException, IOException,
+                   NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         patientCase.encryptAndSave(patientCaseRepo);
     }
-
-
 }

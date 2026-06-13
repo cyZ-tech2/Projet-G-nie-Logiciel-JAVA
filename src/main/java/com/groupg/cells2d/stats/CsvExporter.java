@@ -1,8 +1,5 @@
 package com.groupg.cells2d.stats;
 
-/**
- * exporter les données sous forme de fichier csv
- */
-
+/** Exports simulation data as CSV. */
 public class CsvExporter {
 }

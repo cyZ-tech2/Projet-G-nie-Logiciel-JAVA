@@ -9,9 +9,7 @@ public class OneTimeGenerateKey {
     public static void main(String[] args) throws NoSuchAlgorithmException {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         keyGen.init(256);
-        SecretKey key  = keyGen.generateKey();
-        String encodedKey = Base64.getEncoder().encodeToString(key.getEncoded());
-        System.out.println(encodedKey);
-
+        SecretKey key = keyGen.generateKey();
+        System.out.println(Base64.getEncoder().encodeToString(key.getEncoded()));
     }
 }

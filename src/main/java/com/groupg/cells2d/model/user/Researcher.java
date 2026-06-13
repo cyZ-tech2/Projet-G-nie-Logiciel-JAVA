@@ -1,24 +1,18 @@
 package com.groupg.cells2d.model.user;
 
-import java.util.List;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
-/**
- * class that describes researcher users
- */
+public class Researcher extends User {
 
-public class Researcher extends User{
     private String institution;
-    //private List<> simulationList;
-    public Researcher(double id, String username, String password,String institution) throws Exception {
+
+    public Researcher(double id, String username, String password, String institution)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         super(id, username, password);
         this.institution = institution;
     }
 
-    public String getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(String institution) {
-        this.institution = institution;
-    }
+    public String getInstitution()          { return institution; }
+    public void   setInstitution(String i)  { this.institution = i; }
 }

@@ -1,8 +1,5 @@
 package com.groupg.cells2d.stats;
 
-/**
- * constructeur de nos graphiques courbes etc.
- */
-
+/** Builder for chart data. */
 public class ChartDataBuilder {
 }
