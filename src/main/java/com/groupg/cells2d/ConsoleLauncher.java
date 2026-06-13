@@ -28,7 +28,8 @@ public class ConsoleLauncher {
             this.steps = readInt(scanner, "Number of steps", 1, 100);
             scanner.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error during loading: " + e.getMessage());
+            System.exit(1);
         }
     }
 
@@ -64,6 +65,9 @@ public class ConsoleLauncher {
             this.engine = new SimulationEngine(grid, new Propagation(params));
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error during population: " + e.getMessage());
+        } finally {
+            scanner.close();
         }
     }
 
@@ -71,7 +75,7 @@ public class ConsoleLauncher {
     public void run() {
         try {
             printLegend();
-            System.out.println("\n=== Step 0 ===");
+            System.out.println("\n=== Step " + engine.getStepCount() + " ===");
             printGrid(engine.getGrid());
             printTotals(engine.getGrid(), engine.getStepCount());
 
