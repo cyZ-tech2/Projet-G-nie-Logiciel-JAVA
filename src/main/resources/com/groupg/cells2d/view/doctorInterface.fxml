@@ -7,9 +7,11 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -26,6 +28,7 @@
             <Menu mnemonicParsing="false" text="File">
                <items>
                   <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#onLogout" text="Deconnexion" />
                </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Help">
@@ -49,49 +52,91 @@
    </center>
 
    <left>
-      <VBox prefHeight="1080.0" prefWidth="300.0" spacing="10.0" style="-fx-padding: 10;">
-         <children>
-
-            <!-- Contrôles simulation -->
-            <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Simulation" />
-            <HBox spacing="6.0">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="300.0" vbarPolicy="AS_NEEDED">
+         <content>
+            <VBox prefWidth="298.0" spacing="10.0" style="-fx-padding: 10;">
                <children>
-                  <Button fx:id="btnPlay"  onAction="#onPlay"  prefWidth="140" text="▶ Play" />
-                  <Button fx:id="btnPause" onAction="#onPause" prefWidth="140" text="⏸ Pause" />
+
+                  <!-- Controles simulation : icones uniquement + tooltips -->
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Simulation" />
+                  <HBox spacing="4.0">
+                     <children>
+                        <Button fx:id="btnPlay"  onAction="#onPlay"  prefWidth="52" text="▶" style="-fx-font-size: 16;">
+                           <tooltip><Tooltip text="Play" /></tooltip>
+                        </Button>
+                        <Button fx:id="btnPause" onAction="#onPause" prefWidth="52" text="⏸" style="-fx-font-size: 16;">
+                           <tooltip><Tooltip text="Pause" /></tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <Label fx:id="speedLabel" text="Vitesse : 1000 ms/step" />
+                  <Slider fx:id="speedSlider" min="100" max="3000" value="1000"
+                          blockIncrement="100" majorTickUnit="500" showTickMarks="true" />
+                  <Label fx:id="stepLabel"   text="Etape : 0" />
+                  <Label fx:id="statusLabel" text="Statut : IDLE" />
+
+                  <Separator><VBox.margin><Insets bottom="5.0" top="5.0" /></VBox.margin></Separator>
+
+                  <!-- Formulaire patient -->
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Ajouter un cas patient" />
+                  <TextField fx:id="caseIdField"    promptText="ID du cas (auto)" editable="false"
+                             style="-fx-background-color: #f0f0f0;" />
+                  <ComboBox  fx:id="ageGroupCombo"  promptText="Groupe d'age" maxWidth="Infinity" />
+                  <TextField fx:id="symptomsField"  promptText="Symptomes (separes par virgule)" />
+                  <TextField fx:id="caseCountField" promptText="Nombre de cas infectes" />
+                  <Label fx:id="selectedCellLabel"
+                         text="Cliquez sur la carte pour selectionner la cellule"
+                         wrapText="true" style="-fx-font-size: 11; -fx-text-fill: #444;" />
+                  <Button fx:id="addCaseButton" mnemonicParsing="false" onAction="#submitCase"
+                          text="Ajouter le cas" maxWidth="Infinity" />
+
+                  <Separator><VBox.margin><Insets bottom="5.0" top="5.0" /></VBox.margin></Separator>
+
+                  <Button mnemonicParsing="false" onAction="#onShowStatisticsCharts"
+                          text="Graphiques" maxWidth="Infinity" />
+
+                  <Separator><VBox.margin><Insets bottom="5.0" top="5.0" /></VBox.margin></Separator>
+
+                  <!-- Legende -->
+                  <Label style="-fx-font-weight: bold;" text="Legende" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(89,180,90,0.6);" />
+                           <Label text="Sain" />
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(255,193,7,0.8);" />
+                           <Label text="Partiel" />
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(220,53,69,0.9);" />
+                           <Label text="Infecte" />
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(0,0,0,0.6);" />
+                           <Label text="Critique" />
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16" style="-fx-background-color: rgba(89,90,210,0.6);" />
+                           <Label text="Retabli" />
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                           <Pane prefHeight="16" prefWidth="16"
+                                 style="-fx-background-color: white; -fx-border-color: red; -fx-border-width: 3;" />
+                           <Label text="Morte" />
+                        </HBox>
+                     </children>
+                  </HBox>
+
                </children>
-            </HBox>
-            <Label fx:id="speedLabel" text="Vitesse : 1000 ms/step" />
-            <Slider fx:id="speedSlider" min="100" max="3000" value="1000"
-                    blockIncrement="100" majorTickUnit="500" showTickMarks="true" />
-            <Label fx:id="stepLabel"   text="Étape : 0" />
-            <Label fx:id="statusLabel" text="Statut : IDLE" />
-
-            <Separator>
-               <VBox.margin><Insets bottom="5.0" top="5.0" /></VBox.margin>
-            </Separator>
-
-            <!-- Formulaire patient -->
-            <Label style="-fx-font-weight: bold; -fx-font-size: 13;" text="Ajouter un cas patient" />
-            <TextField fx:id="caseIdField" promptText="ID du cas (auto)" editable="false"
-                       style="-fx-background-color: #f0f0f0;" />
-            <ComboBox fx:id="ageGroupCombo" promptText="Groupe d'âge" maxWidth="Infinity" />
-            <TextField fx:id="symptomsField"  promptText="Symptômes (séparés par virgule)" />
-            <TextField fx:id="caseCountField" promptText="Nombre de cas infectés" />
-            <Label fx:id="selectedCellLabel"
-                   text="👆 Cliquez sur la carte pour sélectionner la cellule"
-                   wrapText="true" style="-fx-font-size: 11; -fx-text-fill: #444;" />
-            <Button fx:id="addCaseButton" mnemonicParsing="false" onAction="#submitCase"
-                    text="Ajouter le cas" maxWidth="Infinity" />
-
-            <Separator>
-               <VBox.margin><Insets bottom="5.0" top="5.0" /></VBox.margin>
-            </Separator>
-
-            <Button mnemonicParsing="false" onAction="#onShowStatisticsCharts"
-                    text="📊 Graphiques" maxWidth="Infinity" />
-
-         </children>
-      </VBox>
+            </VBox>
+         </content>
+      </ScrollPane>
    </left>
 
 </BorderPane>
