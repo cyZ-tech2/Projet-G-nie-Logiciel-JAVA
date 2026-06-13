@@ -12,6 +12,7 @@ import com.groupg.cells2d.stats.Snapshot;
 import com.groupg.cells2d.stats.Statistics;
 import com.groupg.cells2d.data.SaveManager;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -21,8 +22,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.web.WebView;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -324,6 +323,11 @@ public class ResearcherController extends AbstractSimController {
         return CellState.HEALTHY;
     }
 
+    @Override
+    protected void onStatisticsUpdated(com.groupg.cells2d.stats.Snapshot stats) {
+        updateStatisticsUI(stats);
+    }
+
     private void updateStatisticsUI(Snapshot stats) {
         statsLabel.setText(
             "Cellules :"
@@ -381,16 +385,9 @@ public class ResearcherController extends AbstractSimController {
 
     @FXML public void onNewSimulation() { onStop(); }
 
-
-
-    @FXML public void onAbout() {
-        WebView webView = new WebView();
-        webView.getEngine().load(
-            getClass().getResource("/com.groupg.cells2d.controller/about.html").toExternalForm());
-        Stage stage = new Stage();
-        stage.setTitle("About Cells2D");
-        stage.setScene(new Scene(webView, 700, 500));
-        stage.show();
+    @Override
+    protected String getAboutResourcePath() {
+        return "/com.groupg.cells2d.controller/about_researcher.html";
     }
 
     @FXML public void onExportAll() {

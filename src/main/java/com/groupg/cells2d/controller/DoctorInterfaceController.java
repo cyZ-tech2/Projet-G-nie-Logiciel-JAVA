@@ -80,6 +80,11 @@ public class DoctorInterfaceController extends AbstractSimController implements 
         drawMap();
     }
 
+    @Override
+    protected String getAboutResourcePath() {
+        return "/com.groupg.cells2d.controller/about_doctor.html";
+    }
+
     // -------------------------------------------------------------------------
     // Hook : clic sur cellule (sélection pour formulaire)
     // -------------------------------------------------------------------------
