@@ -8,51 +8,81 @@ import com.groupg.cells2d.model.board.Grid;
 import com.groupg.cells2d.model.board.SEIRData;
 import com.groupg.cells2d.model.board.SimulationParams;
 
+import java.io.IOException;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class ConsoleLauncher {
+    private int steps;
+    private SimulationEngine engine;
 
-    public static void main(String[] args) {
+    public ConsoleLauncher() {
+    }
+
+    public void load(String loadPath) {
+        try {
+            this.engine = SaveManager.load(loadPath);
+            System.out.println("\nSimulation loaded from " + loadPath);
+            Scanner scanner = new Scanner(System.in);
+            scanner.useLocale(Locale.US); // for display and input consistency (only use .)
+            this.steps = readInt(scanner, "Number of steps", 1, 100);
+            scanner.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void save(String savePath) {
+        try {
+            SaveManager.save(this.engine, savePath);
+            System.out.println("\nSimulation saved in " + savePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void populate() {
         Scanner scanner = new Scanner(System.in);
+        scanner.useLocale(Locale.US); // for display and input consistency (only use .)
         try {
             System.out.println("=== Cells2D Console Simulation ===");
-            int    rows            = readInt(scanner,    "Rows",                5,   30);
-            int    cols            = readInt(scanner,    "Columns",             5,   30);
-            int    steps           = readInt(scanner,    "Number of steps",     1,  100);
-            double beta            = readDouble(scanner, "Beta / transmission", 0.0, 1.0);
-            double sigma           = readDouble(scanner, "Sigma / incubation",  0.0, 1.0);
-            double gamma           = readDouble(scanner, "Gamma / recovery",    0.0, 1.0);
-            double propagationRate = readDouble(scanner, "Propagation rate",    0.0, 1.0);
-            double mortalityRate   = readDouble(scanner, "Mortality rate",      0.0, 1.0);
-            double xi              = readDouble(scanner, "Xi / waning immunity",0.0, 1.0);
-
+            int rows = readInt(scanner, "Rows", 5, 30);
+            int cols = readInt(scanner, "Columns", 5, 30);
+            this.steps = readInt(scanner, "Number of steps", 1, 100);
+            double beta = readDouble(scanner, "Beta / transmission", 0.0, 1.0);
+            double sigma = readDouble(scanner, "Sigma / incubation", 0.0, 1.0);
+            double gamma = readDouble(scanner, "Gamma / recovery", 0.0, 1.0);
+            double propagationRate = readDouble(scanner, "Propagation rate", 0.0, 1.0);
+            double mortalityRate = readDouble(scanner, "Mortality rate", 0.0, 1.0);
+            double xi = readDouble(scanner, "Xi / waning immunity", 0.0, 1.0);
+            scanner.close();
             Grid grid = createGrid(rows, cols);
             infectInitialCells(grid, rows, cols);
 
             SimulationParams params = new SimulationParams(beta, sigma, gamma, propagationRate, mortalityRate);
             params.setXi(xi);
-            SimulationEngine engine = new SimulationEngine(grid, new Propagation(params));
+            this.engine = new SimulationEngine(grid, new Propagation(params));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+
+    public void run() {
+        try {
             printLegend();
             System.out.println("\n=== Step 0 ===");
-            printGrid(grid);
-            printTotals(grid, engine.getStepCount());
+            printGrid(engine.getGrid());
+            printTotals(engine.getGrid(), engine.getStepCount());
 
             for (int i = 0; i < steps; i++) {
                 engine.step();
-                spreadToNeighbors(grid);
+                spreadToNeighbors(engine.getGrid());
                 System.out.println("\n=== Step " + engine.getStepCount() + " ===");
-                printGrid(grid);
-                printTotals(grid, engine.getStepCount());
+                printGrid(engine.getGrid());
+                printTotals(engine.getGrid(), engine.getStepCount());
                 Thread.sleep(300);
             }
-
-            SaveManager.save(engine, "console-save.dat");
-            System.out.println("\nSimulation saved in console-save.dat");
-
-            SimulationEngine loaded = SaveManager.load("console-save.dat");
-            System.out.println("Simulation loaded successfully. Step: " + loaded.getStepCount());
-
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.err.println("Simulation interrupted.");

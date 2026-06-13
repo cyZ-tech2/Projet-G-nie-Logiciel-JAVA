@@ -6,8 +6,9 @@ module com.groupg.cells2d {
     requires com.google.errorprone.annotations;
     requires javafx.web;
     requires javafx.swing;
-    
-    opens com.groupg.cells2d to javafx.fxml;
+    requires jcommander;
+
+    opens com.groupg.cells2d to javafx.fxml, jcommander;
     exports com.groupg.cells2d;
     exports com.groupg.cells2d.view;
     opens com.groupg.cells2d.view to javafx.fxml;

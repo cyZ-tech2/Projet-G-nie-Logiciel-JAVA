@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Objects;
 
-public abstract class User {
+public abstract class   User {
 
     private final double       id;
     private final String       username;
@@ -41,7 +41,7 @@ public abstract class User {
     public static boolean login(String username, String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         JsonRepository<User> repo = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class,
-            "src/main/java/com/groupg/cells2d/model/user/data/users.json");
+            "src/main/resources/com/groupg/cells2d/model/user/users.json");
         repo.load();
         for (User user : repo.getAll()) {
             if (user.getUsername().equals(username)) {
@@ -54,7 +54,7 @@ public abstract class User {
     public static User get(String username)
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         JsonRepository<User> repo = new JsonRepository<>(AppConfig.GSON_MANAGER, User.class,
-            "src/main/java/com/groupg/cells2d/model/user/data/users.json");
+            "src/main/resources/com/groupg/cells2d/model/user/users.json");
         repo.load();
         for (User user : repo.getAll()) {
             if (user.getUsername().equals(username)) return user;
