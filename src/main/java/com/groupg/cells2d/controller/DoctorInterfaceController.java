@@ -82,7 +82,7 @@ public class DoctorInterfaceController extends AbstractSimController implements 
 
     @Override
     protected String getAboutResourcePath() {
-        return "/com/groupg/cells2d/controller/about.html"; // TODO: créer about_doctor.html
+        return "/com/groupg/cells2d/controller/about_doctor.html";
     }
 
     // -------------------------------------------------------------------------
