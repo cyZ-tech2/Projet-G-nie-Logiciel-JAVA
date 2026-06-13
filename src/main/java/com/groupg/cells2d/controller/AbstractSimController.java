@@ -70,6 +70,21 @@ public abstract class AbstractSimController {
     // -------------------------------------------------------------------------
 
     @FXML
+    public void onLogout() {
+        try {
+            engine.pause();
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                getClass().getResource("/com/groupg/cells2d/view/login.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = (javafx.stage.Stage) mapPane.getScene().getWindow();
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     public void onPlay() {
         if (engine.getStatus() != SimStatus.RUNNING) {
             engine.play();
