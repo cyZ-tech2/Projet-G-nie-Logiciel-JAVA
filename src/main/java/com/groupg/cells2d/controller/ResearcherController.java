@@ -51,6 +51,7 @@ public class ResearcherController extends AbstractSimController {
     @FXML private Label selectedCellLabel;
     @FXML private Label statsLabel;
 
+
     // --- Parameter sliders ---
     @FXML private Slider betaSlider;
     @FXML private Slider gammaSlider;

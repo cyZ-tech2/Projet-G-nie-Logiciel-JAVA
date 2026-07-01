@@ -143,6 +143,8 @@ public class Snapshot {
         return totalPopulation;
     }
 
+    public double getPopulationRatio() { return deadPopulation/totalPopulation;}
+
 
 
     

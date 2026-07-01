@@ -88,6 +88,8 @@ public class SimulationEngine implements Serializable {
      * @throws IllegalStateException if grid is null
      */
     public void step(){
+        double totalDead = 0;
+        double totalPop = 0;
         if(neighborhood == null) throw new IllegalStateException("neighborhood is null, call rebuildNeighborhood() first");
         if(grid == null) throw new IllegalStateException("grid is null");
 
@@ -113,12 +115,17 @@ public class SimulationEngine implements Serializable {
             for(int j=0;j<cols;j++){
                 Cell cell = grid.getMap()[i][j];
                 if(cell != null && newDataBuffer[i][j] != null){
+                    totalDead += cell.getSeirData().getDead();
+                    totalPop += cell.getPopulation();
                     cell.setSeirData(newDataBuffer[i][j]);
                     double infectionRate = cell.getPopulation() > 0 ?
                             newDataBuffer[i][j].getInfected() / cell.getPopulation() : 0;
                     cell.updateState(infectionRate);
                 }
             }
+        }
+        if(totalDead/totalPop >= 0.5) {
+            this.status = SimStatus.FINISHED;
         }
         stepCount++;
     }
@@ -133,13 +140,14 @@ public class SimulationEngine implements Serializable {
         if(this.status == SimStatus.RUNNING) throw new IllegalStateException("simulation is already running");
         this.status= SimStatus.RUNNING;
         Thread thread=new Thread(()-> {
-            while (this.status == SimStatus.RUNNING) {
+            while (this.status == SimStatus.RUNNING  ) {
                 step();
                 try {
                     Thread.sleep(this.stepDuration);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
+
             }
         });
         thread.setDaemon(true);
